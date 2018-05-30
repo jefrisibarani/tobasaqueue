@@ -1,0 +1,208 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Tobasa.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AppName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Tobasa Queue Display</Value>
+    </Setting>
+    <Setting Name="AppVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">1.0</Value>
+    </Setting>
+    <Setting Name="VideoSource" Type="System.String" Scope="User">
+      <Value Profile="(Default)">VideoClip</Value>
+    </Setting>
+    <Setting Name="VideoInputDevice" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="VideoInputDeviceSource" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SVideo</Value>
+    </Setting>
+    <Setting Name="VideoCLipMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">PlayFromFolder</Value>
+    </Setting>
+    <Setting Name="StartDisplayFullScreen" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="VideoInputDevicePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="VideoInputDeviceName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="QueueServerHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="QueueServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2345</Value>
+    </Setting>
+    <Setting Name="StationName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DISP#1</Value>
+    </Setting>
+    <Setting Name="StationPost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST0</Value>
+    </Setting>
+    <Setting Name="NumberAudioLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\wav</Value>
+    </Setting>
+    <Setting Name="MaxQueueNumber" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="MaxStationNumber" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="QueueAnimationTimeInSecond" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">11</Value>
+    </Setting>
+    <Setting Name="Post0Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">APOTIK</Value>
+    </Setting>
+    <Setting Name="Post0Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST0</Value>
+    </Setting>
+    <Setting Name="Post0Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Apotik</Value>
+    </Setting>
+    <Setting Name="Post1Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">LABORATORIUM</Value>
+    </Setting>
+    <Setting Name="Post1Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST1</Value>
+    </Setting>
+    <Setting Name="Post1Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Laboratorium</Value>
+    </Setting>
+    <Setting Name="Post2Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">PENDAFTARAN RJ</Value>
+    </Setting>
+    <Setting Name="Post2Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST2</Value>
+    </Setting>
+    <Setting Name="Post2Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Pendaftaran</Value>
+    </Setting>
+    <Setting Name="Post3Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BPJS KESEHATAN</Value>
+    </Setting>
+    <Setting Name="Post3Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST3</Value>
+    </Setting>
+    <Setting Name="Post3Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BPJS Kesehatan</Value>
+    </Setting>
+    <Setting Name="Post0RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Apotik</Value>
+    </Setting>
+    <Setting Name="Post1RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Laboratorium</Value>
+    </Setting>
+    <Setting Name="Post2RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Pendaftaran</Value>
+    </Setting>
+    <Setting Name="Post3RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BPJS</Value>
+    </Setting>
+    <Setting Name="NumberAnimationColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Red</Value>
+    </Setting>
+    <Setting Name="Post3Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DSEngineVolumeLevel" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="StartNumberWithUnderscore" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="VideoClipLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\movie</Value>
+    </Setting>
+    <Setting Name="PlayVideoAtStartup" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ReceiveMessageFromOtherPost" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="QueueUserName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">tobasaqueue</Value>
+    </Setting>
+    <Setting Name="QueuePassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">e4ee0e54215f5e3dd7683923abe1dac8</Value>
+    </Setting>
+    <Setting Name="UIPostList" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;POST0&lt;/string&gt;
+  &lt;string&gt;POST1&lt;/string&gt;
+  &lt;string&gt;POST2&lt;/string&gt;
+  &lt;string&gt;POST3&lt;/string&gt;
+  &lt;string&gt;POST4&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="RunningText0" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Selamat Datang</Value>
+    </Setting>
+    <Setting Name="RunningText1" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Terimakasih</Value>
+    </Setting>
+    <Setting Name="Post0PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post1PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post2PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post3PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AudioSpellNumber" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowLogo" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DisplayLogoImg" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\DisplayLogoImg.png</Value>
+    </Setting>
+    <Setting Name="DisplayLogoText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Tobasa Queue System</Value>
+    </Setting>
+    <Setting Name="ShowInfoTextTop" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="BasicQueueMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SecuritySalt" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39</Value>
+    </Setting>
+    <Setting Name="Post4Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">CUSTOMER SERVICE</Value>
+    </Setting>
+    <Setting Name="Post4Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST4</Value>
+    </Setting>
+    <Setting Name="Post4Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Customer Service</Value>
+    </Setting>
+    <Setting Name="Post4RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Customer Service</Value>
+    </Setting>
+    <Setting Name="Post4PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post4Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="PlaySimpleSoundNotification" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="UpdateNumberFromOtherPost" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowMessageTextMiddle" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

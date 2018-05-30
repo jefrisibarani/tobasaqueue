@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7F1444A2-0539-4115-A0A2-C5134E0AB228}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tobasa</RootNamespace>
+    <AssemblyName>Libtobasa</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DirectShowLib\amstream.cs" />
+    <Compile Include="DirectShowLib\amvideo.cs" />
+    <Compile Include="DirectShowLib\atscpsipparser.cs" />
+    <Compile Include="DirectShowLib\austream.cs" />
+    <Compile Include="DirectShowLib\AxCore.cs" />
+    <Compile Include="DirectShowLib\AXExtend.cs" />
+    <Compile Include="DirectShowLib\BDAIface.cs" />
+    <Compile Include="DirectShowLib\Bdatif.cs" />
+    <Compile Include="DirectShowLib\BDATypes.cs" />
+    <Compile Include="DirectShowLib\Control.cs" />
+    <Compile Include="DirectShowLib\DES.cs" />
+    <Compile Include="DirectShowLib\DevEnum.cs" />
+    <Compile Include="DirectShowLib\DMODShow.cs" />
+    <Compile Include="DirectShowLib\dsattrib.cs" />
+    <Compile Include="DirectShowLib\DsUtils.cs" />
+    <Compile Include="DirectShowLib\dvbsiparser.cs" />
+    <Compile Include="DirectShowLib\DVDIf.cs" />
+    <Compile Include="DirectShowLib\DynGraph.cs" />
+    <Compile Include="DirectShowLib\encdec.cs" />
+    <Compile Include="DirectShowLib\EvCode.cs" />
+    <Compile Include="DirectShowLib\IL21Dec.cs" />
+    <Compile Include="DirectShowLib\MediaObj.cs" />
+    <Compile Include="DirectShowLib\MediaParam.cs" />
+    <Compile Include="DirectShowLib\Misc.cs" />
+    <Compile Include="DirectShowLib\Mixerocx.cs" />
+    <Compile Include="DirectShowLib\mmstream.cs" />
+    <Compile Include="DirectShowLib\mpconfig.cs" />
+    <Compile Include="DirectShowLib\Mpeg2Data.cs" />
+    <Compile Include="DirectShowLib\mpeg2psiparser.cs" />
+    <Compile Include="DirectShowLib\Mpeg2Structs.cs" />
+    <Compile Include="DirectShowLib\other.cs" />
+    <Compile Include="DirectShowLib\PlayList.cs" />
+    <Compile Include="DirectShowLib\QEdit.cs" />
+    <Compile Include="DirectShowLib\qnetwork.cs" />
+    <Compile Include="DirectShowLib\RegBag.cs" />
+    <Compile Include="DirectShowLib\Sbe.cs" />
+    <Compile Include="DirectShowLib\Tuner.cs" />
+    <Compile Include="DirectShowLib\TvRatings.cs" />
+    <Compile Include="DirectShowLib\Uuids.cs" />
+    <Compile Include="DirectShowLib\Vidcap.cs" />
+    <Compile Include="DirectShowLib\VidPort.cs" />
+    <Compile Include="DirectShowLib\Vmr9.cs" />
+    <Compile Include="DirectShowLib\VmRender.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Work\blowfish.cs" />
+    <Compile Include="Work\Database.cs" />
+    <Compile Include="Work\Notifier.cs" />
+    <Compile Include="Work\Messages.cs" />
+    <Compile Include="Work\PromptDialog.cs" />
+    <Compile Include="Work\TCPClient.cs" />
+    <Compile Include="Work\DSEngine.cs" />
+    <Compile Include="Work\Logger.cs" />
+    <Compile Include="Work\NetSession.cs" />
+    <Compile Include="Work\Util.cs" />
+    <Compile Include="Work\TCPServer.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

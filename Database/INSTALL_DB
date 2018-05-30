@@ -1,0 +1,24 @@
+# Instalasi database
+
+1. Install Microsoft SQL Server 2008 R2 Express Edition
+   Pastikan SQL Server bisa diakses lewat network(TCP/IP) di port 1433
+
+2. Buat user login di SQL Server
+   (SQL Server authentication)
+      login name : antrian
+      password   : TOBASA
+
+3. Buat database
+      nama database	: antri
+      owner database	: antrian
+      recovery model : Full
+   
+4. Restore database backup antri.bak ke database yang dibuat pada step 3
+   Pastikan untuk Overwrite/Replace database 
+   
+5. Set kembali owner database antri ke user "antrian" yang dibuat di step 2
+
+   
+   
+   
+   

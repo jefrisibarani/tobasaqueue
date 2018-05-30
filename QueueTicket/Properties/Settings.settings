@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Tobasa.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="QueueServerHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="QueueServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2345</Value>
+    </Setting>
+    <Setting Name="StationPost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST0</Value>
+    </Setting>
+    <Setting Name="StationName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TICKET#1</Value>
+    </Setting>
+    <Setting Name="PrintTicket" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Post0Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Apotik - Penyerahan Resep</Value>
+    </Setting>
+    <Setting Name="Post0Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST0</Value>
+    </Setting>
+    <Setting Name="Post0Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Apotik</Value>
+    </Setting>
+    <Setting Name="Post0Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post1Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Daftar Laboratorium</Value>
+    </Setting>
+    <Setting Name="Post1Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST1</Value>
+    </Setting>
+    <Setting Name="Post1Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Laboratorium</Value>
+    </Setting>
+    <Setting Name="Post1Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post2Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Pendaftaran Rawat Jalan</Value>
+    </Setting>
+    <Setting Name="Post2Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST2</Value>
+    </Setting>
+    <Setting Name="Post2Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Pendaftaran</Value>
+    </Setting>
+    <Setting Name="Post2Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post3Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BPJS Kesehatan</Value>
+    </Setting>
+    <Setting Name="Post3Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST3</Value>
+    </Setting>
+    <Setting Name="Post3Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BPJS Kesehatan</Value>
+    </Setting>
+    <Setting Name="Post3Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post3Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="StartDisplayFullScreen" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="QueueUserName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">tobasaqueue</Value>
+    </Setting>
+    <Setting Name="QueuePassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">e4ee0e54215f5e3dd7683923abe1dac8</Value>
+    </Setting>
+    <Setting Name="Post0BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post0BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post1BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post1BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post2BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post2BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post3BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post3BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="DisplayLogoImg" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\DisplayLogoImg.png</Value>
+    </Setting>
+    <Setting Name="DisplayHeaderImg" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\DisplayHeaderImg.png</Value>
+    </Setting>
+    <Setting Name="DisplayHeaderBg" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\DisplayHeaderBg.png</Value>
+    </Setting>
+    <Setting Name="RunningText0" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Selamat Datang</Value>
+    </Setting>
+    <Setting Name="RunningText1" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Terimakasih</Value>
+    </Setting>
+    <Setting Name="PrintFooter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TOBASA QUEUE</Value>
+    </Setting>
+    <Setting Name="UIPostList" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;POST0&lt;/string&gt;
+  &lt;string&gt;POST1&lt;/string&gt;
+  &lt;string&gt;POST2&lt;/string&gt;
+  &lt;string&gt;POST3&lt;/string&gt;
+  &lt;string&gt;POST4&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="Post0PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post1PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post2PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post3PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="SecuritySalt" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39</Value>
+    </Setting>
+    <Setting Name="Post4Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Customer Service</Value>
+    </Setting>
+    <Setting Name="Post4Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST4</Value>
+    </Setting>
+    <Setting Name="Post4Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Customer Service</Value>
+    </Setting>
+    <Setting Name="Post4Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post4Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post4BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post4BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post4PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post0PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Apotik</Value>
+    </Setting>
+    <Setting Name="Post1PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Laboratorium</Value>
+    </Setting>
+    <Setting Name="Post2PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Pendaftaran RJ</Value>
+    </Setting>
+    <Setting Name="Post3PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BPJS Kesehatan</Value>
+    </Setting>
+    <Setting Name="Post4PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Customer Service</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

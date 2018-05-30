@@ -1,0 +1,48 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Tobasa.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ConnectionStringPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ad7415644add93d6e719d2b593da6e6e</Value>
+    </Setting>
+    <Setting Name="SecuritySalt" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39</Value>
+    </Setting>
+    <Setting Name="QueueServerHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="QueueServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2345</Value>
+    </Setting>
+    <Setting Name="StationName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ADMIN#1</Value>
+    </Setting>
+    <Setting Name="StationPost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST0</Value>
+    </Setting>
+    <Setting Name="ConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.OleDb&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri</Value>
+    </Setting>
+    <Setting Name="QueueUserName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">tobasaqueue</Value>
+    </Setting>
+    <Setting Name="QueuePassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">e4ee0e54215f5e3dd7683923abe1dac8</Value>
+    </Setting>
+    <Setting Name="UIPostList" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;POST0&lt;/string&gt;
+  &lt;string&gt;POST1&lt;/string&gt;
+  &lt;string&gt;POST2&lt;/string&gt;
+  &lt;string&gt;POST3&lt;/string&gt;
+  &lt;string&gt;POST4&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
