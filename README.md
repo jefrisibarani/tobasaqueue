@@ -15,16 +15,19 @@ Software sistem antrian andal untuk mengelola antrian pelanggan, mengurangi wakt
 #### Struktur folder output
 ```
 _OUTPUT
-   +--QueueAdmin
-   +--QueueCaller
-   +--QueueDisplay
-      +--img
-      +--movie
-      +--wav
-   +--QueueService
-   +--QueueTicket
-      +--img
-   +--startall_output.cmd
+   \--Database
+   \--QueueAdmin
+   \--QueueCaller
+   \--QueueDisplay
+      \--img
+      \--movie
+      \--wav
+   \--QueueService
+   \--QueueTicket
+      \--img
+   \--LICENSE
+   \--README.md
+   \--startall_output.cmd
 ```
 
 ## Instalasi
