@@ -194,10 +194,11 @@
             this.runTextBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.runTextBottom.Location = new System.Drawing.Point(0, 0);
             this.runTextBottom.Name = "runTextBottom";
-            this.runTextBottom.Size = new System.Drawing.Size(1755, 37);
+            this.runTextBottom.Size = new System.Drawing.Size(2234, 37);
             this.runTextBottom.TabIndex = 1;
-            this.runTextBottom.Text = "Selamat datang di antrian Tobasa :: Your news feed helps you keep up with recent " +
-    "activity on repositories you watch and people you follow";
+            this.runTextBottom.Text = "Selamat datang di antrian Tobasa :: Running text dapat diubah di bagian options Q" +
+    "ueueDisplay :: Running text dapat ditambahkan dari database via QueueAdmin :: Te" +
+    "rimakasih";
             this.runTextBottom.UseCompatibleTextRendering = true;
             // 
             // topDiv

@@ -695,7 +695,7 @@ namespace Tobasa
                                 {
                                     //var _id = reader.GetValue(0);
                                     string _runnningText = reader.GetString(3).Trim();
-                                    string msg ="DISPLAY" + Msg.Separator + "GET_RUNNINGTEXT" + Msg.Separator + _station + Msg.Separator + _post + Msg.Separator + _runnningText;
+                                    string msg ="DISPLAY" + Msg.Separator + "SET_RUNNINGTEXT" + Msg.Separator + _station + Msg.Separator + _post + Msg.Separator + _runnningText;
                                     cl.Session.Send(msg);
                                 }
                             }
