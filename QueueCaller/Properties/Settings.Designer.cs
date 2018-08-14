@@ -151,18 +151,6 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ReleaseMode {
-            get {
-                return ((bool)(this["ReleaseMode"]));
-            }
-            set {
-                this["ReleaseMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("POST0")]
         public string UpdateDisplayJobStatusPost {
             get {

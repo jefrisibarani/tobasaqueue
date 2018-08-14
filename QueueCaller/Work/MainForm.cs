@@ -97,10 +97,6 @@ namespace Tobasa
                 }
             }
 
-            if (Properties.Settings.Default.ReleaseMode)
-            {
-            }
-           
             /// Start TCP client
             StartClient();
         }
