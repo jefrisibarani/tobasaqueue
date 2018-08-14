@@ -44,9 +44,6 @@
   &lt;string&gt;POST4|Customer Service&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
-    <Setting Name="ReleaseMode" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="UpdateDisplayJobStatusPost" Type="System.String" Scope="User">
       <Value Profile="(Default)">POST0</Value>
     </Setting>
