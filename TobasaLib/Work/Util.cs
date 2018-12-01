@@ -26,6 +26,9 @@ using BlowFishCS;
 using System.Security.Cryptography;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Configuration;
+using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Tobasa
 {
@@ -217,5 +220,87 @@ namespace Tobasa
             g.Dispose();
             return newBitmap;
         }
-    }
+
+		/// Check User Configuration Setting File.
+		/// Fungsi ini dijalankan pertama kali oleh aplikasi untuk memeriksa apakah file konfigurasi
+		/// user setting dalam kondisi corrupt atau OK.
+		/// Bila file konfigurasi dalam kondisi OK, fungsi ini akan membuat backup
+		/// yang akan digunakan pada waktu file konfigurasi corrupt
+		public static void CheckUserConfigurationFile()
+		{
+			try
+			{
+				Configuration con = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+				string confOri = con.FilePath;
+				string confBak = confOri + ".backup";
+
+				try
+				{
+					if (File.Exists(confOri))
+					{
+						// File konfigurasi ada dan dalam kondisi OK, backup!
+						File.Copy(confOri, confBak, true);
+					}
+				}
+				catch (DirectoryNotFoundException e)
+				{
+					// Pertama kali dijalankan, file konfigurasi belum ada
+					return;
+				}
+				catch (Exception e)
+				{
+					MessageBox.Show(e.ToString(), "Error");
+				}
+
+			}
+			catch (ConfigurationErrorsException e)
+			{
+				string fileOri = e.Filename;
+				string fileBak = fileOri + ".backup";
+				string pesan;
+
+				if (File.Exists(fileBak))
+				{
+					pesan = "File konfigurasi USER SETTINGS sepertinya rusak. \n\n" +
+								fileOri + "\n\n" +
+								"Ini bisa terjadi bila sebelumnya komputer crash. \n\n" +
+								"Untuk melanjutkan, TobasaQueue akan me-restore " +
+								"file konfigurasi USER SETTINGS dari backup yang tersedia\n\n" +
+								"Click Yes untuk me-restore file atau\n" +
+								"Click No untuk memperbaiki secara manual \n\n";
+				}
+				else
+				{
+					pesan = "File konfigurasi USER SETTINGS sepertinya rusak. \n\n" +
+								fileOri + "\n\n" +
+								"Ini bisa terjadi bila sebelumnya komputer crash. \n" +
+								"Untuk melanjutkan, TobasaQueue harus me-reset file konfigurasi USER SETTINGS \n\n" +
+								"Click Yes untuk me-reset USER SETTINGS atau\n" +
+								"Click No untuk memperbaiki secara manual \n\n";
+				}
+
+				if (MessageBox.Show(pesan, "File user settings corrupt",
+									MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+				{
+					// Periksa apakah ada backup, bila ada restore
+					if (File.Exists(fileBak))
+					{
+						try
+						{
+							File.Copy(fileBak, fileOri, true);
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.ToString(), "Error");
+						}
+					}
+					else
+						File.Delete(fileOri);
+				}
+				else
+					Process.GetCurrentProcess().Kill();
+			}
+		}
+
+	}
 }

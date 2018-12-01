@@ -12,7 +12,7 @@ namespace Tobasa.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -656,18 +656,6 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ShowInfoTextTop {
-            get {
-                return ((bool)(this["ShowInfoTextTop"]));
-            }
-            set {
-                this["ShowInfoTextTop"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool BasicQueueMode {
             get {
@@ -740,7 +728,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Post4PlayAudio {
             get {
                 return ((bool)(this["Post4PlayAudio"]));
@@ -752,7 +740,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Post4Visible {
             get {
                 return ((bool)(this["Post4Visible"]));
@@ -776,7 +764,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UpdateNumberFromOtherPost {
             get {
                 return ((bool)(this["UpdateNumberFromOtherPost"]));
@@ -789,12 +777,24 @@ namespace Tobasa.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ShowMessageTextMiddle {
+        public bool ShowInfoTextTop0 {
             get {
-                return ((bool)(this["ShowMessageTextMiddle"]));
+                return ((bool)(this["ShowInfoTextTop0"]));
             }
             set {
-                this["ShowMessageTextMiddle"] = value;
+                this["ShowInfoTextTop0"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowInfoTextTop1 {
+            get {
+                return ((bool)(this["ShowInfoTextTop1"]));
+            }
+            set {
+                this["ShowInfoTextTop1"] = value;
             }
         }
     }

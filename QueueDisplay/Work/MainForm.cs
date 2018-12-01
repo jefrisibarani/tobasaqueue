@@ -448,7 +448,7 @@ namespace Tobasa
             chkSpellNumber.Checked = Properties.Settings.Default.AudioSpellNumber;
             chkPlaySimpleNotification.Checked = Properties.Settings.Default.PlaySimpleSoundNotification;
             chkShowLogo.Checked = Properties.Settings.Default.ShowLogo;
-            chkShowInfoTextTop.Checked = Properties.Settings.Default.ShowInfoTextTop; 
+            chkShowInfoTextTop.Checked = Properties.Settings.Default.ShowInfoTextTop1; 
 
             btnAnimationColor.BackColor = Properties.Settings.Default.NumberAnimationColor;
             numericUpDown.Value = (decimal)Properties.Settings.Default.QueueAnimationTimeInSecond;
@@ -534,7 +534,7 @@ namespace Tobasa
             Properties.Settings.Default.AudioSpellNumber = chkSpellNumber.Checked;
             Properties.Settings.Default.PlaySimpleSoundNotification = chkPlaySimpleNotification.Checked;
             Properties.Settings.Default.ShowLogo = chkShowLogo.Checked;
-            Properties.Settings.Default.ShowInfoTextTop = chkShowInfoTextTop.Checked;
+            Properties.Settings.Default.ShowInfoTextTop1 = chkShowInfoTextTop.Checked;
             Properties.Settings.Default.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
 
             if (mDisplay.DSEngine.DisplaySource == DisplaySource.Stream)

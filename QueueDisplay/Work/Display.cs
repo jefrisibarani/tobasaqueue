@@ -404,8 +404,8 @@ namespace Tobasa
             KeyPreview = true;
 
             leftDivLogo.Visible = Properties.Settings.Default.ShowLogo;
-            lbInfoTextTop.Visible = Properties.Settings.Default.ShowInfoTextTop;
-            lblTopText.Visible = Properties.Settings.Default.ShowMessageTextMiddle;
+            lblTopText1.Visible = Properties.Settings.Default.ShowInfoTextTop0;
+            lblTopText0.Visible = Properties.Settings.Default.ShowInfoTextTop1;
 
             if (Properties.Settings.Default.BasicQueueMode)
             {
@@ -607,24 +607,24 @@ namespace Tobasa
             switch (currentTopText)
             {
                 case 0: 
-                    lblTopText.Text = topTextPost0;
-                    lbInfoTextTop.Text = midTextPost0;
+                    lblTopText0.Text = topTextPost0;
+                    lblTopText1.Text = midTextPost0;
                     break;
                 case 1: 
-                    lblTopText.Text = topTextPost1;
-                    lbInfoTextTop.Text = midTextPost1;
+                    lblTopText0.Text = topTextPost1;
+                    lblTopText1.Text = midTextPost1;
                     break;
                 case 2: 
-                    lblTopText.Text = topTextPost2;
-                    lbInfoTextTop.Text = midTextPost2;
+                    lblTopText0.Text = topTextPost2;
+                    lblTopText1.Text = midTextPost2;
                     break;
                 case 3: 
-                    lblTopText.Text = topTextPost3;
-                    lbInfoTextTop.Text = midTextPost3;
+                    lblTopText0.Text = topTextPost3;
+                    lblTopText1.Text = midTextPost3;
                     break;
                 case 4:
-                    lblTopText.Text = topTextPost4;
-                    lbInfoTextTop.Text = midTextPost4;
+                    lblTopText0.Text = topTextPost4;
+                    lblTopText1.Text = midTextPost4;
                     break;
             }
             if (currentTopText == 4)

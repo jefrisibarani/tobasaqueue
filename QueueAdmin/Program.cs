@@ -30,7 +30,10 @@ namespace Tobasa
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Logger.Log("--------------------------------------------------------------------------------------");
+
+			Util.CheckUserConfigurationFile();
+
+			Logger.Log("--------------------------------------------------------------------------------------");
             Logger.Log("Starting " + Application.ProductName + " ...");
             Logger.Log("From " + Util.ProcessPath);
             Application.Run(new MainForm());
