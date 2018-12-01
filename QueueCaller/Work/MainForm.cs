@@ -561,6 +561,7 @@ namespace Tobasa
                     return;
 
                 string _id = Convert.ToString(gridJobs.Rows[e.RowIndex].Cells[0].Value);
+                string _no = Convert.ToString(gridJobs.Rows[e.RowIndex].Cells[1].Value);
                 if (_id == "")
                     return;
 
@@ -584,6 +585,19 @@ namespace Tobasa
                                 InitGridJobs();
                             }
                         }
+
+
+                        // Update informasi antrian
+                        if (client.Connected)
+                        {
+                            string _message = "DISPLAY" + Msg.Separator + "SHOW_MESSAGE" + Msg.Separator;
+                            _message += Properties.Settings.Default.StationName + Msg.Separator;
+                            _message += Properties.Settings.Default.StationPost + Msg.Separator;
+                            _message += "Antrian no. " + _no + ", Resep telah selesai";
+                            client.Send(_message);
+                        }
+                        else
+                            MessageBox.Show(this, "Could not connect to server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                         // Update Job status on Display
                         UpdateDisplayJobStatus();

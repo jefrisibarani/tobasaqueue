@@ -168,9 +168,6 @@
     <Setting Name="DisplayLogoText" Type="System.String" Scope="User">
       <Value Profile="(Default)">Tobasa Queue System</Value>
     </Setting>
-    <Setting Name="ShowInfoTextTop" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="BasicQueueMode" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -190,18 +187,21 @@
       <Value Profile="(Default)">Customer Service</Value>
     </Setting>
     <Setting Name="Post4PlayAudio" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="Post4Visible" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="PlaySimpleSoundNotification" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="UpdateNumberFromOtherPost" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ShowInfoTextTop0" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ShowMessageTextMiddle" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowInfoTextTop1" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

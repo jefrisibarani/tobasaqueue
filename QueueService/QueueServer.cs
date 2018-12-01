@@ -609,7 +609,7 @@ namespace Tobasa
             else if (message.StartsWith(Msg.DISPLAY_SHOW_MESSAGE))
             {
                 /****************************************************
-                Summary           : Panggil ulang nomor antrian
+                Summary           : Tampilkan pesan pada Label Top Display, dibawah informasi Jam
                 Syntax            : DIPLAY|SHOW_MESSAGE|Station|Post|Message
                
                           Station : Nama Client - tanpa underscore, eg: DISP#1, CALL#2, TICKET#1
