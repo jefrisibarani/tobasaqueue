@@ -10,7 +10,7 @@ Software sistem antrian andal untuk mengelola antrian pelanggan, mengurangi wakt
 * Microsoft SQL Server 2008 R2 Express Edition
 
 ## Build/Compile
-* Buka solution TobasaQueue.sln dengan Visual Studio 2015
+* Buka solution TobasaQueue.sln dengan Visual Studio 2019
 * Build solution, aplikasi yang telah dibuild  ada di  folder ***_OUTPUT***
 
 #### Struktur folder output
@@ -55,4 +55,4 @@ copykan file video (wmv) pada folder QueueDisplay\movie\
 * http://www.mangapul.com/2016/12/konfigurasi-aplikasi-antrian-tobasa.html
 
 
-##### Copyright (C) 2018 Jefri Sibarani
+##### Copyright (C) 2020 Jefri Sibarani

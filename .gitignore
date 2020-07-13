@@ -17,6 +17,7 @@
 *.backup
 .vs
 _OUTPUT*
+_RELEASE*
 QueueAdmin/bin
 QueueAdmin/obj
 QueueCaller/bin
