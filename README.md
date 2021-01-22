@@ -54,4 +54,4 @@ copykan file video (wmv) pada folder QueueDisplay\movie\
 * http://www.mangapul.com/2016/12/konfigurasi-aplikasi-antrian-tobasa.html
 
 
-##### Copyright (C) 2020 Jefri Sibarani
+##### Copyright (C) 2021 Jefri Sibarani
