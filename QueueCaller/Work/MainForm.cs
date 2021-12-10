@@ -1,10 +1,31 @@
-﻿using System;
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+using System;
 using System.Collections;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.OleDb;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Tobasa
 {
@@ -12,9 +33,17 @@ namespace Tobasa
     {
         #region Member variables / class
 
-        /// Struct to save label data -label that need tobe resized automatically
-        /// See labelRecordList,RecordLabelSize(),OnLabelResize()
-        /// Set label Resize event handler to OnLabelResize()
+        private delegate void NetSessionDataReceivedCb(DataReceivedEventArgs arg);
+        private delegate void TCPClientNotifiedCb(NotifyEventArgs e);
+
+        Properties.Settings _settings = Properties.Settings.Default;
+        Dictionary<string, string> _postIdsDict;
+        private TCPClient _client = null;
+        private string _curNumber = "";
+
+        // Struct to save label data -label that need tobe resized automatically
+        // See labelRecordList,RecordLabelSize(),OnLabelResize()
+        // Set label Resize event handler to OnLabelResize()
         private struct LabelRecord
         {
             public LabelRecord(Label label)
@@ -31,163 +60,157 @@ namespace Tobasa
             public float initialFontSize;
         }
 
-        /// array to list LabelRecord
-        ArrayList labelRecordList;
-
-        private delegate void ProcessMessageCallback(DataReceivedEventArgs arg, string text);
-        private delegate void ProcessErrorCallBack(NotifyEventArgs e);
-
-        private TCPClient client = null;
-        private string curNumber = "";
+        // LabelRecord collection
+        ArrayList _labelRecordList;
 
         #endregion
 
         #region Constructor / Destructor
         public MainForm()
         {
-            labelRecordList = new ArrayList();
+            _labelRecordList = new ArrayList();
+            _postIdsDict = UIPostListToDictionary();
 
             InitializeComponent();
-            /// we want to receive key event
+
+            // we want to receive key event
             KeyPreview = true;
 
-            lblStation.Text = Properties.Settings.Default.StationName;
-            lblPost.Text = GetStationPostCaption(Properties.Settings.Default.StationPost);
-            tbServer.Text = Properties.Settings.Default.QueueServerHost;
-            tbPort.Text = Properties.Settings.Default.QueueServerPort.ToString();
+            // Restore settings
+            RestoreSettings();
 
-            string fullStationName = Properties.Settings.Default.StationName;
-            string counterNo = fullStationName.Substring(fullStationName.IndexOf('#') + 1);
-            string stationName = fullStationName.Substring(0, fullStationName.IndexOf('#'));
+            string fullStationName = _settings.StationName;
+            string counterNo       = fullStationName.Substring(fullStationName.IndexOf('#') + 1);
+            string stationName     = fullStationName.Substring(0, fullStationName.IndexOf('#'));
 
-            tbStation.Text = stationName;
+            tbStation.Text   = stationName;
             cbCounterNo.Text = counterNo;
-            lblNumber.Text = "";
-            curNumber = "";
+            lblNumber.Text   = "";
+            _curNumber       = "";
 
-            /// Populate cbPost
-            //string[] cbPostItems = new string[Properties.Settings.Default.UIPostList.Count];
-            //Properties.Settings.Default.UIPostList.CopyTo(cbPostItems, 0);
+            // Populate cbPost
             string[] cbPostItems = UIPostListToArray();
             cbPost.Items.Clear();
             cbPost.Items.AddRange(cbPostItems);
-            cbPost.Text = Properties.Settings.Default.StationPost;
+            cbPost.Text = _settings.StationPost;
 
             RecordLabelSize();
 
-            Database.Me.Connect(GetConnectionString());
+            postsBtnDiv.Visible = _settings.ShowPostsButtonDiv;
 
-            /// In basic mode, Hide "Tab Penyerahan Obat" and "Tab Selesai"
-            if (Properties.Settings.Default.BasicQueueMode)
+            SetupToolTip();
+
+            // Start TCP client
+            StartClient();
+
+            // In basic mode, Hide "Processing" and "Tab Completed"
+            if (! _settings.ManageAdvanceQueue)
             {
-                mainTab.TabPages.Remove(tabProcess);
-                mainTab.TabPages.Remove(tabFinish);
+                mainTab.TabPages.Remove(tabProcessing);
+                mainTab.TabPages.Remove(tabFinished);
             }
             else
             {
-                if (Properties.Settings.Default.StationPost == Properties.Settings.Default.UpdateDisplayJobStatusPost)
+                if (_settings.ManageAllPostAdvanceQueue)
                 {
-                    InitGridJobs();
-                    InitGridJobsFin();
                 }
                 else
                 {
-                    btnRefresh.Enabled = false;
+                    btnRefresh.Enabled    = false;
                     btnRefreshFin.Enabled = false;
                 }
             }
 
-            /// Start TCP client
-            StartClient();
+            // get last queue status from server
+            GetQueuetInfo();
         }
 
         #endregion
 
         #region TCP Connection stuffs
 
-        void TCPClient_Notified(NotifyEventArgs e)
-        {
-            ProcessError(e);
-        }
-
-        public void ProcessError(NotifyEventArgs e)
+        private void TCPClientNotified(NotifyEventArgs arg)
         {
             if (this.InvokeRequired)
             {
-                ProcessErrorCallBack d = new ProcessErrorCallBack(ProcessError);
-                this.Invoke(d, new object[] { e });
+                TCPClientNotifiedCb dlg = new TCPClientNotifiedCb(TCPClientNotified);
+                this.Invoke(dlg, new object[] { arg });
             }
             else
-                MessageBox.Show(this, e.Message, e.Summary, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            {
+                if (arg.Type == NotifyType.NOTIFY_ERR)
+                {
+                    MessageBox.Show(arg.Message, arg.Summary, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                Logger.Log(arg);
+            }
         }
 
         public void StartClient()
         {
-            client = null;
-
-            string dispServerHost = Properties.Settings.Default.QueueServerHost;
-            int dispServerPort = Properties.Settings.Default.QueueServerPort;
-            string stationName = Properties.Settings.Default.StationName;
-            string stationPost = Properties.Settings.Default.StationPost;
-            string userName = Properties.Settings.Default.QueueUserName;
-            string password = Properties.Settings.Default.QueuePassword;
-
-            client = new TCPClient(dispServerHost, dispServerPort);
-            client.Notified += new Action<NotifyEventArgs>(TCPClient_Notified);
+            _client = null;
+            _client = new TCPClient(_settings.QueueServerHost, _settings.QueueServerPort);
+            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
             
-            client.Start();
+            _client.Start();
 
-            if (client.Connected)
+            if (_client.Connected)
             {
-                client.Session.DataReceived += new DataReceived(NetSession_DataReceived);
+                _client.Session.DataReceived += new DataReceived(NetSessionDataReceived);
 
-                string salt = Properties.Settings.Default.SecuritySalt;
-                string clearPwd = Util.DecryptPassword(password, salt);
-                string passwordHash = Util.GetPasswordHash(clearPwd, userName);
+                string clearPwd     = Util.DecryptPassword(_settings.QueuePassword, _settings.SecuritySalt);
+                string passwordHash = Util.GetPasswordHash(clearPwd, _settings.QueueUserName);
 
-                /// Send LOGIN message + our station name to server
-                string message = String.Empty;
-                message = "LOGIN" + Msg.Separator + "CALLER" + Msg.Separator + stationName + Msg.Separator + stationPost + Msg.Separator + userName + Msg.Separator + passwordHash;
-                client.Send(message);
+                // SYS|LOGIN|REQ|[Module!Post!Station!Username!Password]
+                string message =
+                    Msg.SysLogin.Text +
+                    Msg.Separator + "REQ" +
+                    Msg.Separator + "CALLER" +
+                    Msg.CompDelimiter + _settings.StationPost +
+                    Msg.CompDelimiter + _settings.StationName +
+                    Msg.CompDelimiter + _settings.QueueUserName +
+                    Msg.CompDelimiter + passwordHash;
+
+                _client.Send(message);
             }
         }
 
         private void CloseConnection()
         {
-            if (client.Connected)
-                client.Stop();
+            if (_client.Connected)
+                _client.Stop();
         }
 
         #endregion
 
         #region Autoresize Form's Label stuffs
 
-        /// Registered form labels are automatically resized when Form size resized
-        
-        /// Save initial data from labels that need to be resized
-        /// Every label in the list will have its Resize event handled by OnLabelResize
-        /// which will use this data
+        // Registered form labels are automatically resized when Form size resized
+        // Save initial data from labels that need to be resized
+        // Every label in the list will have its Resize event handled by OnLabelResize
+        // which will use this data
         private void RecordLabelSize()
         {
-            labelRecordList.Add(new LabelRecord(capStation));
-            labelRecordList.Add(new LabelRecord(capNumber));
-            labelRecordList.Add(new LabelRecord(capNext));
-            labelRecordList.Add(new LabelRecord(lblStation));
+            _labelRecordList.Add(new LabelRecord(capStation));
+            _labelRecordList.Add(new LabelRecord(capNumber));
+            _labelRecordList.Add(new LabelRecord(capNext));
+            _labelRecordList.Add(new LabelRecord(lblStation));
 
-            labelRecordList.Add(new LabelRecord(lblPost));
-            labelRecordList.Add(new LabelRecord(lblQueueCount));
-            labelRecordList.Add(new LabelRecord(capCurrNumber));
-            labelRecordList.Add(new LabelRecord(lblNumber));
+            _labelRecordList.Add(new LabelRecord(lblPost));
+            _labelRecordList.Add(new LabelRecord(lblQueueCount));
+            _labelRecordList.Add(new LabelRecord(capCurrNumber));
+            _labelRecordList.Add(new LabelRecord(lblNumber));
         }
 
         private void ResizeLabel(LabelRecord lbl)
         {
             SuspendLayout();
-            /// Get the proportionality of the resize
+            // Get the proportionality of the resize
             float proportionalNewWidth = (float)lbl.label.Width / lbl.initialWidth;
             float proportionalNewHeight = (float)lbl.label.Height / lbl.initialHeight;
 
-            /// Calculate the current font size
+            // Calculate the current font size
             lbl.label.Font = new Font(lbl.label.Font.FontFamily, lbl.initialFontSize *
                 (proportionalNewWidth > proportionalNewHeight ? proportionalNewHeight : proportionalNewWidth),
                lbl.label.Font.Style);
@@ -205,7 +228,7 @@ namespace Tobasa
 
         private void OnLabelResize(object sender, EventArgs e)
         {
-            foreach (LabelRecord lbl in labelRecordList)
+            foreach (LabelRecord lbl in _labelRecordList)
             {
                 if (lbl.label == (Label)sender)
                 {
@@ -219,147 +242,237 @@ namespace Tobasa
 
         #region QueueServer message handler
 
-        private void NetSession_DataReceived(DataReceivedEventArgs arg)
+
+        // cross thread safe handler
+        private void NetSessionDataReceived(DataReceivedEventArgs arg)
         {
-            string text = "";
-            /*
-            /// Deserialize the message
-            object message = Message.Deserialize(arg.Data);
-
-            /// Handle the message
-            StringMessage stringMessage = message as StringMessage;
-            if (stringMessage != null)
-                 text = stringMessage.Message;
-            */
-
-            string stringMessage = Encoding.UTF8.GetString(arg.Data);
-            if (stringMessage != null)
-            {
-                text = stringMessage;
-                ProcessMessage(arg, text);
-            }
-        }
-
-        /// cross thread safe handler
-        private void ProcessMessage(DataReceivedEventArgs arg, string text)
-        {
-            /// InvokeRequired required compares the thread ID of the 
-            /// calling thread to the thread ID of the creating thread. 
-            /// If these threads are different, it returns true. 
+            // InvokeRequired required compares the thread ID of the 
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true. 
             if (this.InvokeRequired)
             {
-                ProcessMessageCallback d = new ProcessMessageCallback(ProcessMessage);
-                this.Invoke(d, new object[] { arg, text });
+                NetSessionDataReceivedCb d = new NetSessionDataReceivedCb(NetSessionDataReceived);
+                this.Invoke(d, new object[] { arg });
             }
             else
             {
-                if (text.StartsWith("CALLER"))
-                    ProcessMessageCaller(arg, text);
-                else if (text.StartsWith("LOGIN"))
-                {
-                    string _response = text;
-                    if (_response == Msg.LOGIN_OK)
-                    {
-                        lblStatus.Text = "Connected to Server : " + client.Session.RemoteInfo + " - Post :" + Properties.Settings.Default.StationPost + "  Station:" + Properties.Settings.Default.StationName;
-                        Logger.Log("QueueCaller : Successfully logged in");
-                    }
-                    else
-                    {
-                        string reason = _response.Substring(10);
-                        string msg = "QueueCaller : Could not logged in to server, \r\nReason: " + reason;
-                        Logger.Log(msg);
-                        MessageBox.Show(this, msg, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        CloseConnection();
-                    }
-                }
+                if (arg.DataString.StartsWith("SYS") || arg.DataString.StartsWith("CALLER"))
+                    HandleMessage(arg);
                 else
                 {
-                    string logmsg = String.Format("Unhandled session message from: {0} - MSG: {1} ", arg.RemoteInfo, text);
+                    string logmsg = String.Format("[QueueCaller] Unhandled session message from: {0}", arg.RemoteInfo);
                     Logger.Log(logmsg);
                 }
             }
         }
 
-        private void ProcessMessageCaller(DataReceivedEventArgs arg, string text)
+        private void HandleMessage(DataReceivedEventArgs arg)
         {
-            if (text == Msg.CALLER_SET_NEXTNUMBER_NULL )
+            try
             {
-                MessageBox.Show("Queue empty", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                lblQueueCount.Text = "0";
+                Message qmessage = new Message(arg);
+
+                Logger.Log("[QueueCaller] Processing " + qmessage.MessageType.String + " from " + arg.Session.RemoteInfo);
+
+                // Handle SysLogin
+                if (qmessage.MessageType == Msg.SysLogin && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string result = qmessage.PayloadValues["result"];
+                    string data   = qmessage.PayloadValues["data"];
+
+                    if (result == "OK")
+                    {
+                        lblStatus.Text = "Connected to Server : " + _client.Session.RemoteInfo + " - Post :" + _settings.StationPost + "  Station:" + _settings.StationName;
+                        Logger.Log("[QueueCaller] Successfully logged in");
+                    }
+                    else
+                    {
+                        string reason = data;
+                        string msg = "[QueueCaller] Could not logged in to server, \r\nReason: " + reason;
+
+                        Logger.Log(msg);
+                        MessageBox.Show(this, msg, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        CloseConnection();
+                    }
+                }
+                // Handle CallerGetInfo, CallerGetNext
+                else if ( (qmessage.MessageType == Msg.CallerGetInfo || qmessage.MessageType == Msg.CallerGetNext)
+                            && qmessage.Direction == MessageDirection.RESPONSE )
+                {
+                    string prefix      = qmessage.PayloadValues["postprefix"];
+                    string number      = qmessage.PayloadValues["number"];
+                    string numberleft  = qmessage.PayloadValues["numberleft"];
+
+                    if (string.IsNullOrWhiteSpace(number))
+                    {
+                        if (qmessage.MessageType == Msg.CallerGetInfo)
+                        {
+                            _curNumber = "";
+                            lblNumber.Text = "";
+                        }
+                        MessageBox.Show("Queue empty", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        _curNumber = number;
+                        lblNumber.Text = prefix + number;
+                    }
+
+                    lblQueueCount.Text = numberleft;
+                }
+                // Handle SysUpdateJob
+                else if (qmessage.MessageType == Msg.SysUpdateJob && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string status = qmessage.PayloadValues["status"];
+                    string result = qmessage.PayloadValues["result"];
+
+                    RequestJobsFromServer(_settings.StationPost, "PROCESS", 0, 0);
+                    RequestJobsFromServer(_settings.StationPost, "FINISHED", 0, 0);
+                }
+                // Handle SysGetJob
+                else if (qmessage.MessageType == Msg.SysGetJob && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string status        = qmessage.PayloadValues["status"];
+                    string jsonDataTable = qmessage.PayloadValues["result"];
+
+                    if (status == "PROCESS")
+                        InitGridProcessedJobs(jsonDataTable);
+                    else if (status == "FINISHED")
+                        InitGridFinishedJobs(jsonDataTable);
+                    else
+                    { }
+                }
+                // Handle SysNotify
+                else if (qmessage.MessageType == Msg.SysNotify)
+                {
+                    // extract payload
+                    string notifyTyp = qmessage.PayloadValues["type"];
+                    string notifyMsg = qmessage.PayloadValues["message"];
+
+                    if (notifyTyp == "ERROR")
+                        MessageBox.Show(notifyMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    { }  // WARNING, INFO
+
+                    //LogServerMessage(string.Format("[{0}] {1}", notifyTyp, notifyMsg));
+                }
+                else
+                {
+                    Logger.Log(string.Format("[QueueCaller] Unhandled message from: {0} - MSG: {1} ", arg.RemoteInfo, qmessage.RawMessage));
+                }
             }
-            else if (text.StartsWith( Msg.CALLER_SET_NEXTNUMBER ))
-                ProcessMessageCallerSetNextNumber(arg,text);
+            catch (Exception ex)
+            {
+                Logger.Log("QueueCaller", ex);
+            }
         }
 
-        private void ProcessMessageCallerSetNextNumber(DataReceivedEventArgs arg, string text)
+        private void RequestJobsFromServer(string post, string jobStatus, int offset = 0, int limit = 0)
         {
-            string _prefix, _number,_numberCount;
-            _prefix = _number = _numberCount = "";
-
-            string[] words = text.Split(Msg.Separator.ToCharArray());
-            if (words.Length == 5)
+            if (_client != null && _client.Connected)
             {
-                _prefix = words[2];
-                _number = words[3];
-                _numberCount = words[4];
+                string message = Msg.SysGetJob.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + post +
+                                 Msg.CompDelimiter + jobStatus +
+                                 Msg.CompDelimiter + "0" +
+                                 Msg.CompDelimiter + "0";
 
-                curNumber = _number;
-                lblNumber.Text = _prefix + _number;
-                lblQueueCount.Text = _numberCount;
+                _client.Send(message);
             }
             else
+                Util.ShowConnectionError(this);
+        }
+
+        private void UpdateJobStatus(string jobStatus, string jobId, string jobNumber)
+        {
+            if (_client != null && _client.Connected)
             {
-                string logmsg = String.Format("Invalid CALLER:SET_NEXTNUMBER from: {0} - MSG: {1} ",arg.RemoteInfo,text);
-                Logger.Log(logmsg);
+                string message = Msg.SysUpdateJob.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + jobStatus +
+                                 Msg.CompDelimiter + jobId +
+                                 Msg.CompDelimiter + jobNumber;
+
+                _client.Send(message);
+            }
+        }
+
+        private void GetQueuetInfo()
+        {
+            if (_client.Connected)
+            {
+                string message = Msg.CallerGetInfo.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + _settings.StationPost;
+
+                _client.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
+        }
+
+        private void GetNextNumber()
+        {
+            if (_client.Connected)
+            {
+                string message = Msg.CallerGetNext.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + _settings.StationPost +
+                                 Msg.CompDelimiter + _settings.StationName; 
+
+                _client.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
+        }
+
+        private void RecallNumber()
+        {
+            if (_curNumber == "0" || _curNumber == "")
+            {
+                MessageBox.Show(this, "No number to call", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+
+            if (_client.Connected)
+            {
+                string message = Msg.CallerRecall.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + _curNumber +
+                                 Msg.CompDelimiter + _settings.StationPost +
+                                 Msg.CompDelimiter + _settings.StationName;
+
+                _client.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
         }
 
         #endregion
 
         #region Form event handlers
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
             CloseConnection();
-            Properties.Settings.Default.Save();
+            _settings.Save();
         }
 
         private void OnNextNumber(object sender, EventArgs e)
         {
-            if (client.Connected)
-            {
-
-                string message = "CALLER" + Msg.Separator + "GET_NEXTNUMBER" + Msg.Separator;
-                      message += Properties.Settings.Default.StationName;
-                      message += Msg.Separator + Properties.Settings.Default.StationPost;
-
-                client.Send(message);
-            }
-            else
-                MessageBox.Show(this, "Could not connect to server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            GetNextNumber();
         }
 
         private void OnCallNumber(object sender, EventArgs e)
         {
-            if (curNumber == "0" || curNumber == "")
-            {
-                MessageBox.Show(this, "No number to call", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            if (client.Connected)
-            {
-                string message = "CALLER" + Msg.Separator + "RECALL_NUMBER" + Msg.Separator;
-                
-                message += curNumber;
-                message += Msg.Separator + Properties.Settings.Default.StationName;
-                message += Msg.Separator + Properties.Settings.Default.StationPost;
-
-                client.Send(message);
-            }
-            else
-                MessageBox.Show(this, "Could not connect to server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            RecallNumber();
         }
 
         private void OnAbout(object sender, EventArgs e)
@@ -368,27 +481,28 @@ namespace Tobasa
             about.ShowDialog();
         }
 
-        private void OnSaveSettings(object sender, EventArgs e)
+        private void OnSaveSettingsReconnect(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(this, "Are you sure you want to save changes and reconnect?"
-                                                   , "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show(this, "Are you sure you want to save changes and reconnect?",
+                                                  "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                string staName = tbStation.Text + "#" + cbCounterNo.Text;
-                Properties.Settings.Default.StationName = staName;
-                Properties.Settings.Default.StationPost = cbPost.Text;
-                Properties.Settings.Default.QueueServerHost = tbServer.Text;
-                Properties.Settings.Default.QueueServerPort = Convert.ToInt32(tbPort.Text);
+                SaveSettings();
 
                 CloseConnection();
                 StartClient();
 
-                lblStation.Text = staName;
+                lblStation.Text = _settings.StationName;
                 lblPost.Text = GetStationPostCaption(cbPost.Text);
 
-                curNumber = "";
-                lblNumber.Text = "";
+                // get last queue status from server
+                GetQueuetInfo();
             }
+        }
+
+        private void OnSaveSettings(object sender, EventArgs e)
+        {
+            SaveSettings();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -408,338 +522,294 @@ namespace Tobasa
             }
         }
 
-        #endregion
-
-        #region Connection  string
-
-        private string GetConnectionString()
+        private void OnCbCounterIndexChanged(object sender, EventArgs e)
         {
-            string partialConnStr = Properties.Settings.Default.ConnectionString;
-            OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder();
-            builder.ConnectionString = partialConnStr;
+            string cbText = cbCounterNo.Text;
 
-            string encryptedPwd = Properties.Settings.Default.ConnectionStringPassword;
-            string salt = Properties.Settings.Default.SecuritySalt;
-            string clearPwd = Util.DecryptPassword(encryptedPwd, salt);
+            // ASCII characters: 65 to 90
+            // we use 1 = A = 65 ,  2 = B = 66
+            int staId = Convert.ToInt32(cbText);
+            staId = 64 + staId;
+            string stChar = ((char)staId).ToString();
 
-            builder.Add("Password", clearPwd);
+            lblCtrNoChar.Text = stChar;
+        }
 
-            return builder.ToString();
+        private void OnChangePost(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(this, "Are you sure you want change Post?"
+                                                   , "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                string postId;
+                string fullStationName = _settings.StationName;
+                string counterNo = fullStationName.Substring(fullStationName.IndexOf('#') + 1);
+                string stationName = fullStationName.Substring(0, fullStationName.IndexOf('#'));
+
+                if ((Button)sender == btnChangePost0)
+                {
+                    postId = "POST0";
+                }
+                else if ((Button)sender == btnChangePost1)
+                {
+                    postId = "POST1";
+                }
+                else if ((Button)sender == btnChangePost2)
+                {
+                    postId = "POST2";
+                }
+                else if ((Button)sender == btnChangePost3)
+                {
+                    postId = "POST3";
+                }
+                else if ((Button)sender == btnChangePost4)
+                {
+                    postId = "POST4";
+                }
+                else if ((Button)sender == btnChangePost5)
+                {
+                    postId = "POST5";
+                }
+                else if ((Button)sender == btnChangePost6)
+                {
+                    postId = "POST6";
+                }
+                else if ((Button)sender == btnChangePost7)
+                {
+                    postId = "POST7";
+                }
+                else if ((Button)sender == btnChangePost8)
+                {
+                    postId = "POST8";
+                }
+                else if ((Button)sender == btnChangePost9)
+                {
+                    postId = "POST9";
+                    _settings.StationName = fullStationName;
+                }
+                else
+                    postId = cbPost.Text;
+
+                cbPost.Text = postId;
+
+                _settings.StationPost = postId;
+
+                CloseConnection();
+                StartClient();
+
+                lblStation.Text = fullStationName;
+                lblPost.Text = GetStationPostCaption(postId);
+
+                // get last queue status from server
+                GetQueuetInfo();
+            }
         }
 
         #endregion
 
         #region Tab job finished
 
-        private void InitGridJobs()
+        private void InitGridProcessedJobs(string jsonDataTable = "")
         {
-            if (Database.Me.Connected)
+            try
             {
-               string sql =  @"SELECT id,number,status,station,post,source,date,starttime,calltime,call2time,endtime FROM jobs
-                              WHERE status = 'PROCESS'  AND date = (SELECT CAST(getdate() AS date))
-                              AND post = ? ORDER BY starttime ASC";
+                DataTable dataTable = null;
+                dataTable = (DataTable)JsonConvert.DeserializeObject(jsonDataTable, (typeof(DataTable)));
 
-                try
+                if (dataTable == null || dataTable.Rows.Count == 0)
                 {
-                    Database.Me.OpenConnection();
-                    OleDbDataAdapter sda = new OleDbDataAdapter(sql, Database.Me.Connection);
-                    sda.SelectCommand.Parameters.Add("?", OleDbType.VarChar, 32).Value = Properties.Settings.Default.StationPost;
+                    gridJobs.DataSource = null;
+                    return;
+                }
 
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    gridJobs.DataSource = dt;
+                gridJobs.DataSource = dataTable;
 
-                    DataGridView gridView = gridJobs;
-                    DataGridViewColumn column = null;
-                    column = gridView.Columns[0];
-                    column.Width = 30;
-                    column.HeaderText = "Id";
-                    column = gridView.Columns[1];
-                    column.Width = 60;
-                    column.HeaderText = "Number";
-                    column = gridView.Columns[2];
-                    column.Width = 75;
-                    column.HeaderText = "Status";
-                    column = gridView.Columns[3];
-                    column.Width = 1;
-                    column.HeaderText = "Station";
-                    column = gridView.Columns[4];
-                    column.Width = 1;
-                    column.HeaderText = "Post";
-                    column = gridView.Columns[5];
-                    column.Width = 1;
-                    column.HeaderText = "Source";
-                    column = gridView.Columns[6];
-                    column.Width = 1;
-                    column.HeaderText = "Date";
-                    column = gridView.Columns[7];
-                    column.HeaderText = "Start Time";
-                    column = gridView.Columns[8];
-                    column.HeaderText = "Call Time";
-                    column = gridView.Columns[9];
-                    column.HeaderText = "Finish Time";
-                    column = gridView.Columns[10];
-                    column.HeaderText = "End Time";
-                }
-                catch (ArgumentException e)
-                {
-                    Logger.Log("QueueCaller : ArgumentException : " + e.Message);
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("QueueCaller : Exception : " + e.Message);
-                }
+                DataGridView gridView = gridJobs;
+                DataGridViewColumn column = null;
+                column = gridView.Columns[0];
+                column.Width = 30;
+                column.HeaderText = "Id";
+                column = gridView.Columns[1];
+                column.Width = 60;
+                column.HeaderText = "Number";
+                column = gridView.Columns[2];
+                column.Width = 75;
+                column.HeaderText = "Status";
+                column = gridView.Columns[3];
+                column.Width = 1;
+                column.HeaderText = "Station";
+                column = gridView.Columns[4];
+                column.Width = 1;
+                column.HeaderText = "Post";
+                column = gridView.Columns[5];
+                column.Width = 1;
+                column.HeaderText = "Source";
+                column = gridView.Columns[6];
+                column.Width = 1;
+                column.HeaderText = "Date";
+                column = gridView.Columns[7];
+                column.HeaderText = "Start Time";
+                column = gridView.Columns[8];
+                column.HeaderText = "Call Time";
+                column = gridView.Columns[9];
+                column.HeaderText = "Finish Time";
+                column = gridView.Columns[10];
+                column.HeaderText = "End Time";
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueCaller", e);
             }
         }
 
-        private void InitGridJobsFin()
+        private void InitGridFinishedJobs(string jsonDataTable = "")
         {
-            if (Database.Me.Connected)
+            try
             {
-                string sql = @"SELECT id,number,status,station,post,source,date,starttime,calltime,call2time,endtime FROM jobs
-                              WHERE status = 'FINISHED'  AND date = (SELECT CAST(getdate() AS date))
-                              AND post = ? ORDER BY starttime ASC";
+                DataTable dataTable = null;
+                dataTable = (DataTable)JsonConvert.DeserializeObject(jsonDataTable, (typeof(DataTable)));
 
-                try
+                if (dataTable == null || dataTable.Rows.Count == 0)
                 {
-                    Database.Me.OpenConnection();
-                    OleDbDataAdapter sda = new OleDbDataAdapter(sql, Database.Me.Connection);
-                    sda.SelectCommand.Parameters.Add("?", OleDbType.VarChar, 32).Value = Properties.Settings.Default.StationPost;
-                    
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    gridJobsFin.DataSource = dt;
+                    gridJobsFin.DataSource = null;
+                    return;
+                }
 
-                    DataGridView gridView = gridJobsFin;
-                    DataGridViewColumn column = null;
-                    column = gridView.Columns[0];
-                    column.Width = 30;
-                    column.HeaderText = "Id";
-                    column = gridView.Columns[1];
-                    column.Width = 60;
-                    column.HeaderText = "Number";
-                    column = gridView.Columns[2];
-                    column.Width = 75;
-                    column.HeaderText = "Status";
-                    column = gridView.Columns[3];
-                    column.Width = 1;
-                    column.HeaderText = "Station";
-                    column = gridView.Columns[4];
-                    column.Width = 1;
-                    column.HeaderText = "Post";
-                    column = gridView.Columns[5];
-                    column.Width = 1;
-                    column.HeaderText = "Source";
-                    column = gridView.Columns[6];
-                    column.Width = 1;
-                    column.HeaderText = "Date";
-                    column = gridView.Columns[7];
-                    column.HeaderText = "Start Time";
-                    column = gridView.Columns[8];
-                    column.HeaderText = "Call Time";
-                    column = gridView.Columns[9];
-                    column.HeaderText = "Finish Time";
-                    column = gridView.Columns[10];
-                    column.HeaderText = "End Time";
-                }
-                catch (ArgumentException e)
-                {
-                    Logger.Log("QueueCaller : ArgumentException : " + e.Message);
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("QueueCaller : Exception : " + e.Message);
-                }
+                gridJobsFin.DataSource = dataTable;
+
+                DataGridView gridView = gridJobsFin;
+                DataGridViewColumn column = null;
+                column = gridView.Columns[0];
+                column.Width = 30;
+                column.HeaderText = "Id";
+                column = gridView.Columns[1];
+                column.Width = 60;
+                column.HeaderText = "Number";
+                column = gridView.Columns[2];
+                column.Width = 75;
+                column.HeaderText = "Status";
+                column = gridView.Columns[3];
+                column.Width = 1;
+                column.HeaderText = "Station";
+                column = gridView.Columns[4];
+                column.Width = 1;
+                column.HeaderText = "Post";
+                column = gridView.Columns[5];
+                column.Width = 1;
+                column.HeaderText = "Source";
+                column = gridView.Columns[6];
+                column.Width = 1;
+                column.HeaderText = "Date";
+                column = gridView.Columns[7];
+                column.HeaderText = "Start Time";
+                column = gridView.Columns[8];
+                column.HeaderText = "Call Time";
+                column = gridView.Columns[9];
+                column.HeaderText = "Finish Time";
+                column = gridView.Columns[10];
+                column.HeaderText = "End Time";
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueCaller", e);
             }
         }
 
         private void OnGridJobsCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (Database.Me.Connected)
+            if (e.RowIndex < 0)
+                return;
+
+            string jobId = Convert.ToString(gridJobs.Rows[e.RowIndex].Cells[0].Value);
+            string jobNo = Convert.ToString(gridJobs.Rows[e.RowIndex].Cells[1].Value);
+
+            if (jobId == "")
+                return;
+
+            string msg = "Set this queue number status to FINISHED ?";
+
+            if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                if (e.RowIndex < 0)
-                    return;
-
-                string _id = Convert.ToString(gridJobs.Rows[e.RowIndex].Cells[0].Value);
-                string _no = Convert.ToString(gridJobs.Rows[e.RowIndex].Cells[1].Value);
-                if (_id == "")
-                    return;
-
-                string msg = "Proses untuk pemgambilan obat?";
-
-                if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    string sql = @"UPDATE jobs SET status = 'FINISHED',call2time=getdate() WHERE id = ?";
-                    try
-                    {
-                        Database.Me.OpenConnection();
-                        using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                        {
-                            Int32 number = 0;
-
-                            if (Int32.TryParse(_id, out number))
-                            {
-                                cmd.Parameters.Add("?", OleDbType.Integer).Value = number;
-                                cmd.ExecuteNonQuery();
-                                
-                                InitGridJobs();
-                            }
-                        }
-
-
-                        // Update informasi antrian
-                        if (client.Connected)
-                        {
-                            string _message = "DISPLAY" + Msg.Separator + "SHOW_MESSAGE" + Msg.Separator;
-                            _message += Properties.Settings.Default.StationName + Msg.Separator;
-                            _message += Properties.Settings.Default.StationPost + Msg.Separator;
-                            _message += "Antrian no. " + _no + ", Resep telah selesai";
-                            client.Send(_message);
-                        }
-                        else
-                            MessageBox.Show(this, "Could not connect to server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                        // Update Job status on Display
-                        UpdateDisplayJobStatus();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
+                UpdateJobStatus("FINISHED", jobId, jobNo);
             }
         }
 
         private void OnGridJobsFinCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (Database.Me.Connected)
-            {
-                if (e.RowIndex < 0)
-                    return;
-
-                string _id = Convert.ToString(gridJobsFin.Rows[e.RowIndex].Cells[0].Value);
-                if (_id == "")
-                    return;
-
-                string msg = "Tutup nomor antrian ini?";
-
-                if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    string sql = @"UPDATE jobs SET status = 'CLOSED',endtime=getdate() WHERE id = ?";
-                    try
-                    {
-                        Database.Me.OpenConnection();
-                        using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                        {
-                            Int32 number = 0;
-
-                            if (Int32.TryParse(_id, out number))
-                            {
-                                cmd.Parameters.Add("?", OleDbType.Integer).Value = number;
-                                cmd.ExecuteNonQuery();
-
-                                InitGridJobsFin();
-                            }
-                        }
-                        // Update Job status on Display
-                        UpdateDisplayJobStatus();
-
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
-        }
-
-        private void UpdateDisplayJobStatus()
-        {
-            if (Properties.Settings.Default.StationPost != Properties.Settings.Default.UpdateDisplayJobStatusPost)
-            {
+            if (e.RowIndex < 0)
                 return;
-            }
 
-            if (Database.Me.Connected)
+            string jobId = Convert.ToString(gridJobsFin.Rows[e.RowIndex].Cells[0].Value);
+            string jobNo = Convert.ToString(gridJobsFin.Rows[e.RowIndex].Cells[1].Value);
+
+            if (jobId == "")
+                return;
+
+            string msg = "Set this queue number status to CLOSED ?";
+
+            if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                try
-                {
-                    Database.Me.OpenConnection();
-
-                    // update display
-                    string sql1 = @"SELECT TOP 10 id,number, posts.numberprefix FROM jobs
-                                    JOIN posts ON posts.name = jobs.post
-                                    WHERE status = 'FINISHED'  AND date = (SELECT CAST(getdate() AS date))
-                                    AND post = ? ORDER BY call2time ASC";
-
-                    using (OleDbCommand cmdSelect = new OleDbCommand(sql1, Database.Me.Connection))
-                    {
-                        cmdSelect.Parameters.Add("?", OleDbType.VarChar, 32).Value = Properties.Settings.Default.StationPost;
-                        OleDbDataReader reader = cmdSelect.ExecuteReader();
-                        int _idx = 0;
-                        string _msg = "";
-                        //string _prefix = Tobasa.Properties.Settings.Default.NumberPrefix;
-
-                        while (reader.Read())
-                        {
-                            string _number = reader.GetValue(1).ToString().Trim();
-                            string _prefix = reader.GetValue(2).ToString().Trim();
-                            if (_msg.Length > 0)
-                                _msg += ",";
-
-                            _msg += _prefix + _number;
-                            _idx++;
-                        }
-                        reader.Close();
-
-                        if (client.Connected)
-                        {
-                            string _message = "DISPLAY" + Msg.Separator + "UPDATE_JOB" + Msg.Separator;
-                            _message += Properties.Settings.Default.StationName + Msg.Separator;
-                            _message += Properties.Settings.Default.StationPost + Msg.Separator;
-                            _message += _msg;
-                            client.Send(_message);
-                        }
-                        else
-                        {
-                            MessageBox.Show(this, "Could not connect to server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                
+                UpdateJobStatus("CLOSED", jobId, jobNo);
             }
         }
 
         private void OnRefresh(object sender, EventArgs e)
         {
-            InitGridJobs();
-            InitGridJobsFin();
+            if((Button)sender == btnRefresh)
+                RequestJobsFromServer(_settings.StationPost,"PROCESS",0,0);
+            else if ((Button)sender == btnRefreshFin)
+                RequestJobsFromServer(_settings.StationPost,"FINISHED",0,0);
         }
 
         private void OnPageSelected(object sender, TabControlEventArgs e)
         {
-            if (Properties.Settings.Default.StationPost != Properties.Settings.Default.UpdateDisplayJobStatusPost)
-                return;
+            //if (!_settings.ManageAllPostAdvanceQueue)
+            //    return;
 
             TabPage page = e.TabPage;
-            if (page == tabProcess )
-                InitGridJobs();
-            else if (page == tabFinish)
-                InitGridJobsFin();
+            
+            if (page == tabProcessing )
+                RequestJobsFromServer(_settings.StationPost,"PROCESS",0,0);
+            else if (page == tabFinished)
+                RequestJobsFromServer(_settings.StationPost,"FINISHED",0,0);
         }
 
-        #endregion
+		#endregion
 
-        #region Miscs stuffs
+		#region Settings
 
-        private string GetStationPostCaption(string post)
+        private void SaveSettings()
+        {
+            string staName = tbStation.Text + "#" + cbCounterNo.Text;
+            _settings.StationName = staName;
+            _settings.StationPost = cbPost.Text;
+            _settings.QueueServerHost = tbServer.Text;
+            _settings.QueueServerPort = Convert.ToInt32(tbPort.Text);
+
+            _settings.ShowPostsButtonDiv = chkShowSwitchPostsButtons.Checked;
+            _settings.ManageAdvanceQueue = chkManageAdvanceQueue.Checked;
+            _settings.ManageAllPostAdvanceQueue = chkManageAllPostAdvanceQueue.Checked;
+        }
+
+        private void RestoreSettings()
+        {
+            lblStation.Text = _settings.StationName;
+            lblPost.Text = GetStationPostCaption(_settings.StationPost);
+            tbServer.Text = _settings.QueueServerHost;
+            tbPort.Text = _settings.QueueServerPort.ToString();
+            chkShowSwitchPostsButtons.Checked = _settings.ShowPostsButtonDiv;
+            chkManageAdvanceQueue.Checked = _settings.ManageAdvanceQueue;
+            chkManageAllPostAdvanceQueue.Checked = _settings.ManageAllPostAdvanceQueue;
+        }
+
+		#endregion
+
+		#region Miscs stuffs
+
+		private string GetStationPostCaption(string post)
         {
             string postCaption = "";
-            foreach (Object obj in Properties.Settings.Default.UIPostList)
+            foreach (Object obj in _settings.UIPostList)
             {
                 string postFull = (string)obj;
                 if (postFull.Contains("|"))
@@ -761,11 +831,11 @@ namespace Tobasa
 
         private string[] UIPostListToArray()
         {
-            string[] cbPostItems = new string[Properties.Settings.Default.UIPostList.Count];
+            string[] cbPostItems = new string[_settings.UIPostList.Count];
 
-            for (int i = 0; i < Properties.Settings.Default.UIPostList.Count; i++)
+            for (int i = 0; i < _settings.UIPostList.Count; i++)
             {
-                string postFull = (string) Properties.Settings.Default.UIPostList[i];
+                string postFull = (string) _settings.UIPostList[i];
                 if (postFull.Contains("|"))
                 {
                     char[] separators = new char[] { '|' };
@@ -778,6 +848,44 @@ namespace Tobasa
             }
 
             return cbPostItems;
+        }
+
+        private Dictionary<string, string> UIPostListToDictionary()
+        {
+            Dictionary<string, string> postIds = new Dictionary<string, string>();
+
+            for (int i = 0; i < _settings.UIPostList.Count; i++)
+            {
+                string postFull = (string)_settings.UIPostList[i];
+                if (postFull.Contains("|"))
+                {
+                    char[] separators = new char[] { '|' };
+                    string[] words = postFull.Split(separators);
+
+                    postIds.Add(words[0],words[1]);
+                }
+            }
+
+            return postIds;
+        }
+
+        private void SetupToolTip()
+        {
+            toolTip.InitialDelay = 50;
+            toolTip.ReshowDelay = 100;
+            toolTip.AutoPopDelay = 5000;
+
+            toolTip.SetToolTip(btnChangePost0, _postIdsDict["POST0"]);
+            toolTip.SetToolTip(btnChangePost1, _postIdsDict["POST1"]);
+            toolTip.SetToolTip(btnChangePost2, _postIdsDict["POST2"]);
+            toolTip.SetToolTip(btnChangePost3, _postIdsDict["POST3"]);
+            toolTip.SetToolTip(btnChangePost4, _postIdsDict["POST4"]);
+            toolTip.SetToolTip(btnChangePost5, _postIdsDict["POST5"]);
+            toolTip.SetToolTip(btnChangePost6, _postIdsDict["POST6"]);
+            toolTip.SetToolTip(btnChangePost7, _postIdsDict["POST7"]);
+            toolTip.SetToolTip(btnChangePost8, _postIdsDict["POST8"]);
+            toolTip.SetToolTip(btnChangePost9, _postIdsDict["POST9"]);
+
         }
 
         #endregion

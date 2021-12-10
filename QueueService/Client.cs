@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,78 +32,38 @@ namespace Tobasa
 
     public class Client
     {
-        private NetSession session = null;
-        private ClientType cType;
-        private string name = String.Empty;
-        private string post = String.Empty;
-        private string userName = String.Empty;
-        private string password = String.Empty;
-        private bool loggedIn = false;
-        private bool receiveMessageFromOtherPost = true;
-
         public Client(NetSession ses)
         {
-            session = ses;
-            cType = ClientType.QueueCaller;
+            Session = ses;
+            Type = ClientType.QueueCaller;
         }
 
-        public bool ReceiveMessageFromOtherPost
-        {
-            get { return receiveMessageFromOtherPost; }
-            set { receiveMessageFromOtherPost = value; }
-        }
+        public bool ReceiveMessageFromOtherPost { get; set; } = true;
 
-        public bool LoggedIn
-        {
-            get { return loggedIn; }
-            set { loggedIn = value; }
-        }
+        public bool LoggedIn { get; set; } = false;
 
         public int Id
         {
             get
             {
-                if (session != null)
-                    return session.Id;
+                if (Session != null)
+                    return Session.Id;
                 else
                     return -1;
             }
         }
 
-        public ClientType Type
-        {
-            get { return cType; }
-            set { cType = value; }
-        }
+        public ClientType Type { get; set; }
 
-        public NetSession Session
-        {
-            get { return session; }
-        }
+        public NetSession Session { get; } = null;
 
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+        public string Name { get; set; } = string.Empty;
 
-        public string Post
-        {
-            get { return post; }
-            set { post = value; }
-        }
+        public string Post { get; set; } = string.Empty;
 
-        public string UserName
-        {
-            get { return userName; }
-            set { userName = value; }
-        }
+        public string UserName { get; set; } = string.Empty;
 
-        public string Password
-        {
-            get { return password; }
-            set { password = value; }
-        }
+        public string Password { get; set; } = string.Empty;
 
         public static ClientType ClientTypeFromString(string val)
         {
@@ -126,10 +86,15 @@ namespace Tobasa
             return type;
         }
 
+        public string RemoteInfo
+        {
+            get { return Session.RemoteInfo; }
+        }
+
         public void Close()
         {
-            if (session != null)
-                session.Close();
+            if (Session != null)
+                Session.Close();
         }
     }
 }

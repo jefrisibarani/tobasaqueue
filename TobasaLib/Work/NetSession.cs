@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -31,21 +31,26 @@ namespace Tobasa
 
     public class DataReceivedEventArgs : EventArgs
     {
+        private NetSession _session = null;
+        private byte[] _data = null;
+
         public DataReceivedEventArgs(NetSession ses, byte[] data )
         {
-            mSession = ses;
-            mData = data;
+            _session = ses;
+            _data = data;
         }
-
-        private NetSession mSession = null;
-        private byte[] mData = null;
+        
+        public NetSession Session
+        {
+            get => _session;
+        }
 
         public string RemoteInfo 
         {
             get 
             {
-                if (mSession != null && !mSession.Closed)
-                    return mSession.RemoteInfo;
+                if (_session != null && !_session.Closed)
+                    return _session.RemoteInfo;
                 else
                     return "";
             }
@@ -55,8 +60,8 @@ namespace Tobasa
         {
             get
             {
-                if (mSession != null && !mSession.Closed)
-                    return mSession.Id;
+                if (_session != null && !_session.Closed)
+                    return _session.Id;
                 else
                     return -1;
             }
@@ -64,66 +69,80 @@ namespace Tobasa
 
         public byte[] Data
         {
-            get { return mData; }
+            get { return _data; }
+        }
+
+        public string DataString
+        {
+            get
+            {
+                if (_data == null)
+                    return "";
+
+                /*
+                // Deserialize the message
+                object message = Message.Deserialize(_data);
+
+                // Handle the message
+                StringMessage stringMessage = message as StringMessage;
+                if (stringMessage != null)
+                    return stringMessage.Message;
+                */
+
+                string stringMessage = Encoding.UTF8.GetString(_data);
+                if (stringMessage != null)
+                    return stringMessage;
+
+                return "";
+            }
         }
     }
 
     public class NetSession : Notifier, IDisposable
     {
         #region Member variables
-        
-        bool disposed = false;
-        private bool socketClosed = false;
-        private bool socketDisconnected = false;
-
-        private Socket sock = null;
-        private int id = -1;
-        private string remoteinfo = String.Empty;
-        private string localinfo = String.Empty;
 
         public event DataReceived DataReceived;
         public event ConnectionClosed ConnectionClosed;
 
-        private int keepAliveInterval = 5; // 5 second
-        System.Timers.Timer KeepaliveTimer;
-
-        private int maxMessageSize; // 0 = no maximum message size
-        private byte[] lengthBuffer;
-        private byte[] dataBuffer;
-        private int bytesReceived;
+        bool _disposed = false;
+        private bool _socketClosed = false;
+        private bool _socketDisconnected = false;
+        private Socket _sock = null;
+        private int _id = -1;
+        private string _remoteinfo = string.Empty;
+        private string _localinfo = string.Empty;
+        private int _keepAliveInterval = 5;             // 5 second
+        private System.Timers.Timer _keepaliveTimer;
+        private int _maxMessageSize;                    // 0 = no maximum message size
+        private byte[] _lengthBuffer;
+        private byte[] _dataBuffer;
+        private int _bytesReceived;
+        private bool _exceptionOccurred = false;
 
         #endregion
 
-        #region Constructor
+        #region Constructor and Destructor
 
         public NetSession(Socket handler)
         {
-            sock = handler;
-            if (sock.Connected)
+            _sock = handler;
+            if (_sock.Connected)
             {
-                remoteinfo = sock.RemoteEndPoint.ToString();
-                localinfo = sock.LocalEndPoint.ToString();
+                _remoteinfo = _sock.RemoteEndPoint.ToString();
+                _localinfo = _sock.LocalEndPoint.ToString();
             }
 
             // Allocate the buffer for receiving message lengths
-            lengthBuffer = new byte[sizeof(int)];
-            maxMessageSize = 1024; 
+            _lengthBuffer = new byte[sizeof(int)];
+            _maxMessageSize = 102400;  // 100KB
 
             // Initialize the keepalive timer and its default value.
-            KeepaliveTimer = new System.Timers.Timer();
-            KeepaliveTimer.Elapsed += new System.Timers.ElapsedEventHandler(KeepaliveTimer_Elapsed);
-            KeepaliveTimer.Interval = keepAliveInterval*1000;
-            KeepaliveTimer.Enabled = true;
+            _keepaliveTimer = new System.Timers.Timer();
+            _keepaliveTimer.Elapsed += new System.Timers.ElapsedEventHandler(KeepaliveTimer_Elapsed);
+            _keepaliveTimer.Interval = _keepAliveInterval*1000;
+            _keepaliveTimer.Enabled = true;
         }
-
-        private void KeepaliveTimer_Elapsed(object source, System.Timers.ElapsedEventArgs e)
-        {
-            Send(BitConverter.GetBytes(0),true);
-        }
-
-        #endregion
-
-        #region Destructor
 
         ~NetSession()
         {
@@ -137,7 +156,7 @@ namespace Tobasa
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
                 return;
 
             if (disposing)
@@ -147,13 +166,44 @@ namespace Tobasa
                 // Free any other managed objects here. 
             }
 
+            #if DEBUG
+            OnNotifyLog(NetSessionId, "Disposed successfully");
+            #endif
+
             // Free any unmanaged objects here. 
             Close();
-            disposed = true;
+            _disposed = true;
+        }
 
-            #if DEBUG
-            Logger.Log("NetSession : ID " + Id.ToString() + " Disposed...............................");
-            #endif
+        #endregion
+
+        #region Miscs
+
+        private void KeepaliveTimer_Elapsed(object source, System.Timers.ElapsedEventArgs e)
+        {
+            Send(BitConverter.GetBytes(0), true);
+        }
+
+        private bool SendReceiveShouldStop
+        {
+            get 
+            { 
+                return _socketDisconnected || _exceptionOccurred || _socketClosed; 
+            }
+        }
+
+        private string NetSessionId
+        {
+            get => "NetSession: " + Id.ToString();
+        }
+
+        private void CheckSocketException(SocketException ex)
+        {
+            if (ex.SocketErrorCode == SocketError.ConnectionAborted || ex.SocketErrorCode == SocketError.ConnectionReset)
+            {
+                _socketDisconnected = true;
+                _exceptionOccurred = true;
+            }
         }
 
         #endregion
@@ -162,24 +212,23 @@ namespace Tobasa
 
         public void Close()
         {
-            if (!socketClosed)
+            if (!_socketClosed)
             {
-                KeepaliveTimer.Elapsed -= new System.Timers.ElapsedEventHandler(KeepaliveTimer_Elapsed);
-                KeepaliveTimer.Enabled = false;
-                KeepaliveTimer.Dispose();
+                _keepaliveTimer.Elapsed -= new System.Timers.ElapsedEventHandler(KeepaliveTimer_Elapsed);
+                _keepaliveTimer.Enabled = false;
+                _keepaliveTimer.Dispose();
 
-                socketDisconnected = true;
-                socketClosed = true;
+                _socketDisconnected = true;
+                _socketClosed = true;
 
-                sock.Shutdown(SocketShutdown.Both);
-                sock.Close();
-                sock = null;
+                _sock.Shutdown(SocketShutdown.Both);
+                _sock.Close();
+                
+                _sock = null;
 
-                // call callback
-                if (ConnectionClosed != null)
-                    ConnectionClosed(this);
+                OnNotifyLog(NetSessionId, "Closed successfully");
 
-                Logger.Log("NetSession : ID " + Id.ToString() + " Closed...............................");
+                ConnectionClosed?.Invoke(this);
             }
         }
 
@@ -189,39 +238,34 @@ namespace Tobasa
 
         public int KeepAliveInterval
         {
-            get { return keepAliveInterval; }
-            set { keepAliveInterval = value; }
+            get { return _keepAliveInterval; }
+            set { _keepAliveInterval = value; }
         }
 
         public int Id
         {
-            get { return id; }
-            set { id = value; }
+            get { return _id; }
+            set { _id = value; }
         }
 
         public Socket Socket
         {
-            get { return sock; }
+            get { return _sock; }
         }
 
         public bool Closed
         {
-            get { return socketClosed; }
-        }
-
-        public bool SocketDisconnected
-        {
-            get { return socketDisconnected; }
+            get { return _socketClosed; }
         }
 
         public string RemoteInfo
         {
-            get { return remoteinfo; }
+            get { return _remoteinfo; }
         }
 
         public string LocalInfo
         {
-            get { return localinfo; }
+            get { return _localinfo; }
         }
 
         #endregion
@@ -230,97 +274,51 @@ namespace Tobasa
 
         public void BeginReceive()
         {
-            if (socketClosed)
+            if (_socketClosed)
                 return;
 
+            // if established connection was aborted by remote side, we got SocketException here!
+
             // Read into the appropriate buffer: length or data
-            if (dataBuffer != null)
-                sock.BeginReceive(dataBuffer, bytesReceived, dataBuffer.Length - bytesReceived, 0,new AsyncCallback(ReceiveCallback), this);
+            if (_dataBuffer != null)
+                _sock.BeginReceive(_dataBuffer, _bytesReceived, _dataBuffer.Length - _bytesReceived, 0, new AsyncCallback(ReceiveCallback), this);
             else
-                sock.BeginReceive(lengthBuffer, bytesReceived, lengthBuffer.Length - bytesReceived, 0,new AsyncCallback(ReceiveCallback), this);
+                _sock.BeginReceive(_lengthBuffer, _bytesReceived, _lengthBuffer.Length - _bytesReceived, 0, new AsyncCallback(ReceiveCallback), this);
         }
 
         private void ReceiveCallback(IAsyncResult ar)
         {
-            if (socketClosed)
+            if (_socketClosed)
                 return;
 
             try
             {
-                int read = sock.EndReceive(ar);
+                int read = _sock.EndReceive(ar);
                 ReadData(read);
             }
             catch (SocketException e)
             {
+                CheckSocketException(e);
+                OnNotifyError(NetSessionId, e);
                 Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : SocketExceptions Code: " + Convert.ToString(e.ErrorCode) + "  " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "SocketException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-                // Notify disconected event - ErrorCode 10054 - SocketErrorCode.ConnectionReset
-                //if (e.ErrorCode == 10054)
-                //    socketDisconnected = true;
-                OnNotifyError(args);
-            }
-            catch (ArgumentNullException e)
-            {
-                Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : ArgumentNullException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "ArgumentNullException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (InvalidOperationException e)
-            {
-                Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : InvalidOperationException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "InvalidOperationException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
             }
             catch (Exception e)
             {
-                // Exception throwed by ReadData(), will be handled here
-
+                _exceptionOccurred = true;
+                OnNotifyError(NetSessionId, e);
                 Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : Exception : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "Exception";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
             }
         }
 
         internal void ReadData(int read)
         {
             // Get the number of bytes read into the buffer
-            bytesReceived += read;
+            _bytesReceived += read;
 
-            if (dataBuffer == null)
+            if (_dataBuffer == null)
             {
                 // We're currently receiving the length buffer
-                if (bytesReceived != sizeof(int))
+                if (_bytesReceived != sizeof(int))
                 {
                     // We haven't gotten all the length buffer yet
                     BeginReceive();
@@ -328,7 +326,7 @@ namespace Tobasa
                 else
                 {
                     // We've gotten the length buffer
-                    int lengthNBO = BitConverter.ToInt32(lengthBuffer, 0);
+                    int lengthNBO = BitConverter.ToInt32(_lengthBuffer, 0);
                     int length = IPAddress.NetworkToHostOrder(lengthNBO); 
 
                     // Sanity check for length < 0
@@ -340,30 +338,30 @@ namespace Tobasa
                     }
 
                     // Another sanity check is needed here for very large packets, to prevent denial-of-service attacks
-                    if (maxMessageSize > 0 && length > maxMessageSize)
+                    if (_maxMessageSize > 0 && length > _maxMessageSize)
                     {
-                        string errmsg = "Message length " + length.ToString() + " is larger than maximum message size " + maxMessageSize.ToString();
+                        string errmsg = "Message length " + length.ToString() + " is larger than maximum message size " + _maxMessageSize.ToString();
                         throw new System.Net.ProtocolViolationException(errmsg);
                     }
 
                     // Zero-length packets are allowed as keepalives
                     if (length == 0)
                     {
-                        bytesReceived = 0;
+                        _bytesReceived = 0;
                         BeginReceive();
                     }
                     else
                     {
                         // Create the data buffer and start reading into it
-                        dataBuffer = new byte[length];
-                        bytesReceived = 0;
+                        _dataBuffer = new byte[length];
+                        _bytesReceived = 0;
                         BeginReceive();
                     }
                 }
             }
             else
             {
-                if (bytesReceived != dataBuffer.Length)
+                if (_bytesReceived != _dataBuffer.Length)
                 {
                     // We haven't gotten all the data buffer yet
                     BeginReceive();
@@ -374,8 +372,8 @@ namespace Tobasa
                     OnDataReceived();
 
                     // Start reading the length buffer again
-                    dataBuffer = null;
-                    bytesReceived = 0;
+                    _dataBuffer = null;
+                    _bytesReceived = 0;
                     BeginReceive();
                 }
             }
@@ -383,7 +381,7 @@ namespace Tobasa
 
         public void Send(string data)
         {
-            if (socketClosed)
+            if (SendReceiveShouldStop)
                 return;
             
             /*
@@ -400,16 +398,16 @@ namespace Tobasa
 
         public void Send(byte[] data,bool keepalivemsg = false)
         {
-            if (socketClosed)
+            if (SendReceiveShouldStop)
                 return;
             try
             {
                 // Begin sending the data to the remote device.
-                lock (sock)
+                lock (_sock)
                 {
                     if (keepalivemsg)
                     {
-                        sock.BeginSend(data, 0, data.Length, 0, null, this);
+                        _sock.BeginSend(data, 0, data.Length, 0, null, this);
                     }
                     else
                     {
@@ -420,164 +418,49 @@ namespace Tobasa
                         byte[] lengthPrefix = BitConverter.GetBytes(dataLengthNBO);
 
                         // no callback here
-                        sock.BeginSend(lengthPrefix, 0, lengthPrefix.Length, 0, null, this);
+                        _sock.BeginSend(lengthPrefix, 0, lengthPrefix.Length, 0, null, this);
                         // Send the actual message, this time enabling the normal callback.
-                        sock.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), this);
+                        _sock.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), this);
                     }
                 }
             }
             catch (SocketException e)
             {
+                CheckSocketException(e);
+                OnNotifyError(NetSessionId, e);
                 Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : SocketException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "SocketException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (ArgumentNullException e)
-            {
-                Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : ArgumentNullException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "ArgumentNullException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : ArgumentOutOfRangeException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "ArgumentOutOfRangeException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (ObjectDisposedException e)
-            {
-                Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : ObjectDisposedException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "ObjectDisposed";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
             }
             catch (Exception e)
             {
+                _exceptionOccurred = true;
+                OnNotifyError(NetSessionId, e);
                 Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : Exception : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "Exception";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
             }
         }
 
         private void SendCallback(IAsyncResult ar)
         {
-            if (socketClosed)
+            if (SendReceiveShouldStop)
                 return;
 
             try
             {
                 // Complete sending the data to the remote device.
-                int bytesSent = sock.EndSend(ar);
-                Logger.Log(String.Format("NetSession : ID " + Id.ToString() + " Sent {0} bytes data to {1}", bytesSent, RemoteInfo));
+                int bytesSent = _sock.EndSend(ar);
+
+                OnNotifyLog(NetSessionId, String.Format("Sent {0} bytes data to {1}", bytesSent, RemoteInfo));
             }
             catch (SocketException e)
             {
+                CheckSocketException(e);
+                OnNotifyError(NetSessionId, e);
                 Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : SocketException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "SocketException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (ArgumentNullException e)
-            {
-                Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : ArgumentNullException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "ArgumentNullException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (ArgumentException e)
-            {
-                Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : ArgumentException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "ArgumentException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (InvalidOperationException e)
-            {
-                Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : InvalidOperationException : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "InvalidOperationException";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
             }
             catch (Exception e)
             {
+                _exceptionOccurred = true;
+                OnNotifyError(NetSessionId, e);
                 Close();
-
-                string msg = "NetSession : ID " + Id.ToString() + " : Exception : " + e.Message;
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "Exception";
-                args.Source = e.Source;
-                args.Message = msg;
-                args.Exception = e;
-
-                OnNotifyError(args);
             }
         }
         
@@ -585,13 +468,13 @@ namespace Tobasa
         {
             if (DataReceived != null)
             {
-                Logger.Log(String.Format("NetSession : ID " + Id.ToString() + " Received {0} bytes data from {1}", dataBuffer.Length.ToString(), RemoteInfo));
-                DataReceivedEventArgs arg = new DataReceivedEventArgs(this, dataBuffer);
+                OnNotifyLog(NetSessionId, String.Format("Received {0} bytes data from {1}", _dataBuffer.Length.ToString(), RemoteInfo));
+
+                DataReceivedEventArgs arg = new DataReceivedEventArgs(this, _dataBuffer);
                 DataReceived(arg);
             }
         }
 
         #endregion
-
     }
 }

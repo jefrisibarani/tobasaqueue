@@ -1,16 +1,29 @@
-﻿namespace Tobasa
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+namespace Tobasa
 {
     partial class FormLogin
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -98,11 +111,11 @@
             // 
             this.btnChangePassword.Location = new System.Drawing.Point(13, 8);
             this.btnChangePassword.Name = "btnChangePassword";
-            this.btnChangePassword.Size = new System.Drawing.Size(103, 23);
+            this.btnChangePassword.Size = new System.Drawing.Size(111, 23);
             this.btnChangePassword.TabIndex = 7;
-            this.btnChangePassword.Text = "Change &Password";
+            this.btnChangePassword.Text = "Change &Password ";
             this.btnChangePassword.UseVisualStyleBackColor = true;
-            this.btnChangePassword.Click += new System.EventHandler(this.btnChangePassword_Click);
+            this.btnChangePassword.Click += new System.EventHandler(this.OnChangePasswordClick);
             // 
             // lblPassword
             // 
@@ -171,7 +184,8 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Form Login";
-            this.Load += new System.EventHandler(this.Form_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
+            this.Load += new System.EventHandler(this.OnFormLoad);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

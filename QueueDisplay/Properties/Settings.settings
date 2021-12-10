@@ -136,6 +136,11 @@
   &lt;string&gt;POST2&lt;/string&gt;
   &lt;string&gt;POST3&lt;/string&gt;
   &lt;string&gt;POST4&lt;/string&gt;
+  &lt;string&gt;POST5&lt;/string&gt;
+  &lt;string&gt;POST6&lt;/string&gt;
+  &lt;string&gt;POST7&lt;/string&gt;
+  &lt;string&gt;POST8&lt;/string&gt;
+  &lt;string&gt;POST9&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="RunningText0" Type="System.String" Scope="User">
@@ -168,9 +173,6 @@
     <Setting Name="DisplayLogoText" Type="System.String" Scope="User">
       <Value Profile="(Default)">Tobasa Queue System</Value>
     </Setting>
-    <Setting Name="BasicQueueMode" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="SecuritySalt" Type="System.String" Scope="User">
       <Value Profile="(Default)">C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39</Value>
     </Setting>
@@ -187,10 +189,10 @@
       <Value Profile="(Default)">Customer Service</Value>
     </Setting>
     <Setting Name="Post4PlayAudio" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="Post4Visible" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="PlaySimpleSoundNotification" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -199,10 +201,130 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ShowInfoTextTop0" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ShowInfoTextTop1" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AudioUseLoket" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AudioLoketIDUseAlphabet" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="BasicQueueMode" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Post5Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI GIGI</Value>
+    </Setting>
+    <Setting Name="Post5Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST5</Value>
+    </Setting>
+    <Setting Name="Post5Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Gigi</Value>
+    </Setting>
+    <Setting Name="Post5RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Gigi</Value>
+    </Setting>
+    <Setting Name="Post5PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post5Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post6Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI ANAK</Value>
+    </Setting>
+    <Setting Name="Post6Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST6</Value>
+    </Setting>
+    <Setting Name="Post6Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Anak</Value>
+    </Setting>
+    <Setting Name="Post6RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Anak</Value>
+    </Setting>
+    <Setting Name="Post6PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post6Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post7Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI MATA</Value>
+    </Setting>
+    <Setting Name="Post7Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST7</Value>
+    </Setting>
+    <Setting Name="Post7Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Mata</Value>
+    </Setting>
+    <Setting Name="Post7RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Mata</Value>
+    </Setting>
+    <Setting Name="Post7PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post7Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post8Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI KULIT</Value>
+    </Setting>
+    <Setting Name="Post8Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST8</Value>
+    </Setting>
+    <Setting Name="Post8Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Kulit</Value>
+    </Setting>
+    <Setting Name="Post8RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Kulit</Value>
+    </Setting>
+    <Setting Name="Post8PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post8Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post9Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI THT</Value>
+    </Setting>
+    <Setting Name="Post9Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST9</Value>
+    </Setting>
+    <Setting Name="Post9Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli THT</Value>
+    </Setting>
+    <Setting Name="Post9RunText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli THT</Value>
+    </Setting>
+    <Setting Name="Post9PlayAudio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post9Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post0Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post1Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post2Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="MainPostCounterText" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ShowRightPosts" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ShowLeftPosts" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ShowCenterMiddleDiv" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

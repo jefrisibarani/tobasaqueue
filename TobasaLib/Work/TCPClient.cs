@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@ namespace Tobasa
         private string mServer;
         private int mPort;
         private string response;
+        public static int sessionId = 100;
 
         #endregion
 
@@ -63,6 +64,12 @@ namespace Tobasa
             get { return (ses != null) ? ses : null; }
         }
 
+        private int NewSessionId()
+        {
+            sessionId++;
+            return sessionId;
+        }
+
         public bool Connected
         {
             get { return Session != null && !Session.Closed; }
@@ -85,7 +92,10 @@ namespace Tobasa
 
                 if (sock != null)
                 {
-                    ses = new NetSession(sock);
+                    ses = new NetSession(sock)
+                    {
+                        Id = NewSessionId()
+                    };
                     ses.DataReceived += new DataReceived(NetSession_DataReceived);
                     ses.Notified += new Action<NotifyEventArgs>(NetSession_Notified);
                     ses.BeginReceive();
@@ -95,7 +105,7 @@ namespace Tobasa
 
         private Socket GetSocket(string server, int port)
         {
-            /// Create socket and connect to a remote device.
+            // Create socket and connect to a remote device.
             try
             {
                 IPAddress ipAddress = null;
@@ -114,9 +124,9 @@ namespace Tobasa
                 }
                 */
 
-                /// resolv ip dengan GetHostAddresses, karena GetHostEntry 
-                /// meresolv 192.169.1.1 menjadi 36.22.22.180, bila dns 
-                /// bukan local lan dns
+                // resolv ip dengan GetHostAddresses, karena GetHostEntry 
+                // meresolv 192.169.1.1 menjadi 36.22.22.180, bila dns 
+                // bukan local lan dns
                  
                 IPAddress[] ips;
                 ips = Dns.GetHostAddresses(server);
@@ -129,87 +139,36 @@ namespace Tobasa
                         break;
                     }
                 }
-
                
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
-                /// Create a TCP/IP socket.
+                // Create a TCP/IP socket.
                 Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                /// Connect to the remote endpoint.
+                // Connect to the remote endpoint.
                 sock.Connect(remoteEP);
                 
                 return sock;
             }
             catch (SocketException e)
             {
-                Logger.Log("TCPClient : SocketException : " + e.Message);
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "SocketException";
-                args.Source = "TCPClient";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (ArgumentNullException e)
-            {
-                Logger.Log("TCPClient : ArgumentNullException : " + e.Message);
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "ArgumentNullException";
-                args.Source = "TCPClient";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (NullReferenceException e)
-            {
-                Logger.Log("TCPClient : NullReferenceException : " + e.Message);
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "NullReferenceException";
-                args.Source = "TCPClient";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
+                OnNotifyError("TCPClient", e);
             }
             catch (Exception e)
             {
-                Logger.Log("TCPClient : Exception : " + e.Message);
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "Exception";
-                args.Source = "TCPClient";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
+                OnNotifyError("TCPClient", e);
             }
             
             return null;
         }
 
-        private void NetSession_Notified(NotifyEventArgs e)
+        private void NetSession_Notified(NotifyEventArgs arg)
         {
-            Logger.Log(e.Source + " : " + e.Summary + " : " + e.Message);
-            OnNotify(e);
+            OnNotify(arg);
         }
 
         private void NetSession_DataReceived(DataReceivedEventArgs arg)
         {
-            /*
-            /// Deserialize the message
-            object message = Msg.Deserialize(arg.Data);
-
-            /// Handle the message
-            StringMessage stringMessage = message as StringMessage;
-            if (stringMessage != null)
-                response = stringMessage.Message;
-            */
             string stringMessage = Encoding.UTF8.GetString(arg.Data);
             if (stringMessage != null)
             {

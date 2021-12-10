@@ -12,7 +12,7 @@ namespace Tobasa.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -500,6 +500,11 @@ namespace Tobasa.Properties {
   <string>POST2</string>
   <string>POST3</string>
   <string>POST4</string>
+  <string>POST5</string>
+  <string>POST6</string>
+  <string>POST7</string>
+  <string>POST8</string>
+  <string>POST9</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection UIPostList {
             get {
@@ -723,6 +728,654 @@ namespace Tobasa.Properties {
             }
             set {
                 this["Post4PrintHeader"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DrawLabelOnButtons {
+            get {
+                return ((bool)(this["DrawLabelOnButtons"]));
+            }
+            set {
+                this["DrawLabelOnButtons"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("14")]
+        public int ButtonLabelFontSize {
+            get {
+                return ((int)(this["ButtonLabelFontSize"]));
+            }
+            set {
+                this["ButtonLabelFontSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Middle")]
+        public string MainMenuLabelAlignment {
+            get {
+                return ((string)(this["MainMenuLabelAlignment"]));
+            }
+            set {
+                this["MainMenuLabelAlignment"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("12")]
+        public int MainMenuLabelFontSize {
+            get {
+                return ((int)(this["MainMenuLabelFontSize"]));
+            }
+            set {
+                this["MainMenuLabelFontSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI GIGI")]
+        public string Post5Caption {
+            get {
+                return ((string)(this["Post5Caption"]));
+            }
+            set {
+                this["Post5Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST5")]
+        public string Post5Post {
+            get {
+                return ((string)(this["Post5Post"]));
+            }
+            set {
+                this["Post5Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Gigi")]
+        public string Post5Name {
+            get {
+                return ((string)(this["Post5Name"]));
+            }
+            set {
+                this["Post5Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post5Enabled {
+            get {
+                return ((bool)(this["Post5Enabled"]));
+            }
+            set {
+                this["Post5Enabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post5Visible {
+            get {
+                return ((bool)(this["Post5Visible"]));
+            }
+            set {
+                this["Post5Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOn.png")]
+        public string Post5BtnImgOn {
+            get {
+                return ((string)(this["Post5BtnImgOn"]));
+            }
+            set {
+                this["Post5BtnImgOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOff.png")]
+        public string Post5BtnImgOff {
+            get {
+                return ((string)(this["Post5BtnImgOff"]));
+            }
+            set {
+                this["Post5BtnImgOff"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public short Post5PrintCopies {
+            get {
+                return ((short)(this["Post5PrintCopies"]));
+            }
+            set {
+                this["Post5PrintCopies"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Gigi")]
+        public string Post5PrintHeader {
+            get {
+                return ((string)(this["Post5PrintHeader"]));
+            }
+            set {
+                this["Post5PrintHeader"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI ANAK")]
+        public string Post6Caption {
+            get {
+                return ((string)(this["Post6Caption"]));
+            }
+            set {
+                this["Post6Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST6")]
+        public string Post6Post {
+            get {
+                return ((string)(this["Post6Post"]));
+            }
+            set {
+                this["Post6Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Anak")]
+        public string Post6Name {
+            get {
+                return ((string)(this["Post6Name"]));
+            }
+            set {
+                this["Post6Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post6Enabled {
+            get {
+                return ((bool)(this["Post6Enabled"]));
+            }
+            set {
+                this["Post6Enabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post6Visible {
+            get {
+                return ((bool)(this["Post6Visible"]));
+            }
+            set {
+                this["Post6Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOn.png")]
+        public string Post6BtnImgOn {
+            get {
+                return ((string)(this["Post6BtnImgOn"]));
+            }
+            set {
+                this["Post6BtnImgOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOff.png")]
+        public string Post6BtnImgOff {
+            get {
+                return ((string)(this["Post6BtnImgOff"]));
+            }
+            set {
+                this["Post6BtnImgOff"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public short Post6PrintCopies {
+            get {
+                return ((short)(this["Post6PrintCopies"]));
+            }
+            set {
+                this["Post6PrintCopies"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Anak")]
+        public string Post6PrintHeader {
+            get {
+                return ((string)(this["Post6PrintHeader"]));
+            }
+            set {
+                this["Post6PrintHeader"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI MATA")]
+        public string Post7Caption {
+            get {
+                return ((string)(this["Post7Caption"]));
+            }
+            set {
+                this["Post7Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST7")]
+        public string Post7Post {
+            get {
+                return ((string)(this["Post7Post"]));
+            }
+            set {
+                this["Post7Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Mata")]
+        public string Post7Name {
+            get {
+                return ((string)(this["Post7Name"]));
+            }
+            set {
+                this["Post7Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post7Enabled {
+            get {
+                return ((bool)(this["Post7Enabled"]));
+            }
+            set {
+                this["Post7Enabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post7Visible {
+            get {
+                return ((bool)(this["Post7Visible"]));
+            }
+            set {
+                this["Post7Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOn.png")]
+        public string Post7BtnImgOn {
+            get {
+                return ((string)(this["Post7BtnImgOn"]));
+            }
+            set {
+                this["Post7BtnImgOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOff.png")]
+        public string Post7BtnImgOff {
+            get {
+                return ((string)(this["Post7BtnImgOff"]));
+            }
+            set {
+                this["Post7BtnImgOff"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public short Post7PrintCopies {
+            get {
+                return ((short)(this["Post7PrintCopies"]));
+            }
+            set {
+                this["Post7PrintCopies"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Mata")]
+        public string Post7PrintHeader {
+            get {
+                return ((string)(this["Post7PrintHeader"]));
+            }
+            set {
+                this["Post7PrintHeader"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI KULIT")]
+        public string Post8Caption {
+            get {
+                return ((string)(this["Post8Caption"]));
+            }
+            set {
+                this["Post8Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST8")]
+        public string Post8Post {
+            get {
+                return ((string)(this["Post8Post"]));
+            }
+            set {
+                this["Post8Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Kulit")]
+        public string Post8Name {
+            get {
+                return ((string)(this["Post8Name"]));
+            }
+            set {
+                this["Post8Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post8Enabled {
+            get {
+                return ((bool)(this["Post8Enabled"]));
+            }
+            set {
+                this["Post8Enabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post8Visible {
+            get {
+                return ((bool)(this["Post8Visible"]));
+            }
+            set {
+                this["Post8Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOn.png")]
+        public string Post8BtnImgOn {
+            get {
+                return ((string)(this["Post8BtnImgOn"]));
+            }
+            set {
+                this["Post8BtnImgOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOff.png")]
+        public string Post8BtnImgOff {
+            get {
+                return ((string)(this["Post8BtnImgOff"]));
+            }
+            set {
+                this["Post8BtnImgOff"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public short Post8PrintCopies {
+            get {
+                return ((short)(this["Post8PrintCopies"]));
+            }
+            set {
+                this["Post8PrintCopies"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Kulit")]
+        public string Post8PrintHeader {
+            get {
+                return ((string)(this["Post8PrintHeader"]));
+            }
+            set {
+                this["Post8PrintHeader"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI THT")]
+        public string Post9Caption {
+            get {
+                return ((string)(this["Post9Caption"]));
+            }
+            set {
+                this["Post9Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST9")]
+        public string Post9Post {
+            get {
+                return ((string)(this["Post9Post"]));
+            }
+            set {
+                this["Post9Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli THT")]
+        public string Post9Name {
+            get {
+                return ((string)(this["Post9Name"]));
+            }
+            set {
+                this["Post9Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post9Enabled {
+            get {
+                return ((bool)(this["Post9Enabled"]));
+            }
+            set {
+                this["Post9Enabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post9Visible {
+            get {
+                return ((bool)(this["Post9Visible"]));
+            }
+            set {
+                this["Post9Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOn.png")]
+        public string Post9BtnImgOn {
+            get {
+                return ((string)(this["Post9BtnImgOn"]));
+            }
+            set {
+                this["Post9BtnImgOn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\ButtonGreenOff.png")]
+        public string Post9BtnImgOff {
+            get {
+                return ((string)(this["Post9BtnImgOff"]));
+            }
+            set {
+                this["Post9BtnImgOff"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public short Post9PrintCopies {
+            get {
+                return ((short)(this["Post9PrintCopies"]));
+            }
+            set {
+                this["Post9PrintCopies"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli THT")]
+        public string Post9PrintHeader {
+            get {
+                return ((string)(this["Post9PrintHeader"]));
+            }
+            set {
+                this["Post9PrintHeader"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post0Visible {
+            get {
+                return ((bool)(this["Post0Visible"]));
+            }
+            set {
+                this["Post0Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post1Visible {
+            get {
+                return ((bool)(this["Post1Visible"]));
+            }
+            set {
+                this["Post1Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post2Visible {
+            get {
+                return ((bool)(this["Post2Visible"]));
+            }
+            set {
+                this["Post2Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowLeftMenu {
+            get {
+                return ((bool)(this["ShowLeftMenu"]));
+            }
+            set {
+                this["ShowLeftMenu"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowRightMenu {
+            get {
+                return ((bool)(this["ShowRightMenu"]));
+            }
+            set {
+                this["ShowRightMenu"] = value;
             }
         }
     }

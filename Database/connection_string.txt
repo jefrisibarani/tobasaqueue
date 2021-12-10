@@ -1,0 +1,8 @@
+Provider: OLEDB
+Connection String          :  "Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;"
+ConnectionStringPassword   : ad7415644add93d6e719d2b593da6e6e
+
+
+Provider: SQLITE
+Connection String          :  "Data Source=..\Database\antri.db3;Version=3;"
+ConnectionStringPassword   :

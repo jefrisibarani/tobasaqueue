@@ -1,17 +1,22 @@
-
 # Software Antrian Tobasa
 http://www.mangapul.com/p/software-antrian-tobasa.html
 
-Software sistem antrian andal untuk mengelola antrian pelanggan, mengurangi waktu tunggu, meningkatkan kualitas layanan dan memaksimalkan kepuasan customer.
+Software sistem antrian andal untuk mengelola antrian pelanggan, mengurangi waktu tunggu, 
+meningkatkan kualitas layanan dan memaksimalkan kepuasan customer.
 
 ## Kebutuhan minimal
-* Windows 7 
-* Microsoft .NET Framework 4
-* Microsoft SQL Server 2008 R2 Express Edition
+* Windows 7 Service Pack 1 
+* Microsoft .NET Framework 4.8
 
-## Build/Compile
+Bila ingin menggunakan SQL Server sebagai database:
+* Microsoft SQL Server 2008 R2 Express Edition 
+
+Software Antrian Tobasa menggunakan SQLite sebagai database default.
+
+## Build/Compile dari source code
+* Clone/download project source code dari https://github.com/jefrisibarani/tobasaqueue
 * Buka solution TobasaQueue.sln dengan Visual Studio 2019
-* Build solution, aplikasi yang telah dibuild  ada di  folder ***_OUTPUT***
+* Build solution, aplikasi yang telah dibuild  ada di  folder  ***_OUTPUT***
 
 #### Struktur folder output
 ```
@@ -32,27 +37,45 @@ _OUTPUT
 ```
 
 ## Instalasi
-Aplikasi yang telah dibuild/compile ada pada folder _OUTPUT, copy folder _OUTPUT ke folder lain: misalkan C:\AntrianTobasa
+Aplikasi yang telah dibuild/compile ada pada folder _OUTPUT, copy folder _OUTPUT ke folder lain: 
+misalkan C:\AntrianTobasa
 
-* Restore database ***antri.bak*** yang ada di folder Database,
-  ikuti petunjuk pada file Database\INSTALL_DB.txt
-* Jalankan program server QueueService.exe pada folder QueueService
-* Jalankan program QueueDisplay, QueueAdmin, QueueCaller
+Atau silahkan download versi binary dari:
+* https://github.com/jefrisibarani/tobasaqueue/releases
+* http://www.mangapul.com/2016/05/download-software-antrian-tobasa.html
 
-#### Menjalankan QueueService.exe sebagai  Windows service
+Lalu extract ke folder C:\AntrianTobasa
+
+
+#### Bila ingin menggunakan SQL Server sebagai database:
+* Restore database ***sqlserver_2008_r2_antri.bak*** yang ada di folder Database,
+  ikuti petunjuk pada file **Database\install_db_sqlserver.md**
+  
+* Jalankan program server **QueueService.exe** pada folder QueueService
+* Jalankan program QueueDisplay.exe, QueueAdmin.exe, QueueCaller.exe
+
+
+#### Menampilkan file video
+Bila ingin menampilkan video pada QueueDisplay:
+Copykan file video (**format wmv**), atau format lainnya(bila codec sudah terinstall pada windows)
+pada folder QueueDisplay\movie\ 
+
+
+#### Menjalankan QueueService.exe sebagai  Windows service (opsional)
 * Jalankan commmand prompt sebagai Administrator
 * Masuk ke dalam folder QueueService
 * Jalankan command berikut:
 ```
-* c:\Windows\Microsoft.NET\Framework\v4.0.30319\installutil QueueService.exe
+c:\Windows\Microsoft.NET\Framework\v4.0.30319\installutil QueueService.exe
 ```
-#### Menampilkan file video
-Bila ingin menampilkan video pada QueueDisplay,
-copykan file video (wmv) pada folder QueueDisplay\movie\ 
 
 #### Untuk informasi/konfigurasi lebih lanjut
 * http://www.mangapul.com/p/software-antrian-tobasa.html
 * http://www.mangapul.com/2016/12/konfigurasi-aplikasi-antrian-tobasa.html
 
 
-##### Copyright (C) 2020 Jefri Sibarani
+#### Download .NET
+* https://dotnet.microsoft.com/download/dotnet-framework/net48
+
+
+##### Copyright (C) 2021 Jefri Sibarani

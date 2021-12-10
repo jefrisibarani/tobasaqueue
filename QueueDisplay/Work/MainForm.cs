@@ -1,5 +1,24 @@
-﻿using System;
-using System.Text;
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
@@ -11,63 +30,76 @@ namespace Tobasa
     {
         #region Member variables
 
-        private delegate void ProcessMessageCallback(DataReceivedEventArgs arg, string text);
-        private delegate void ProcessErrorCallBack(NotifyEventArgs e);
-        
-        private TCPClient client = null;
+        private delegate void NetSessionDataReceivedCb(DataReceivedEventArgs arg);
+        private delegate void TCPClientNotifiedCb(NotifyEventArgs e);
+
+        Properties.Settings _settings = Properties.Settings.Default;
+        private PostPropertyCollection _postProperties = new PostPropertyCollection();
+        private TCPClient _client = null;
 
         #endregion
 
         #region TCP Client stuffs
 
-        void TCPClient_Notified(NotifyEventArgs e)
-        {
-            ProcessError(e);
-        }
-
-        public void ProcessError(NotifyEventArgs e)
+        private void TCPClientNotified(NotifyEventArgs arg)
         {
             if (this.InvokeRequired)
             {
-                ProcessErrorCallBack d = new ProcessErrorCallBack(ProcessError);
-                this.Invoke(d, new object[] { e });
+                TCPClientNotifiedCb dlg = new TCPClientNotifiedCb(TCPClientNotified);
+                this.Invoke(dlg, new object[] { arg });
             }
             else
-                MessageBox.Show(this, e.Message, e.Summary, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            {
+                if (arg.Type == NotifyType.NOTIFY_ERR)
+                {
+                    MessageBox.Show(arg.Message, arg.Summary, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                Logger.Log(arg);
+            }
         }
 
         private void CloseConnection()
         {
-            if (client.Connected)
-                client.Stop();
+            if (_client.Connected)
+                _client.Stop();
         }
 
         public void StartClient()
         {
-            string dispServerHost = Properties.Settings.Default.QueueServerHost;
-            int dispServerPort = Properties.Settings.Default.QueueServerPort;
-            string stationName = Properties.Settings.Default.StationName;
-            string stationPost = Properties.Settings.Default.StationPost;
-            string userName = Properties.Settings.Default.QueueUserName;
-            string password = Properties.Settings.Default.QueuePassword;
+            _client = null;
 
-            client = new TCPClient(dispServerHost, dispServerPort);
-            client.Notified += new Action<NotifyEventArgs>(TCPClient_Notified);
+            string dispServerHost = _settings.QueueServerHost;
+            int dispServerPort    = _settings.QueueServerPort;
+            string stationName    = _settings.StationName;
+            string stationPost    = _settings.StationPost;
+            string userName       = _settings.QueueUserName;
+            string password       = _settings.QueuePassword;
 
-            client.Start();
+            _client = new TCPClient(dispServerHost, dispServerPort);
+            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
 
-            if (client.Connected)
+            _client.Start();
+
+            if (_client.Connected)
             {
-                client.Session.DataReceived += new DataReceived(NetSession_DataReceived);
+                _client.Session.DataReceived += new DataReceived(NetSessionDataReceived);
 
-                string salt = Properties.Settings.Default.SecuritySalt;
+                string salt = _settings.SecuritySalt;
                 string clearPwd = Util.DecryptPassword(password, salt);
                 string passwordHash = Util.GetPasswordHash(clearPwd, userName);
 
-                // Send LOGIN message + our station name to server
-                string message = String.Empty;
-                message = "LOGIN" + Msg.Separator + "DISPLAY"+ Msg.Separator + stationName + Msg.Separator + stationPost + Msg.Separator + userName + Msg.Separator + passwordHash;
-                client.Send(message);
+                // SYS|LOGIN|REQ|[Module!Post!Station!Username!Password]
+                string message =
+                    Msg.SysLogin.Text +
+                    Msg.Separator + "REQ" +
+                    Msg.Separator + "DISPLAY" +
+                    Msg.CompDelimiter + stationPost +
+                    Msg.CompDelimiter + stationName +
+                    Msg.CompDelimiter + userName +
+                    Msg.CompDelimiter + passwordHash;
+
+                _client.Send(message);
             }
         }
 
@@ -75,177 +107,138 @@ namespace Tobasa
 
         #region QueueServer message handlers
 
-        private void NetSession_DataReceived(DataReceivedEventArgs arg)
+
+        // cross thread safe handler
+        public void NetSessionDataReceived(DataReceivedEventArgs arg)
         {
-            string text = "";
-            /*
-            // Deserialize the message
-            object message = Message.Deserialize(arg.Data);
-
-            // Handle the message
-            StringMessage stringMessage = message as StringMessage;
-            if (stringMessage != null)
-                text = stringMessage.Message;
-            */
-            string stringMessage = Encoding.UTF8.GetString(arg.Data);
-            if (stringMessage != null)
-            {
-                text = stringMessage;
-
-                if (text.StartsWith("DISPLAY") || text.StartsWith("LOGIN"))
-                    ProcessMessage(arg, text);
-                else
-                {
-                    string logmsg = String.Format("Unhandled session message from: {0} - MSG: {1} ", arg.RemoteInfo, text);
-                    Logger.Log(logmsg);
-                }
-            }
-        }
-
-        /// cross thread safe handler
-        public void ProcessMessage(DataReceivedEventArgs arg, string text)
-        {
-            /// InvokeRequired required compares the thread ID of the 
-            /// calling thread to the thread ID of the creating thread. 
-            /// If these threads are different, it returns true. 
+            // InvokeRequired required compares the thread ID of the 
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true. 
             if (this.InvokeRequired)
             {
-                ProcessMessageCallback d = new ProcessMessageCallback(ProcessMessage);
-                this.Invoke(d, new object[] { arg, text });
+                NetSessionDataReceivedCb d = new NetSessionDataReceivedCb(NetSessionDataReceived);
+                this.Invoke(d, new object[] { arg });
             }
             else
             {
-                if (text.StartsWith("DISPLAY"))
-                    HandleMessage(arg, text);
-                else if (text.StartsWith("LOGIN"))
+                if (arg.DataString.StartsWith("SYS") || arg.DataString.StartsWith("DISPLAY"))
+                    HandleMessage(arg);
+                else
                 {
-                    string _response = text;
-                    if (_response == Msg.LOGIN_OK)
-                    {
-                        lblStatus.Text = "Connected to Server : " + client.Session.RemoteInfo + " - Post :" + Properties.Settings.Default.StationPost + "  Station:" + Properties.Settings.Default.StationName;
-                        Logger.Log("QueueDisplay : Successfully logged in");
+                    string logmsg = String.Format("[QueueDisplay] Unhandled session message from: {0}", arg.RemoteInfo);
+                    Logger.Log(logmsg);
+                }
+            }
+        }
 
-                        // Request running text from server
-                        client.Send("DISPLAY" + Msg.Separator + "GET_RUNNINGTEXT");
+        public void HandleMessage(DataReceivedEventArgs arg)
+        {
+            try
+            {
+                Message qmessage = new Message(arg);
+
+                Logger.Log("[QueueDisplay] Processing " + qmessage.MessageType.String + " from " + arg.Session.RemoteInfo);
+
+                // Handle SysLogin
+                if (qmessage.MessageType == Msg.SysLogin && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string result = qmessage.PayloadValues["result"];
+                    string data = qmessage.PayloadValues["data"];
+
+                    if (result == "OK")
+                    {
+                        lblStatus.Text = "Connected to Server : " + _client.Session.RemoteInfo + " - Post :" + _settings.StationPost + "  Station:" + _settings.StationName;
+                        Logger.Log("[QueueDisplay] Successfully logged in");
+
+                        // Request running text stored on database
+                        RequestRunningTextFromServer();
                     }
                     else
                     {
-                        string reason = _response.Substring(10);
-                        string msg = "QueueDisplay : Could not logged in to server, \r\nReason: " + reason;
+                        string reason = data;
+                        string msg = "[QueueDisplay] Could not logged in to server, \r\nReason: " + reason;
+
                         Logger.Log(msg);
                         MessageBox.Show(this, msg, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                         CloseConnection();
                     }
                 }
+                // Handle DisplayCall and DisplayRecall
+                else if (qmessage.MessageType == Msg.DisplayCall || qmessage.MessageType == Msg.DisplayRecall)
+                {
+                    mDisplay.ProcessDisplayCallNumber(qmessage);
+                }
+                // Handle DisplayShowInfo
+                else if (qmessage.MessageType == Msg.DisplayShowInfo && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    mDisplay.ProcessDisplayShowMessage(qmessage);
+                }
+                // Handle DisplaySetFinished
+                else if (qmessage.MessageType == Msg.DisplaySetFinished && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    mDisplay.ProcessDisplayUpdateFinishedJob(qmessage);
+                }
+                // Handle DisplayResetValues
+                else if (qmessage.MessageType == Msg.DisplayResetValues && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    mDisplay.ResetDisplayNumbers();
+                }
+                // Handle DisplayGetRunText
+                else if (qmessage.MessageType == Msg.DisplayGetRunText && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    // we are receiving running text from QueueServer
+                    string runningText = qmessage.PayloadValues["result"];
+                    mDisplay.AddRunningText(runningText);
+                }
+                // Handle DisplayResetRunText
+                else if (qmessage.MessageType == Msg.DisplayResetRunText && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    mDisplay.ResetRunningText();
+                }
+                // Handle DisplayDelRunText
+                else if (qmessage.MessageType == Msg.DisplayDelRunText && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    string runningText = qmessage.PayloadValues["text"];
+                    mDisplay.DeleteRunningText(runningText);
+                }
+                // Handle SysNotify
+                else if (qmessage.MessageType == Msg.SysNotify)
+                {
+                    // extract payload
+                    string notifyTyp = qmessage.PayloadValues["type"];
+                    string notifyMsg = qmessage.PayloadValues["message"];
+
+                    if (notifyTyp == "ERROR")
+                        MessageBox.Show(notifyMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    { }  // WARNING, INFO
+
+                    //LogServerMessage(string.Format("[{0}] {1}", notifyTyp, notifyMsg));
+                }
+                else
+                {
+                    Logger.Log(string.Format("[QueueDisplay] Unhandled message from: {0} - MSG: {1} ", arg.RemoteInfo, qmessage.RawMessage));
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("QueueDisplay", ex);
             }
         }
 
-        public void HandleMessage(DataReceivedEventArgs arg, string text)
+        private void RequestRunningTextFromServer()
         {
-            if (text.StartsWith(Msg.DISPLAY_RESET_VALUES))
-            {
-                mDisplay.ResetDisplayNumbers();
-            }
-            else if (text.StartsWith(Msg.DISPLAY_SET_RUNNINGTEXT))
-            {
-                string _station, _post, _rtext;
-                _station = _post = _rtext = "";
-
-                string[] words = text.Split(Msg.Separator.ToCharArray());
-
-                if (words.Length == 5)
-                {
-                    _station = words[2];
-                    _post = words[3];
-                    _rtext = words[4];
-                    
-                    mDisplay.AddRunningText(_rtext);
-                }
-                else
-                {
-                    string logmsg = String.Format("Invalid DISPLAY:SET_RUNNINGTEXT from: {0} - MSG: {1} ", arg.RemoteInfo, text);
-                    Logger.Log(logmsg);
-                    return;
-                }
-            }
-            else if (text.StartsWith(Msg.DISPLAY_RESET_RUNNINGTEXT))
-            {
-                mDisplay.ResetRunningText();
-            }
-            else if (text.StartsWith(Msg.DISPLAY_DELETE_RUNNINGTEXT))
-            {
-                string _station, _post, _rtext;
-                _station = _post = _rtext = "";
-
-                string[] words = text.Split(Msg.Separator.ToCharArray());
-
-                if (words.Length == 5)
-                {
-                    _station = words[2];
-                    _post = words[3];
-                    _rtext = words[4];
-                    
-                    mDisplay.DeleteRunningText(_rtext);
-                }
-                else
-                {
-                    string logmsg = String.Format("Invalid DISPLAY:DELETE_RUNNINGTEXT from: {0} - MSG: {1} ", arg.RemoteInfo, text);
-                    Logger.Log(logmsg);
-                    return;
-                }
-            }
-            else if (text.StartsWith(Msg.DISPLAY_CALL_NUMBER) || text.StartsWith(Msg.DISPLAY_RECALL_NUMBER))
-            {
-                string[] words = text.Split(Msg.Separator.ToCharArray());
-                if (words.Length == 7)
-                    mDisplay.ProcessDisplayCallNumber(text);
-                else
-                {
-                    string logmsg = "";
-                    if (text.StartsWith(Msg.DISPLAY_CALL_NUMBER))
-                        logmsg = String.Format("Invalid DISPLAY:CALL_NUMBER from: {0} - MSG: {1} ", arg.RemoteInfo, text);
-                    else if (text.StartsWith(Msg.DISPLAY_RECALL_NUMBER))
-                        logmsg = String.Format("Invalid DISPLAY:RECALL_NUMBER from: {0} - MSG: {1} ", arg.RemoteInfo, text);
-
-                    Logger.Log(logmsg);
-                    return;
-                }
-            }
-            else if ( text.StartsWith(Msg.DISPLAY_SHOW_MESSAGE))
-            {
-                string[] words = text.Split(Msg.Separator.ToCharArray());
-                if (words.Length == 5)
-                    mDisplay.ProcessDisplayShowMessage(text);
-                else
-                {
-                    string logmsg = String.Format("Invalid DISPLAY:SHOW_MESSAGE from: {0} - MSG: {1} ", arg.RemoteInfo, text);
-                    Logger.Log(logmsg);
-                    return;
-                }
-            }
-            else if (text.StartsWith(Msg.DISPLAY_UPDATE_JOB))
-            {
-                string _station, _post, _numbers;
-                _station = _post = _numbers = "";
-
-                string[] words = text.Split(Msg.Separator.ToCharArray());
-
-                if (words.Length == 5)
-                {
-                    _station = words[2];
-                    _post = words[3];
-                    _numbers = words[4];
-                    
-                    mDisplay.ProcessDisplayUpdateFinishedJob(_numbers);
-                }
-                else
-                {
-                    string logmsg = String.Format("Invalid DISPLAY:UPDATE_JOB from: {0} - MSG: {1} ", arg.RemoteInfo, text);
-                    Logger.Log(logmsg);
-                    return;
-                }
-            }
+            string message =
+                Msg.DisplayGetRunText.Text +
+                Msg.Separator + "REQ" +
+                Msg.Separator + "Identifier" +
+                Msg.Separator + _settings.StationPost +
+                Msg.CompDelimiter + _settings.StationName;
+            
+            _client.Send(message);
         }
+
 
         #endregion
 
@@ -269,7 +262,7 @@ namespace Tobasa
         // set up correct volume level
         private void DSEngine_PlayerStarted(EventArgs e)
         {
-            mDisplay.DSEngine.SetVolume(Properties.Settings.Default.DSEngineVolumeLevel);
+            mDisplay.DSEngine.SetVolume(_settings.DSEngineVolumeLevel);
         }
 
         public string GetClipFileName()
@@ -325,7 +318,7 @@ namespace Tobasa
             if (videoFolder == String.Empty)
             {
                 string fileName = GetClipFileName();
-                mDisplay.DSEngine.StartDisplay(mDisplay.pnlVideo, mDisplay.Handle, DisplaySource.Clip, fileName);
+                mDisplay.DSEngine.StartDisplay(mDisplay.centerPanelVideo, mDisplay.Handle, DisplaySource.Clip, fileName);
             }
             else
             {
@@ -353,7 +346,7 @@ namespace Tobasa
             if (mDisplay.DSEngine.CurrentPlayState != PlayState.Init)
                 mDisplay.DSEngine.CloseClip();
 
-            mDisplay.DSEngine.StartDisplay(mDisplay.pnlVideo, mDisplay.Handle, DisplaySource.Stream, "");
+            mDisplay.DSEngine.StartDisplay(mDisplay.centerPanelVideo, mDisplay.Handle, DisplaySource.Stream, "");
 
             if (mDisplay.DSEngine.CurrentPlayState == PlayState.Running)
             {
@@ -376,7 +369,7 @@ namespace Tobasa
         public MainForm()
         {
             InitializeComponent();
-            /// we want to receive key event
+            // we want to receive key event
             KeyPreview = true;
             this.WindowState = FormWindowState.Minimized;
             
@@ -390,24 +383,35 @@ namespace Tobasa
             mDisplay.DSEngine.Notified += new Action<NotifyEventArgs>(DSEngine_Notified);
             mDisplay.DSEngine.PlayerStarted += new Action<EventArgs>(DSEngine_PlayerStarted);
 
-            /// Populate cbPost
-            cbPost.Items.Clear();
-            string[] cbPostItems = new string[Properties.Settings.Default.UIPostList.Count];
-            Properties.Settings.Default.UIPostList.CopyTo(cbPostItems, 0);
-            cbPost.Items.AddRange(cbPostItems);
-            cbPost.Text = Properties.Settings.Default.StationPost;
+            // Get POST Ids
+            string[] postIds = new string[_settings.UIPostList.Count];
+            _settings.UIPostList.CopyTo(postIds, 0);
 
-            /// Check Screen Count
+            // Populate PostPropertyCollection
+            foreach (string id in postIds)
+            {
+                _postProperties.Add(id, new PostProperty(id));
+            }
+
+            // Populate cbPost
+            cbPost.Items.Clear();
+            cbPost.Items.AddRange(postIds);
+
+            // Populate cbSelectPost
+            cbSelectPost.Items.Clear();
+            cbSelectPost.Items.AddRange(postIds);
+
+            // Check Screen Count
             Screen[] screens = Screen.AllScreens;
             if (screens.Length > 1)
                 btnSwitchDisplay.Enabled = true;
 
             RestoreSettings();
 
-            if (Properties.Settings.Default.PlayVideoAtStartup)
+            if (_settings.PlayVideoAtStartup)
                 OnOpenCloseVideo(this, EventArgs.Empty);
 
-            /// start tcp client
+            // start tcp client
             StartClient();
 
             //mDisplay.TopMost = true;
@@ -419,129 +423,136 @@ namespace Tobasa
         #endregion
 
         #region Application settings stuffs
+
+        private void SetPostPropertiesControl(string postid)
+        {
+            string postId = postid;
+            PostProperty prop = _postProperties.FindById(postId);
+
+            if (prop != null)
+            {
+                tbPostName.Text = prop.Name;
+                tbPostId.Text = prop.Id;
+                tbPostCaption.Text = prop.Caption;
+                chkPostPlayAudio.Checked = prop.PlayAudio;
+                tbPostRunText.Text = prop.RunText;
+
+                if (prop.Id == _settings.StationPost)
+                    chkPostPlayAudio.Checked = true;
+
+                if (prop.Index == 0 || prop.Index == 1 || prop.Index == 2 ||
+                   prop.Index == 5 || prop.Index == 6 || prop.Index == 7)
+                {
+                    chkPostVisible.Checked = true;
+                    chkPostVisible.Enabled = false;
+                }
+                else
+                {
+                    chkPostVisible.Checked = prop.Visible;
+                    chkPostVisible.Enabled = true;
+                }
+            }
+        }
+
         private void RestoreSettings()
         {
             // Restore last used video device
-            if (Properties.Settings.Default.VideoInputDevicePath != String.Empty)
-                cbDevice.SelectedValue = Properties.Settings.Default.VideoInputDevicePath;
+            if (_settings.VideoInputDevicePath != String.Empty)
+                cbDevice.SelectedValue = _settings.VideoInputDevicePath;
             
             // Restore last used video input device source
-            if (Properties.Settings.Default.VideoSource == "VideoInputDevice")
+            if (_settings.VideoSource == "VideoInputDevice")
                 radVideoDevice.Checked = true;
-            else if (Properties.Settings.Default.VideoSource == "VideoCLip")
+            else if (_settings.VideoSource == "VideoCLip")
                 radVideoClip.Checked = true;
 
-            if (Properties.Settings.Default.VideoCLipMode == "PlayFromFolder")
+            if (_settings.VideoCLipMode == "PlayFromFolder")
                 rbPlayFromFolder.Checked = true;
-            else if (Properties.Settings.Default.VideoCLipMode == "PlayBySelectManually")
+            else if (_settings.VideoCLipMode == "PlayBySelectManually")
                 rbOpenClip.Checked = true;
 
-            tbClipFolder.Text = Properties.Settings.Default.VideoClipLocation;
+            tbClipFolder.Text = _settings.VideoClipLocation;
 
-            tbServer.Text = Properties.Settings.Default.QueueServerHost;
-            tbPort.Text = Properties.Settings.Default.QueueServerPort.ToString();
-            tbStation.Text = Properties.Settings.Default.StationName;
-            cbPost.Text = Properties.Settings.Default.StationPost;
+            tbServer.Text = _settings.QueueServerHost;
+            tbPort.Text = _settings.QueueServerPort.ToString();
+            tbStation.Text = _settings.StationName;
+            cbPost.Text = _settings.StationPost;
 
-            tbClipFolder.Text = Properties.Settings.Default.VideoClipLocation;
-            tbAudioFolder.Text = Properties.Settings.Default.NumberAudioLocation;
-            chkSpellNumber.Checked = Properties.Settings.Default.AudioSpellNumber;
-            chkPlaySimpleNotification.Checked = Properties.Settings.Default.PlaySimpleSoundNotification;
-            chkShowLogo.Checked = Properties.Settings.Default.ShowLogo;
-            chkShowInfoTextTop.Checked = Properties.Settings.Default.ShowInfoTextTop1; 
+            tbClipFolder.Text = _settings.VideoClipLocation;
+            tbAudioFolder.Text = _settings.NumberAudioLocation;
+            chkSpellNumber.Checked = _settings.AudioSpellNumber;
+            chkPlaySimpleNotification.Checked = _settings.PlaySimpleSoundNotification;
+            chkShowLogo.Checked = _settings.ShowLogo;
+            chkShowInfoTextTop0.Checked = _settings.ShowInfoTextTop0;
+            chkShowInfoTextTop1.Checked = _settings.ShowInfoTextTop1;
+            chkShowCenterMiddleDiv.Checked = _settings.ShowCenterMiddleDiv;
+            chkShowLeftPosts.Checked = _settings.ShowLeftPosts;
+            chkShowRightPosts.Checked = _settings.ShowRightPosts;
 
-            btnAnimationColor.BackColor = Properties.Settings.Default.NumberAnimationColor;
-            numericUpDown.Value = (decimal)Properties.Settings.Default.QueueAnimationTimeInSecond;
+            btnAnimationColor.BackColor = _settings.NumberAnimationColor;
+            numericUpDown.Value = (decimal)_settings.QueueAnimationTimeInSecond;
             
             // DSEngine volume related settings
-            volSlider.Value = Properties.Settings.Default.DSEngineVolumeLevel / 1000;
-            mDisplay.DSEngine.SetVolume(Properties.Settings.Default.DSEngineVolumeLevel);
-            lastVolume = Properties.Settings.Default.DSEngineVolumeLevel;
+            volSlider.Value = _settings.DSEngineVolumeLevel / 1000;
+            mDisplay.DSEngine.SetVolume(_settings.DSEngineVolumeLevel);
+            lastVolume = _settings.DSEngineVolumeLevel;
             chkMute.Checked = (lastVolume == -10000);
             volSlider.Enabled = (lastVolume > -10000);
 
-            chkSetUnderscore.Checked = Properties.Settings.Default.StartNumberWithUnderscore;
-            chkPlayVideoStartup.Checked = Properties.Settings.Default.PlayVideoAtStartup;
+            chkSetUnderscore.Checked = _settings.StartNumberWithUnderscore;
+            chkPlayVideoStartup.Checked = _settings.PlayVideoAtStartup;
 
             // Check sound folder
-            string _soundDir = Properties.Settings.Default.NumberAudioLocation;
+            string _soundDir = _settings.NumberAudioLocation;
             if (!Directory.Exists(_soundDir))
             {
                 _soundDir = Util.ProcessDir + "\\wav";
-                Properties.Settings.Default.NumberAudioLocation = _soundDir;
+                _settings.NumberAudioLocation = _soundDir;
             }
             
             if (Directory.Exists(_soundDir))
                 tbAudioFolder.Text = _soundDir;
 
-            post0Name.Text = Properties.Settings.Default.Post0Name;
-            post0Post.Text = Properties.Settings.Default.Post0Post;
-            post0Caption.Text = Properties.Settings.Default.Post0Caption;
-            post0RunText.Text = Properties.Settings.Default.Post0RunText;
-            post0PlayAudio.Checked = Properties.Settings.Default.Post0PlayAudio;
-            if (Properties.Settings.Default.Post0Post == Properties.Settings.Default.StationPost)
-                post0PlayAudio.Checked = true;
+            chkAudioLoketIDUseAlphabet.Checked = _settings.AudioLoketIDUseAlphabet;
 
-            post1Name.Text = Properties.Settings.Default.Post1Name;
-            post1Post.Text = Properties.Settings.Default.Post1Post;
-            post1Caption.Text = Properties.Settings.Default.Post1Caption;
-            post1RunText.Text = Properties.Settings.Default.Post1RunText;
-            post1PlayAudio.Checked = Properties.Settings.Default.Post1PlayAudio;
-            if (Properties.Settings.Default.Post1Post == Properties.Settings.Default.StationPost)
-                post1PlayAudio.Checked = true;
+            txtRuntext0.Text = _settings.RunningText0;
+            txtRuntext1.Text = _settings.RunningText1;
 
-            post2Name.Text = Properties.Settings.Default.Post2Name;
-            post2Post.Text = Properties.Settings.Default.Post2Post;
-            post2Caption.Text = Properties.Settings.Default.Post2Caption;
-            post2RunText.Text = Properties.Settings.Default.Post2RunText;
-            post2PlayAudio.Checked = Properties.Settings.Default.Post2PlayAudio;
-            if (Properties.Settings.Default.Post2Post == Properties.Settings.Default.StationPost)
-                post2PlayAudio.Checked = true;
+            tbImgLogo.Text = _settings.DisplayLogoImg;
+            tbTextLogo.Text = _settings.DisplayLogoText;
 
-            post3Name.Text = Properties.Settings.Default.Post3Name;
-            post3Post.Text = Properties.Settings.Default.Post3Post;
-            post3Caption.Text = Properties.Settings.Default.Post3Caption;
-            post3RunText.Text = Properties.Settings.Default.Post3RunText;
-            post3PlayAudio.Checked = Properties.Settings.Default.Post3PlayAudio;
-            post3Visible.Checked = Properties.Settings.Default.Post3Visible;
-            if (Properties.Settings.Default.Post3Post == Properties.Settings.Default.StationPost)
-                post3PlayAudio.Checked = true;
-
-            post4Name.Text = Properties.Settings.Default.Post4Name;
-            post4Post.Text = Properties.Settings.Default.Post4Post;
-            post4Caption.Text = Properties.Settings.Default.Post4Caption;
-            post4RunText.Text = Properties.Settings.Default.Post4RunText;
-            post4PlayAudio.Checked = Properties.Settings.Default.Post4PlayAudio;
-            post4Visible.Checked = Properties.Settings.Default.Post4Visible;
-            if (Properties.Settings.Default.Post4Post == Properties.Settings.Default.StationPost)
-                post4PlayAudio.Checked = true;
-
-            txtRuntext0.Text = Properties.Settings.Default.RunningText0;
-            txtRuntext1.Text = Properties.Settings.Default.RunningText1;
-
-            tbImgLogo.Text = Properties.Settings.Default.DisplayLogoImg;
-            tbTextLogo.Text = Properties.Settings.Default.DisplayLogoText;
+            // setup POST Options
+            _postProperties.LoadFromConfiguration();
+            cbSelectPost.Text = "POST0";
+            var postId = cbSelectPost.Text;
+            SetPostPropertiesControl(postId);
         }
 
         private void SaveSettings()
         {
-            Properties.Settings.Default.QueueAnimationTimeInSecond = (int)numericUpDown.Value;
-            Properties.Settings.Default.PlayVideoAtStartup = chkPlayVideoStartup.Checked;
-            Properties.Settings.Default.StartNumberWithUnderscore = chkSetUnderscore.Checked;
-            Properties.Settings.Default.NumberAudioLocation = tbAudioFolder.Text;
-            Properties.Settings.Default.VideoClipLocation = tbClipFolder.Text;
-            Properties.Settings.Default.StartDisplayFullScreen = mDisplay.isFullScreen;
-            Properties.Settings.Default.AudioSpellNumber = chkSpellNumber.Checked;
-            Properties.Settings.Default.PlaySimpleSoundNotification = chkPlaySimpleNotification.Checked;
-            Properties.Settings.Default.ShowLogo = chkShowLogo.Checked;
-            Properties.Settings.Default.ShowInfoTextTop1 = chkShowInfoTextTop.Checked;
-            Properties.Settings.Default.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
+            _settings.AudioLoketIDUseAlphabet = chkAudioLoketIDUseAlphabet.Checked;
+            _settings.QueueAnimationTimeInSecond = (int)numericUpDown.Value;
+            _settings.PlayVideoAtStartup = chkPlayVideoStartup.Checked;
+            _settings.StartNumberWithUnderscore = chkSetUnderscore.Checked;
+            _settings.NumberAudioLocation = tbAudioFolder.Text;
+            _settings.VideoClipLocation = tbClipFolder.Text;
+            _settings.StartDisplayFullScreen = mDisplay.isFullScreen;
+            _settings.AudioSpellNumber = chkSpellNumber.Checked;
+            _settings.PlaySimpleSoundNotification = chkPlaySimpleNotification.Checked;
+            _settings.ShowLogo = chkShowLogo.Checked;
+            _settings.ShowInfoTextTop0 = chkShowInfoTextTop0.Checked;
+            _settings.ShowInfoTextTop1 = chkShowInfoTextTop1.Checked;
+            _settings.ShowCenterMiddleDiv = chkShowCenterMiddleDiv.Checked;
+            _settings.ShowLeftPosts = chkShowLeftPosts.Checked;
+            _settings.ShowRightPosts = chkShowRightPosts.Checked;
+
+            _settings.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
 
             if (mDisplay.DSEngine.DisplaySource == DisplaySource.Stream)
             {
-                Properties.Settings.Default.VideoSource = "VideoInputDevice";
-                Properties.Settings.Default.VideoInputDevicePath = mDisplay.DSEngine.VideoInputDevicePath;
-                Properties.Settings.Default.VideoInputDeviceName = mDisplay.DSEngine.VideoInputDeviceName;
+                _settings.VideoSource = "VideoInputDevice";
+                _settings.VideoInputDevicePath = mDisplay.DSEngine.VideoInputDevicePath;
+                _settings.VideoInputDeviceName = mDisplay.DSEngine.VideoInputDeviceName;
 
                 if (mDisplay.DSEngine.UsingCrossbar)
                 {
@@ -554,56 +565,46 @@ namespace Tobasa
                         src = "VideoComposite";
                     else src = String.Empty;
 
-                    Properties.Settings.Default.VideoInputDeviceSource = src;
+                    _settings.VideoInputDeviceSource = src;
                 }
             }
             else if (mDisplay.DSEngine.DisplaySource == DisplaySource.Clip)
-                Properties.Settings.Default.VideoSource = "VideoCLip";
+                _settings.VideoSource = "VideoCLip";
 
-            Properties.Settings.Default.QueueServerHost = tbServer.Text;
-            Properties.Settings.Default.QueueServerPort = Convert.ToInt32(tbPort.Text);
-            Properties.Settings.Default.StationName = tbStation.Text;
-            Properties.Settings.Default.StationPost = cbPost.Text;
+            _settings.QueueServerHost = tbServer.Text;
+            _settings.QueueServerPort = Convert.ToInt32(tbPort.Text);
+            _settings.StationName = tbStation.Text;
+            _settings.StationPost = cbPost.Text;
 
-            Properties.Settings.Default.Post0Name = post0Name.Text;
-            Properties.Settings.Default.Post0Post = post0Post.Text;
-            Properties.Settings.Default.Post0Caption = post0Caption.Text;
-            Properties.Settings.Default.Post0RunText = post0RunText.Text;
-            Properties.Settings.Default.Post0PlayAudio = post0PlayAudio.Checked;
+            _settings.RunningText0 = txtRuntext0.Text;
+            _settings.RunningText1 = txtRuntext1.Text;
 
-            Properties.Settings.Default.Post1Name = post1Name.Text;
-            Properties.Settings.Default.Post1Post = post1Post.Text;
-            Properties.Settings.Default.Post1Caption = post1Caption.Text;
-            Properties.Settings.Default.Post1RunText = post1RunText.Text;
-            Properties.Settings.Default.Post1PlayAudio = post1PlayAudio.Checked;
+            _settings.DisplayLogoImg = tbImgLogo.Text;
+            _settings.DisplayLogoText = tbTextLogo.Text;
 
-            Properties.Settings.Default.Post2Name = post2Name.Text;
-            Properties.Settings.Default.Post2Post = post2Post.Text;
-            Properties.Settings.Default.Post2Caption = post2Caption.Text;
-            Properties.Settings.Default.Post2RunText = post2RunText.Text;
-            Properties.Settings.Default.Post2PlayAudio = post2PlayAudio.Checked;
 
-            Properties.Settings.Default.Post3Name = post3Name.Text;
-            Properties.Settings.Default.Post3Post = post3Post.Text;
-            Properties.Settings.Default.Post3Caption = post3Caption.Text;
-            Properties.Settings.Default.Post3RunText = post3RunText.Text;
-            Properties.Settings.Default.Post3PlayAudio = post3PlayAudio.Checked;
-            Properties.Settings.Default.Post3Visible = post3Visible.Checked;
+            // save post options
+            var postId = cbSelectPost.Text;
+            PostProperty prop = _postProperties.FindById(postId);
+            if (prop != null)
+            {
+                prop.Name = tbPostName.Text;
+                //prop.Id = tbPostId.Text;
+                prop.Caption = tbPostCaption.Text;
+                prop.Visible = chkPostVisible.Checked;
+                prop.PlayAudio = chkPostPlayAudio.Checked;
+                prop.RunText = tbPostRunText.Text;
 
-            Properties.Settings.Default.Post4Name = post4Name.Text;
-            Properties.Settings.Default.Post4Post = post4Post.Text;
-            Properties.Settings.Default.Post4Caption = post4Caption.Text;
-            Properties.Settings.Default.Post4RunText = post4RunText.Text;
-            Properties.Settings.Default.Post4PlayAudio = post4PlayAudio.Checked;
-            Properties.Settings.Default.Post4Visible = post4Visible.Checked;
+                if (prop.Index == 0 || prop.Index == 1 || prop.Index == 2 ||
+                   prop.Index == 5 || prop.Index == 6 || prop.Index == 7)
+                {
+                    prop.Visible = true;
+                }
+            }
 
-            Properties.Settings.Default.RunningText0 = txtRuntext0.Text;
-            Properties.Settings.Default.RunningText1 = txtRuntext1.Text;
+            _postProperties.SaveToConfiguration();
 
-            Properties.Settings.Default.DisplayLogoImg = tbImgLogo.Text;
-            Properties.Settings.Default.DisplayLogoText = tbTextLogo.Text;
-
-            Properties.Settings.Default.Save();
+            _settings.Save();
         }
 
         #endregion
@@ -805,10 +806,10 @@ namespace Tobasa
                 if (mDisplay.DSEngine.CurrentPlayState == PlayState.Running)
                 {
                     if (fromFolder)
-                        Properties.Settings.Default.VideoCLipMode = "PlayFromFolder";
+                        _settings.VideoCLipMode = "PlayFromFolder";
 
                     gbDisplaySource.Enabled = false;
-                    mDisplay.DSEngine.SetVolume(Properties.Settings.Default.DSEngineVolumeLevel);
+                    mDisplay.DSEngine.SetVolume(_settings.DSEngineVolumeLevel);
                 }
             }
             else 
@@ -885,10 +886,10 @@ namespace Tobasa
             if (result == DialogResult.Yes)
             {
 
-                Properties.Settings.Default.StationName = tbStation.Text;
-                Properties.Settings.Default.StationPost = cbPost.Text;
-                Properties.Settings.Default.QueueServerHost = tbServer.Text;
-                Properties.Settings.Default.QueueServerPort = Convert.ToInt32(tbPort.Text);
+                _settings.StationName = tbStation.Text;
+                _settings.StationPost = cbPost.Text;
+                _settings.QueueServerHost = tbServer.Text;
+                _settings.QueueServerPort = Convert.ToInt32(tbPort.Text);
 
                 CloseConnection();
                 StartClient();
@@ -902,7 +903,7 @@ namespace Tobasa
             if (result == DialogResult.OK)
             {
                 tbAudioFolder.Text = browse.SelectedPath;
-                Properties.Settings.Default.NumberAudioLocation = browse.SelectedPath;
+                _settings.NumberAudioLocation = browse.SelectedPath;
             }
         }
 
@@ -917,7 +918,7 @@ namespace Tobasa
             if (result == DialogResult.OK)
             {
                 tbImgLogo.Text = fileDlg.FileName;
-                Properties.Settings.Default.DisplayLogoImg = fileDlg.FileName;
+                _settings.DisplayLogoImg = fileDlg.FileName;
             }
         }
 
@@ -931,7 +932,7 @@ namespace Tobasa
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 btnAnimationColor.BackColor = dlg.Color;
-                Properties.Settings.Default.NumberAnimationColor = dlg.Color;
+                _settings.NumberAnimationColor = dlg.Color;
             }
         }
 
@@ -939,13 +940,13 @@ namespace Tobasa
         {
             int lvl = volSlider.Value * 1000;
             mDisplay.DSEngine.SetVolume(lvl);
-            Properties.Settings.Default.DSEngineVolumeLevel = lvl;
+            _settings.DSEngineVolumeLevel = lvl;
             chkMute.Checked = (lvl == -10000);
         }
 
         private void OnSpellNumber(object sender, EventArgs e)
         {
-            Properties.Settings.Default.AudioSpellNumber = chkSpellNumber.Checked;
+            _settings.AudioSpellNumber = chkSpellNumber.Checked;
         }
 
         private void OnSaveSettings(object sender, EventArgs e)
@@ -997,13 +998,13 @@ namespace Tobasa
 
                 mDisplay.DSEngine.SetVolume(-10000);
                 volSlider.Enabled = false;
-                Properties.Settings.Default.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
+                _settings.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
             }
             else
             {
                 mDisplay.DSEngine.SetVolume(lastVolume);
                 volSlider.Enabled = true;
-                Properties.Settings.Default.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
+                _settings.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
             }
 
             /*
@@ -1014,7 +1015,7 @@ namespace Tobasa
             else if (mDisplay.DSEngine.CurrentVolume == -10000)
                 volSlider.Value = -10;
 
-            Tobasa.Properties.Settings.Default.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
+            Tobasa._settings.DSEngineVolumeLevel = mDisplay.DSEngine.CurrentVolume;
             */
         }
         
@@ -1043,6 +1044,17 @@ namespace Tobasa
             chkSpellNumber.Enabled = !c.Checked;
         }
 
+        private void OnCounterUseAlphabet(object sender, EventArgs e)
+        {
+            CheckBox c = (CheckBox)sender;
+            _settings.AudioLoketIDUseAlphabet = c.Checked;
+        }
+
+        private void OnCbSelectPostChanged(object sender, EventArgs e)
+        {
+            string postId = cbSelectPost.Text;
+            SetPostPropertiesControl(postId);
+        }
 
         #endregion
     }

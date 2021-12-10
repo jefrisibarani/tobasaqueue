@@ -1,38 +1,145 @@
-﻿using System;
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+using System;
 using System.Windows.Forms;
-using System.Data.OleDb;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Tobasa
 {
     public partial class FormRunText : Form
     {
-        public event Action<EventArgs> DataChanged;
-        private bool insertMode = false;
-        private string _id;
+        #region Member variables
 
-        public FormRunText(string id)
+        public event Action<string> DataChanged;
+        private readonly MainForm _mainForm;
+        private bool _insertMode = false;
+        Dictionary<string, string> _initialData = new Dictionary<string, string>();
+
+        #endregion
+
+        #region Form Loading/Unloading
+
+        public FormRunText(MainForm form, Dictionary<string, string> data)
         {
-            _id = id;
+            _mainForm = form;
+            //_mainForm.MessageReceived += new MessageReceived(ProcessMessage);
+
+            _initialData = data;
             InitializeComponent();
 
-            if (insertMode) btnAction.Text = "&Insert";
+            if (_insertMode) 
+                btnAction.Text = "&Insert";
+            else 
+                btnAction.Text = "&Update";
+        }
+
+        public FormRunText(MainForm form)
+        {
+            _mainForm = form;
+            //_mainForm.MessageReceived += new MessageReceived(ProcessMessage);
+
+            _insertMode = true;
+            InitializeComponent();
+
+            if (_insertMode) btnAction.Text = "&Insert";
             else btnAction.Text = "&Update";
 
         }
 
-        public FormRunText()
+        private void OnFormLoad(object sender, EventArgs e)
         {
-            insertMode = true;
-            InitializeComponent();
+            if (!_insertMode && _initialData.Count > 0)
+            {
+                bool sticky = Convert.ToBoolean(Convert.ToInt32(_initialData["sticky"]));
+                bool active = Convert.ToBoolean(Convert.ToInt32(_initialData["active"]));
 
-            if (insertMode) btnAction.Text = "&Insert";
-            else btnAction.Text = "&Update";
-
+                txtStation.Text   = _initialData["station"];
+                chkSticky.Checked = sticky;
+                chkActive.Checked = active;
+                txtRunText.Text   = _initialData["runText"];
+            }
         }
 
-        private void OnDataChanged()
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            DataChanged?.Invoke(new EventArgs());
+            _mainForm.MessageReceived -= ProcessMessage;
+        }
+
+        #endregion
+
+        public void ProcessMessage(Message message)
+        {
+        }
+
+        private void InsertUpdateDataRunText(string station, bool sticky, bool active, string runText)
+        {
+            if (_mainForm.TcpClient != null && _mainForm.TcpClient.Connected)
+            {
+                string messageT;
+                string commandType;
+                int id_;
+
+                if (_insertMode)
+                {
+                    messageT = Msg.SysInsTable.Text;
+                    commandType = "INSERT";
+                    id_ = -1;
+                }
+                else
+                {
+                    messageT = Msg.SysUpdTable.Text;
+                    commandType = "UPDATE";
+                    id_ = Convert.ToInt32(_initialData["id"]);
+                }
+
+                Dto.RunningText runningText = new Dto.RunningText()
+                {
+                    Id = id_,
+                    StationName = station,
+                    Sticky = sticky,
+                    Active = active,
+                    Text = runText
+                };
+
+                string jsonRText = JsonConvert.SerializeObject(runningText, Formatting.None);
+                Dictionary<string, string> paramDict = new Dictionary<string, string>()
+                {
+                    ["command"] = commandType,
+                    ["data"] = jsonRText,
+                };
+
+                string jsonParam = JsonConvert.SerializeObject(paramDict, Formatting.None);
+
+                // SYS|INS_TABLE|REQ|Identifier|[Name!Params]
+                string message = messageT +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + Tbl.runningtexts +  // tablename
+                                 Msg.CompDelimiter + jsonParam;      // parameter
+
+                _mainForm.TcpClient.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
         }
 
         private void OnClose(object sender, EventArgs e)
@@ -42,84 +149,36 @@ namespace Tobasa
 
         private void OnAction(object sender, EventArgs e)
         {
-            if (Database.Me.Connected)
+
+            string msg = "";
+            if (_insertMode)
+                msg = "Do you want to insert record?";
+            else
+                msg = "Do you want to update record?";
+
+            if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.No)
+                return;
+
+            try
             {
-                string msg = "";
-                if (insertMode)
-                    msg = "Do you want to insert record?";
-                else
-                    msg = "Do you want to update record?";
+                // Send Insert/Update request to QueueServer
+                // On receiving response from server in MainForm.HandleMessage, 
+                // tell main form to update relevant grid view
 
-                if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
+                InsertUpdateDataRunText(txtStation.Text.Trim(), chkSticky.Checked, chkActive.Checked, txtRunText.Text.Trim());
 
-                string sql = "";
-                if (insertMode)
-                    sql = "INSERT INTO runningtexts (station_name,sticky,active,running_text) VALUES (?,?,?,?)";
-                else
-                    sql = "UPDATE runningtexts SET station_name = ? , sticky = ? , active = ?, running_text = ? WHERE id = ?";
+                // TODO: Remove DataChanged event, since MainForm now update 
+                // relevant grid in its HandleMessage method
+                //DataChanged?.Invoke(Tbl.runningtexts);
 
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 32).Value = txtStation.Text.Trim();
-                        cmd.Parameters.Add("?", OleDbType.Boolean).Value = chkSticky.Checked;
-                        cmd.Parameters.Add("?", OleDbType.Boolean).Value = chkActive.Checked;
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 255).Value = txtRunText.Text.Trim();
-
-                        if (!insertMode) // UPDATE
-                            cmd.Parameters.Add("?", OleDbType.Integer).Value = _id;
-
-                        cmd.ExecuteNonQuery();
-
-                        OnDataChanged();
-                        this.Close();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                this.Close();
             }
-        }
-
-        private void Form_Load(object sender, EventArgs e)
-        {
-
-            if (!insertMode) // Update
+            catch (Exception ex)
             {
-                if (Database.Me.Connected)
-                {
-                    string sql = "SELECT station_name,sticky,active,running_text FROM runningtexts WHERE id= ?";
-                    try
-                    {
-                        Database.Me.OpenConnection();
-                        using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                        {
-                            cmd.Parameters.Add("?", OleDbType.Integer).Value = _id;
-
-                            using (OleDbDataReader reader = cmd.ExecuteReader())
-                            {
-                                if (reader.HasRows)
-                                {
-                                    reader.Read();
-
-                                    txtStation.Text = reader.GetString(0).Trim();
-                                    chkSticky.Checked = reader.GetBoolean(1);
-                                    chkActive.Checked = reader.GetBoolean(2);
-                                    txtRunText.Text = reader.GetString(3).Trim();
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log("QueueAdmin : Exception : " + ex.Message);
-                    }
-                }
+                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            
         }
     }
 }

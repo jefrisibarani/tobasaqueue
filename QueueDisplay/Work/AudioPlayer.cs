@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+using System;
 using System.IO;
 using System.Media;
 using System.Threading;
@@ -36,20 +56,20 @@ namespace Tobasa
         {
             if (_number < 1000 && _station < 10)
             {
-                /// Play audio in separate thread
+                // Play audio in separate thread
                 ThreadStart starter = new ThreadStart(DoPlay);
                 thread = new Thread(starter);
                 thread.Start();
             }
             else
             {
-                Logger.Log("QueueDisplay AudioPlayer : Maximum queue number is 999, station number is 9 ");
+                Logger.Log("AudioPlayer", "Maximum total queue 1000 , total station 10 ");
             }
         }
 
         private void DoPlay()
         {
-            /// get exclusive access to play
+            // get exclusive access to play
             allDone.WaitOne();
 
             if (PlayStartedHandler != null)
@@ -70,13 +90,12 @@ namespace Tobasa
                     new SoundPlayer(audioFile).PlaySync();
 
 
-                    /// Play every char in Prefix
-                    
+                    // Play every char in Prefix
                     if (Regex.IsMatch(_prefix, @"^[a-zA-Z]+$"))
                     {
                         foreach (char c in _prefix)
                         {
-                            /// Play Prefix
+                            // Play Prefix
                             string pref = c.ToString();
                             pref = pref.ToLower();
                             pref = pref + ".wav";
@@ -86,14 +105,14 @@ namespace Tobasa
                     }
                     
 
-                    /// Play nomor antrian
+                    // Play nomor antrian
                     string txt0 = "";
                     if (Properties.Settings.Default.AudioSpellNumber)
                         txt0 = NumToWords2(_number);
                     else
                         txt0 = NumToWords(_number);
 
-                    /// split with null = whitespace
+                    // split with null = whitespace
                     string[] words0 = txt0.Split(null);
                     foreach (string word in words0)
                     {
@@ -101,31 +120,49 @@ namespace Tobasa
                         new SoundPlayer(audioFile).PlaySync();
                     }
 
-                    /// Play "di counter"
-                    audioFile = _soundDir + "counter.wav";
+                    // Play "di counter/loket"
+                    if( Tobasa.Properties.Settings.Default.AudioUseLoket)
+                        audioFile = _soundDir + "loket.wav";
+                    else
+                        audioFile = _soundDir + "counter.wav";
+
                     new SoundPlayer(audioFile).PlaySync();
 
-                    /// Play nomor counter
-                    string txt1 = NumToWords(_station);
-                    string[] words1 = txt1.Split(null);
-                    foreach (string word in words1)
+                    // Play nomor counter/loket
+                    if (Tobasa.Properties.Settings.Default.AudioLoketIDUseAlphabet)
                     {
-                        audioFile = _soundDir + word + ".wav";
+                        // ASCII characters: 65 to 90
+                        // we use 1 = A = 65
+                        //        2 = B = 66
+                        int _id = 64 + _station;
+
+                        // Play Prefix
+                        string stNumber = ((char)_id).ToString();
+                        stNumber = stNumber.ToLower();
+                        stNumber = stNumber + ".wav";
+                        audioFile = _soundDir + stNumber;
                         new SoundPlayer(audioFile).PlaySync();
                     }
+                    else
+                    {
+                        string txt1 = NumToWords(_station);
+                        string[] words1 = txt1.Split(null);
+                        foreach (string word in words1)
+                        {
+                            audioFile = _soundDir + word + ".wav";
+                            new SoundPlayer(audioFile).PlaySync();
+                        }
+                    }
+
                 }
             }
             catch (FileNotFoundException e)
             {
-                Logger.Log("QueueDisplay AudioPlayer : FileNotFoundException : " + e.Message + " - " + audioFile);
-            }
-            catch (InvalidOperationException e)    
-            {
-                Logger.Log("QueueDisplay AudioPlayer : InvalidOperationException : " + e.Message);
+                Logger.Log("AudioPlayer", "FileNotFoundException : " + e.Message + " - " + audioFile);
             }
             catch (Exception e)
             {
-                Logger.Log("QueueDisplay AudioPlayer : Exception : " + e.Message);
+                Logger.Log("AudioPlayer", e);
             }
 
             if (PlayCompletedHandler != null)

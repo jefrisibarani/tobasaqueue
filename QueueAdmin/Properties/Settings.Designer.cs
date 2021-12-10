@@ -12,7 +12,7 @@ namespace Tobasa.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -20,18 +20,6 @@ namespace Tobasa.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ad7415644add93d6e719d2b593da6e6e")]
-        public string ConnectionStringPassword {
-            get {
-                return ((string)(this["ConnectionStringPassword"]));
-            }
-            set {
-                this["ConnectionStringPassword"] = value;
             }
         }
         
@@ -95,17 +83,6 @@ namespace Tobasa.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antr" +
-            "i")]
-        public string ConnectionString {
-            get {
-                return ((string)(this["ConnectionString"]));
-            }
-        }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("tobasaqueue")]
@@ -139,6 +116,11 @@ namespace Tobasa.Properties {
   <string>POST2</string>
   <string>POST3</string>
   <string>POST4</string>
+  <string>POST5</string>
+  <string>POST6</string>
+  <string>POST7</string>
+  <string>POST8</string>
+  <string>POST9</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection UIPostList {
             get {

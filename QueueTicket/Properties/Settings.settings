@@ -127,6 +127,11 @@
   &lt;string&gt;POST2&lt;/string&gt;
   &lt;string&gt;POST3&lt;/string&gt;
   &lt;string&gt;POST4&lt;/string&gt;
+  &lt;string&gt;POST5&lt;/string&gt;
+  &lt;string&gt;POST6&lt;/string&gt;
+  &lt;string&gt;POST7&lt;/string&gt;
+  &lt;string&gt;POST8&lt;/string&gt;
+  &lt;string&gt;POST9&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="Post0PrintCopies" Type="System.Int16" Scope="User">
@@ -182,6 +187,168 @@
     </Setting>
     <Setting Name="Post4PrintHeader" Type="System.String" Scope="User">
       <Value Profile="(Default)">Customer Service</Value>
+    </Setting>
+    <Setting Name="DrawLabelOnButtons" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ButtonLabelFontSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">14</Value>
+    </Setting>
+    <Setting Name="MainMenuLabelAlignment" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Middle</Value>
+    </Setting>
+    <Setting Name="MainMenuLabelFontSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">12</Value>
+    </Setting>
+    <Setting Name="Post5Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI GIGI</Value>
+    </Setting>
+    <Setting Name="Post5Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST5</Value>
+    </Setting>
+    <Setting Name="Post5Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Gigi</Value>
+    </Setting>
+    <Setting Name="Post5Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post5Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post5BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post5BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post5PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post5PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Gigi</Value>
+    </Setting>
+    <Setting Name="Post6Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI ANAK</Value>
+    </Setting>
+    <Setting Name="Post6Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST6</Value>
+    </Setting>
+    <Setting Name="Post6Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Anak</Value>
+    </Setting>
+    <Setting Name="Post6Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post6Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post6BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post6BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post6PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post6PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Anak</Value>
+    </Setting>
+    <Setting Name="Post7Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI MATA</Value>
+    </Setting>
+    <Setting Name="Post7Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST7</Value>
+    </Setting>
+    <Setting Name="Post7Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Mata</Value>
+    </Setting>
+    <Setting Name="Post7Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post7Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post7BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post7BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post7PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post7PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Mata</Value>
+    </Setting>
+    <Setting Name="Post8Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI KULIT</Value>
+    </Setting>
+    <Setting Name="Post8Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST8</Value>
+    </Setting>
+    <Setting Name="Post8Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Kulit</Value>
+    </Setting>
+    <Setting Name="Post8Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post8Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post8BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post8BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post8PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post8PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli Kulit</Value>
+    </Setting>
+    <Setting Name="Post9Caption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POLI THT</Value>
+    </Setting>
+    <Setting Name="Post9Post" Type="System.String" Scope="User">
+      <Value Profile="(Default)">POST9</Value>
+    </Setting>
+    <Setting Name="Post9Name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli THT</Value>
+    </Setting>
+    <Setting Name="Post9Enabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post9Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post9BtnImgOn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOn.png</Value>
+    </Setting>
+    <Setting Name="Post9BtnImgOff" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
+    </Setting>
+    <Setting Name="Post9PrintCopies" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Post9PrintHeader" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Poli THT</Value>
+    </Setting>
+    <Setting Name="Post0Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post1Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Post2Visible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ShowLeftMenu" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ShowRightMenu" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

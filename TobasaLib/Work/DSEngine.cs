@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public

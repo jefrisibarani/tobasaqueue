@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@ namespace Tobasa
 {
     public enum NotifyType
     {
+        NOTIFY_LOG,
         NOTIFY_MSG,
         NOTIFY_ERR
     }
@@ -43,20 +44,40 @@ namespace Tobasa
         public Exception Exception { get; set; }
     }
 
-    /// <summary>
-    /// Notifier class.
-    /// Raise notify event by calling Notify()
-    /// </summary>
+    /** Notifier class.
+        Raise notify event by calling Notify()
+    */
     public class Notifier
     {
-        //public event EventHandler<NotifyEventArgs> Notified;
         public event Action<NotifyEventArgs> Notified;
-
-        // Invoke the Error handler
         protected virtual void OnNotifyError(NotifyEventArgs e)
         {
             e.Type = NotifyType.NOTIFY_ERR;
             OnNotify(e);
+        }
+
+        protected virtual void OnNotifyError(Exception ex)
+        {
+            NotifyEventArgs args = new NotifyEventArgs();
+            args.Summary = ex.GetType().Name;
+            args.Source = ex.Source;
+            args.Message = ex.Message;
+            args.Exception = ex;
+            args.Type = NotifyType.NOTIFY_ERR;
+
+            OnNotify(args);
+        }
+
+        protected virtual void OnNotifyError(string source, Exception ex)
+        {
+            NotifyEventArgs args = new NotifyEventArgs();
+            args.Summary = ex.GetType().Name;
+            args.Source = source;
+            args.Message = ex.Message;
+            args.Exception = ex;
+            args.Type = NotifyType.NOTIFY_ERR;
+
+            OnNotify(args);
         }
 
         protected virtual void OnNotifyMessage(NotifyEventArgs e)
@@ -65,19 +86,45 @@ namespace Tobasa
             OnNotify(e);
         }
 
+        protected virtual void OnNotifyMessage(string source, string message, string summary="Info")
+        {
+            NotifyEventArgs args = new NotifyEventArgs();
+            args.Summary = summary;
+            args.Source = source;
+            args.Message = message;
+            args.Exception = null;
+            args.Type = NotifyType.NOTIFY_MSG;
+
+            OnNotify(args);
+        }
+
+        protected virtual void OnNotifyLog(string source, string message, string summary = "Info")
+        {
+            NotifyEventArgs args = new NotifyEventArgs();
+            args.Summary = summary;
+            args.Source = source;
+            args.Message = message;
+            args.Exception = null;
+            args.Type = NotifyType.NOTIFY_LOG;
+
+            OnNotify(args);
+        }
+
+        protected virtual void OnNotifyLog(string source, Exception ex)
+        {
+            NotifyEventArgs args = new NotifyEventArgs();
+            args.Summary = ex.GetType().Name;
+            args.Source = source;
+            args.Message = ex.Message;
+            args.Exception = ex;
+            args.Type = NotifyType.NOTIFY_LOG;
+
+            OnNotify(args);
+        }
+
         protected virtual void OnNotify(NotifyEventArgs e)
         {
-            /*
-            EventHandler<NotifyEventArgs> handler = Notified;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-            */
-            if (Notified != null)
-            {
-                Notified(e);
-            }
+            Notified?.Invoke(e);
         }
     }
 }

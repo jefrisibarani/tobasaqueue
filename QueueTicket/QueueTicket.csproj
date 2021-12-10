@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +47,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Tobasa.AppMain</StartupObject>
@@ -58,6 +60,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -67,6 +70,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>queue.ico</ApplicationIcon>
@@ -79,6 +83,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -88,18 +93,19 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Work\AboutBox.cs">
@@ -122,6 +128,7 @@
     <Compile Include="Work\OptionForm.Designer.cs">
       <DependentUpon>OptionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Work\PostProperty.cs" />
     <Compile Include="Work\RuntextLabel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -191,18 +198,19 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir $(TargetDir)img
-COPY /Y $(ProjectDir)img\*.*  $(TargetDir)img
+    <PostBuildEvent>IF NOT EXIST $(SolutionDir)_OUTPUT                                       MD $(SolutionDir)_OUTPUT
+IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)          MD $(SolutionDir)_OUTPUT\$(ProjectName)
+IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)\img MD $(SolutionDir)_OUTPUT\$(ProjectName)\img
+IF NOT EXIST $(TargetDir)img                                                    MD $(TargetDir)img
 
-IF NOT EXIST $(SolutionDir)_OUTPUT MD $(SolutionDir)_OUTPUT
-IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName) MD $(SolutionDir)_OUTPUT\$(ProjectName)
-COPY /Y $(TargetDir)$(TargetFileName) $(SolutionDir)_OUTPUT\$(ProjectName)
-COPY /Y $(TargetDir)Libtobasa.dll $(SolutionDir)_OUTPUT\$(ProjectName)
-COPY /Y $(TargetDir)$(TargetFileName).config $(SolutionDir)_OUTPUT\$(ProjectName)
-
-
-IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)img MD $(SolutionDir)_OUTPUT\$(ProjectName)\img
-COPY /Y $(ProjectDir)img\*.*  $(SolutionDir)_OUTPUT\$(ProjectName)\img</PostBuildEvent>
+COPY /Y $(TargetDir)$(TargetFileName)                 $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)Libtobasa.dll                           $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)$(TargetFileName).config     $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(ProjectDir)img\*.*                                   $(SolutionDir)_OUTPUT\$(ProjectName)\img\
+COPY /Y $(ProjectDir)img\*.*                                   $(TargetDir)img\</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>IF EXIST $(SolutionDir)_OUTPUT\$(ProjectName)   rmdir /q /s $(SolutionDir)_OUTPUT\$(ProjectName)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

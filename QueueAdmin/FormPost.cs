@@ -1,37 +1,145 @@
-﻿using System;
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+using System;
 using System.Windows.Forms;
-using System.Data.OleDb;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Tobasa
 {
     public partial class FormPost : Form
     {
-        public event Action<EventArgs> DataChanged;
-        private bool insertMode = false;
-        private string postName;
+        #region Member variables
 
-        public FormPost(string post)
+        public event Action<string> DataChanged;
+        private readonly MainForm _mainForm;
+        private bool _insertMode = false;
+        Dictionary<string, string> _initialData = new Dictionary<string, string>();
+
+        #endregion
+
+        #region Form Loading/Unloading
+
+        public FormPost(MainForm form, Dictionary<string, string> data)
         {
-            postName = post;
+            _mainForm = form;
+            //_mainForm.MessageReceived += new MessageReceived(ProcessMessage);
+
+            _initialData = data;
             InitializeComponent();
 
-            if (insertMode) btnAction.Text = "&Insert";
+            if (_insertMode)
+                btnAction.Text = "&Insert";
+            else
+                btnAction.Text = "&Update";
+        }
+
+        public FormPost(MainForm form)
+        {
+            _mainForm = form;
+            //_mainForm.MessageReceived += new MessageReceived(ProcessMessage);
+
+            _insertMode = true;
+            InitializeComponent();
+
+            if (_insertMode) btnAction.Text = "&Insert";
             else btnAction.Text = "&Update";
         }
 
-        public FormPost()
+        private void OnFormLoad(object sender, EventArgs e)
         {
-            insertMode = true;
-            InitializeComponent();
+            if (!_insertMode && _initialData.Count > 0)
+            {
+                txtPost.Text = _initialData["postname"];
 
-            if (insertMode) btnAction.Text = "&Insert";
-            else btnAction.Text = "&Update";
+                var remark = _initialData["remark"];
+                if (remark != null)
+                    txtRemark.Text = remark.ToString().Trim();
+
+                var prefix = _initialData["prefix"];
+                if (prefix != null)
+                    txtPrefix.Text = prefix.ToString().Trim();
+            }
         }
 
-        private void OnDataChanged()
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (DataChanged != null)
-                DataChanged(new EventArgs());
+            //_mainForm.MessageReceived -= ProcessMessage;
+        }
+
+        #endregion
+
+        public void ProcessMessage(Message message)
+        {
+        }
+
+        private void InsertUpdateDataPost(string postname, string remark, string prefix)
+        {
+            if (_mainForm.TcpClient != null && _mainForm.TcpClient.Connected)
+            {
+                string messageT;
+                string commandType;
+                string postOld_;
+
+                if (_insertMode)
+                {
+                    messageT    = Msg.SysInsTable.Text;
+                    commandType = "INSERT";
+                    postOld_    = "";
+                }
+                else
+                {
+                    messageT    = Msg.SysUpdTable.Text;
+                    commandType = "UPDATE";
+                    postOld_    = _initialData["postname"];
+                }
+
+                Dto.Post post = new Dto.Post()
+                {
+                    NameOld         = postOld_,
+                    Name            = postname,
+                    NumberPrefix    = prefix,
+                    Keterangan      = remark
+                };
+
+                string jsonPost = JsonConvert.SerializeObject(post, Formatting.None);
+                Dictionary<string, string> paramDict = new Dictionary<string, string>()
+                {
+                    ["command"] = commandType,
+                    ["data"] = jsonPost,
+                };
+
+                string jsonParam = JsonConvert.SerializeObject(paramDict, Formatting.None);
+
+                // SYS|INS_TABLE|REQ|Identifier|[Name!Params]
+                string message = messageT +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + Tbl.posts +       // tablename
+                                 Msg.CompDelimiter + jsonParam;    // parameter
+
+                _mainForm.TcpClient.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
         }
 
         private void OnClose(object sender, EventArgs e)
@@ -41,83 +149,32 @@ namespace Tobasa
 
         private void OnAction(object sender, EventArgs e)
         {
-            if (Database.Me.Connected)
+            string msg = "";
+            if (_insertMode)
+                msg = "Do you want to insert record?";
+            else 
+                msg = "Do you want to update record?";
+
+            if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.No)
+                return;
+
+            try
             {
-                string msg = "";
-                if (insertMode)
-                    msg = "Do you want to insert record?";
-                else 
-                    msg = "Do you want to update record?";
+                // Send Insert/Update request to QueueServer
+                // On receiving response from server in MainForm.HandleMessage, 
+                // tell main form to update relevant grid view
 
-                if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
+                InsertUpdateDataPost(txtPost.Text.Trim(), txtRemark.Text.Trim(), txtPrefix.Text.Trim());
 
-                string sql = "";
-                if (insertMode)
-                    sql = "INSERT INTO posts (name,keterangan,numberprefix) VALUES (?,?,?)";
-                else
-                    sql = "UPDATE posts SET name = ? , keterangan = ? , numberprefix = ? WHERE name = ?";
-                
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 32).Value = txtPost.Text.Trim();
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 254).Value = txtRemark.Text.Trim();
-                        cmd.Parameters.Add("?", OleDbType.Char, 2).Value = txtPrefix.Text.Trim();
+                // TODO: Remove DataChanged event, since MainForm now update 
+                // relevant grid in its HandleMessage method
+                //DataChanged?.Invoke(Tbl.posts);
 
-                        if (!insertMode) // UPDATE
-                            cmd.Parameters.Add("?", OleDbType.VarChar, 32).Value = postName;
-
-                        cmd.ExecuteNonQuery();
-
-                        OnDataChanged();
-                        this.Close();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                this.Close();
             }
-        }
-
-        private void Form_Load(object sender, EventArgs e)
-        {
-            if (Database.Me.Connected)
+            catch (Exception ex)
             {
-                string sql = "SELECT name,keterangan,numberprefix FROM posts WHERE name= ?";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 32).Value = postName;
-
-                        using (OleDbDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                reader.Read();
-                                
-                                txtPost.Text = postName;
-
-                                var remark = reader.GetValue(1);
-                                if (remark != null)
-                                    txtRemark.Text = remark.ToString().Trim();
-
-                                var prefix = reader.GetValue(2);
-                                if (prefix != null)
-                                    txtPrefix.Text = prefix.ToString().Trim();
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log("QueueAdmin : Exception : " + ex.Message);
-                }
+                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

@@ -1,4 +1,3 @@
-*.vs
 *.o
 *.obj
 *.res
@@ -16,6 +15,8 @@
 #*#
 *.backup
 .vs
+*.mp4
+*.wmv
 _OUTPUT*
 _RELEASE*
 QueueAdmin/bin
@@ -28,7 +29,12 @@ QueueService/bin
 QueueService/obj
 QueueTicket/bin
 QueueTicket/obj
+QueueConfig/bin
+QueueConfig/obj
 TobasaLib/bin
 TobasaLib/obj
 _res
 _notes
+_Private
+packages
+Database/antri.db3

@@ -1,9 +1,30 @@
-﻿using System;
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+using System;
 using System.IO;
 using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Tobasa
 {
@@ -11,9 +32,13 @@ namespace Tobasa
     {
         #region Member variables/class
 
-        /// Struct to save label data -label that need to be resized automatically
-        /// See labelRecordList,RecordLabelSize(),OnLabelResize()
-        /// Set label Resize event handler to OnLabelResize()
+        private delegate void AddRunningTextCallback(string text);
+        private delegate void ResetRunningTextTextCallback();
+        private delegate void DeleteRunningTextCallback(string text);
+
+        // Struct to save label data -label that need to be resized automatically
+        // See labelRecordList,RecordLabelSize(),OnLabelResize()
+        // Set label Resize event handler to OnLabelResize()
         private struct LabelRecord
         {
             public LabelRecord(Label label)
@@ -30,33 +55,49 @@ namespace Tobasa
             public float initialFontSize;
         }
 
-        /// Array runnning text bottom
+        // Array runnning text bottom
         ArrayList runningTextList = new ArrayList();
 
-        /// array to list LabelRecord
+        // array to list LabelRecord
         ArrayList labelRecordList;
 
-        /// Stopwatch to measure label's animation time
+        // Stopwatch to measure label's animation time
         private Stopwatch swPost0 = new Stopwatch();
         private Stopwatch swPost1 = new Stopwatch();
         private Stopwatch swPost2 = new Stopwatch();
         private Stopwatch swPost3 = new Stopwatch();
         private Stopwatch swPost4 = new Stopwatch();
+        private Stopwatch swPost5 = new Stopwatch();
+        private Stopwatch swPost6 = new Stopwatch();
+        private Stopwatch swPost7 = new Stopwatch();
+        private Stopwatch swPost8 = new Stopwatch();
+        private Stopwatch swPost9 = new Stopwatch();
 
-        /// Timer to display clock
+        // Timer to display clock
         private Timer timerClock { get; set; }
-        /// Timer to animate top text
-        private Timer timerTopText;
-        static int currentTopText = 0;
+
+        // Timer to animate top text
+        private Timer timerTopText0;
+        private Timer timerTopText1;
+
+        static int currentTopText0 = 0;
+        static int currentTopText1 = 0;
+
+        // optional Msg.DISPLAY_CALL_NUMBER info strip, shown in lblTopText0
         string topTextPost0, topTextPost1, topTextPost2, topTextPost3, topTextPost4;
+        string topTextPost5, topTextPost6, topTextPost7, topTextPost8, topTextPost9;
+
+        // optional msg.DISPLAY_SHOW_MESSAGE info strip, shown in lblTopText1
         string midTextPost0, midTextPost1, midTextPost2, midTextPost3, midTextPost4;
+        string midTextPost5, midTextPost6, midTextPost7, midTextPost8, midTextPost9;
+        
         Bitmap displayLogoImg  = null;
 
         private const int CP_NOCLOSE_BUTTON = 0x200;
         public bool isFullScreen;
         bool startUpCompleted;
 
-        /// Our DirectShow engine
+        // Our DirectShow engine
         private DSEngine dsEngine;
 
         public DSEngine DSEngine
@@ -70,83 +111,129 @@ namespace Tobasa
 
         public void AddRunningText(string text)
         {
-            runningTextList.Add(text);
-            runTextBottom.Text = "";
-            foreach (string txt in runningTextList)
+            // InvokeRequired required compares the thread ID of the 
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true. 
+            if (this.InvokeRequired)
             {
-                if (runTextBottom.Text != "")
-                    runTextBottom.Text += "  ::  ";
-                runTextBottom.Text += txt;
+                AddRunningTextCallback d = new AddRunningTextCallback(AddRunningText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            { 
+                runningTextList.Add(text);
+                runningTextBottom.Text = "";
+                foreach (string txt in runningTextList)
+                {
+                    if (runningTextBottom.Text != "")
+                        runningTextBottom.Text += "  ::  ";
+                    runningTextBottom.Text += txt;
+                }
             }
         }
 
         public void ResetRunningText()
         {
-            runningTextList.Clear();
-            runTextBottom.Text = "";
+            // InvokeRequired required compares the thread ID of the 
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true. 
+            if (this.InvokeRequired)
+            {
+                ResetRunningTextTextCallback d = new ResetRunningTextTextCallback(ResetRunningText);
+                this.Invoke(d, new object[] {});
+            }
+            else
+            {
+                runningTextList.Clear();
+                runningTextBottom.Text = "";
+            }
         }
 
         public void DeleteRunningText(string text)
         {
-            foreach (string txt in runningTextList )
+            // InvokeRequired required compares the thread ID of the 
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true. 
+            if (this.InvokeRequired)
             {
-                if (txt == text || txt == "ANY")
+                DeleteRunningTextCallback d = new DeleteRunningTextCallback(DeleteRunningText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                foreach (string txt in runningTextList)
                 {
-                    runningTextList.Remove(txt);
+                    if (txt == text || txt == "ANY")
+                    {
+                        runningTextList.Remove(txt);
+                    }
+                }
+                runningTextBottom.Text = "";
+                foreach (string txt in runningTextList)
+                {
+                    if (runningTextBottom.Text != "")
+                        runningTextBottom.Text += "  ::  ";
+                    runningTextBottom.Text += txt;
                 }
             }
-            runTextBottom.Text = "";
-            foreach (string txt in runningTextList)
-            {
-                if (runTextBottom.Text != "")
-                    runTextBottom.Text += "  ::  ";
-                runTextBottom.Text += txt;
-            }
         }
-
+        
         #endregion
 
         #region QueueServer message handlers
 
-        public void ProcessDisplayCallNumber(string text)
+        public void ProcessDisplayCallNumber(Message qmessage)
         {
-            if (text.StartsWith(Msg.DISPLAY_CALL_NUMBER) || text.StartsWith(Msg.DISPLAY_RECALL_NUMBER))
+            string prefix       = qmessage.PayloadValues["prefix"];
+            string number       = qmessage.PayloadValues["number"];
+            string station      = qmessage.PayloadValues["caller"];
+            string post         = qmessage.PayloadValues["post"];
+            string queueLeft    = qmessage.PayloadValues["left"];
+
+            // If relevant panel/div is hidden, stop.
+            string post0Name = Properties.Settings.Default.Post0Post;
+            string post1Name = Properties.Settings.Default.Post1Post;
+            string post2Name = Properties.Settings.Default.Post2Post;
+            string post3Name = Properties.Settings.Default.Post3Post;
+            string post4Name = Properties.Settings.Default.Post4Post;
+            string post5Name = Properties.Settings.Default.Post5Post;
+            string post6Name = Properties.Settings.Default.Post6Post;
+            string post7Name = Properties.Settings.Default.Post7Post;
+            string post8Name = Properties.Settings.Default.Post8Post;
+            string post9Name = Properties.Settings.Default.Post9Post;
+
+            // main left posts visible?
+            if ((post.Equals(post0Name) || post.Equals(post1Name) || post.Equals(post2Name) || post.Equals(post3Name) || post.Equals(post4Name))
+                && !leftDiv.Visible)
+                    return;
+                    
+            // main right posts visible?
+            if ((post.Equals(post5Name) || post.Equals(post6Name) || post.Equals(post7Name) || post.Equals(post8Name) || post.Equals(post9Name))
+                    && !rightDiv.Visible)
+                    return;
+
+            // right/left div,  two bottom posts visible?
+            if (post.Equals(post3Name) && !Properties.Settings.Default.Post3Visible)
+                return;
+            else if (post.Equals(post4Name) && !Properties.Settings.Default.Post4Visible)
+                return;
+            else if (post.Equals(post8Name) && !Properties.Settings.Default.Post8Visible)
+                return;
+            else if (post.Equals(post9Name) && !Properties.Settings.Default.Post9Visible)
+                return;
+            else
             {
-                string _prefix, _number, _station, _post, _queueCount;
-                _prefix = _number = _queueCount = _station = _post = "";
+                bool recall = false;
+                if (qmessage.MessageType == Msg.DisplayCall)
+                    recall = false;
+                else if (qmessage.MessageType == Msg.DisplayRecall)
+                    recall = true;
 
-                string[] words = text.Split(Msg.Separator.ToCharArray());
-                if (words.Length == 7)
-                {
-                    _prefix = words[2];
-                    _number = words[3];
-                    _queueCount = words[4];
-                    _station = words[5];
-                    _post = words[6];
-
-
-                    // jika panel post3 atau post4 jalan di hidden, stop process
-                    string post3Name = Properties.Settings.Default.Post3Post;
-                    string post4Name = Properties.Settings.Default.Post4Post;
-                    if (_post.Equals(post3Name) && !Properties.Settings.Default.Post3Visible)
-                        return;
-                    else if (_post.Equals(post4Name) && !Properties.Settings.Default.Post4Visible)
-                        return;
-                    else
-                    {
-                        bool recall = false;
-                        if (text.StartsWith(Msg.DISPLAY_CALL_NUMBER))
-                            recall = false;
-                        else if (text.StartsWith(Msg.DISPLAY_RECALL_NUMBER))
-                            recall = true;
-
-                        ProcessDisplayCallNumber(_prefix, _number, _queueCount, _station, _post, recall);
-                    }
-                }
+                ProcessDisplayCallNumber(prefix, number, queueLeft, station, post, recall);
             }
         }
 
-        public void ProcessDisplayCallNumber(string prefix, string number, string queueCount, string station, string post,bool recall = false)
+        public void ProcessDisplayCallNumber(string prefix, string number, string queueCount, string station, string post, bool recall = false)
         {
             string _id = station.Substring(station.IndexOf('#') + 1);
 
@@ -155,29 +242,48 @@ namespace Tobasa
             string post2Name = Properties.Settings.Default.Post2Post;
             string post3Name = Properties.Settings.Default.Post3Post;
             string post4Name = Properties.Settings.Default.Post4Post;
+            string post5Name = Properties.Settings.Default.Post5Post;
+            string post6Name = Properties.Settings.Default.Post6Post;
+            string post7Name = Properties.Settings.Default.Post7Post;
+            string post8Name = Properties.Settings.Default.Post8Post;
+            string post9Name = Properties.Settings.Default.Post9Post;
 
+            // Posts info strip prefix, shown in lblTopText0
             string post0RunText = Properties.Settings.Default.Post0RunText;
             string post1RunText = Properties.Settings.Default.Post1RunText;
             string post2RunText = Properties.Settings.Default.Post2RunText;
             string post3RunText = Properties.Settings.Default.Post3RunText;
             string post4RunText = Properties.Settings.Default.Post4RunText;
+            string post5RunText = Properties.Settings.Default.Post5RunText;
+            string post6RunText = Properties.Settings.Default.Post6RunText;
+            string post7RunText = Properties.Settings.Default.Post7RunText;
+            string post8RunText = Properties.Settings.Default.Post8RunText;
+            string post9RunText = Properties.Settings.Default.Post9RunText;
 
             string postMainCaption = "";
             bool playAudio = false;
 
+            // Loket or Counter
+            string textCounterOrLabel;
+            if (Properties.Settings.Default.AudioUseLoket)
+                textCounterOrLabel = "Loket";
+            else
+                textCounterOrLabel = "Counter";
+
+            // Now, show the information
             if (post.Equals(post0Name))
             {
-                if (!recall ) lblPost0JumAnVal.Text = queueCount;
+                if (!recall) lblPost0JumAnVal.Text = queueCount;
                 
                 lblPost0No.Text = prefix + number;
-                lblPost0CounterNo.Text = _id;
+                lblPost0CounterNo.Text = GetStationIdAsChar(_id);
 
                 // animate label
                 timerPost0.Start();
                 swPost0.Start();
 
-                string text = String.Format("{0} : Nomor {1} di Counter {2}                     ", post0RunText, prefix + number, _id);
-                topTextPost0 = text;
+                topTextPost0 = String.Format("{0} : Nomor {1} di {2} {3}  ", post0RunText, prefix + number, textCounterOrLabel, _id);
+
                 playAudio = Properties.Settings.Default.Post0PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post0Caption;
             }
@@ -186,14 +292,14 @@ namespace Tobasa
                 if (!recall) lblPost1JumAnVal.Text = queueCount;
 
                 lblPost1No.Text = prefix + number;
-                lblPost1CounterNo.Text = _id;
+                lblPost1CounterNo.Text = GetStationIdAsChar(_id);
 
                 // animate label
                 timerPost1.Start();
                 swPost1.Start();
 
-                string text = String.Format("{0} : Nomor {1} di Counter {2}               ", post1RunText, prefix + number, _id);
-                topTextPost1 = text;
+                topTextPost1 = String.Format("{0} : Nomor {1} di {2} {3}  ", post1RunText, prefix + number, textCounterOrLabel, _id);
+
                 playAudio = Properties.Settings.Default.Post1PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post1Caption;
             }
@@ -202,14 +308,14 @@ namespace Tobasa
                 if (!recall) lblPost2JumAnVal.Text = queueCount;
 
                 lblPost2No.Text = prefix + number;
-                lblPost2CounterNo.Text = _id;
+                lblPost2CounterNo.Text = GetStationIdAsChar(_id);
 
                 // animate label
                 timerPost2.Start();
                 swPost2.Start();
 
-                string text = String.Format("{0} : Nomor {1} di Counter {2}            ", post2RunText, prefix + number, _id);
-                topTextPost2 = text;
+                topTextPost2 = String.Format("{0} : Nomor {1} di {2} {3}  ", post2RunText, prefix + number, textCounterOrLabel, _id);
+
                 playAudio = Properties.Settings.Default.Post2PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post2Caption;
             }
@@ -218,14 +324,14 @@ namespace Tobasa
                 if (!recall) lblPost3JumAnVal.Text = queueCount;
 
                 lblPost3No.Text = prefix + number;
-                lblPost3CounterNo.Text = _id;
+                lblPost3CounterNo.Text = GetStationIdAsChar(_id);
 
                 // animate label
                 timerPost3.Start();
                 swPost3.Start();
 
-                string text = String.Format("{0} : Nomor {1} di Counter {2}    ", post3RunText, prefix + number, _id);
-                topTextPost3 = text;
+                topTextPost3 = String.Format("{0} : Nomor {1} di {2} {3}  ", post3RunText, prefix + number, textCounterOrLabel, _id);
+
                 playAudio = Properties.Settings.Default.Post3PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post3Caption;
             }
@@ -234,23 +340,107 @@ namespace Tobasa
                 if (!recall) lblPost4JumAnVal.Text = queueCount;
 
                 lblPost4No.Text = prefix + number;
-                lblPost4CounterNo.Text = _id;
+                lblPost4CounterNo.Text = GetStationIdAsChar(_id);
 
                 // animate label
                 timerPost4.Start();
                 swPost4.Start();
 
-                string text = String.Format("{0} : Nomor {1} di Counter {2}    ", post4RunText, prefix + number, _id);
-                topTextPost4 = text;
+                topTextPost4 = String.Format("{0} : Nomor {1} di {2} {3}  ", post4RunText, prefix + number, textCounterOrLabel, _id);
+
                 playAudio = Properties.Settings.Default.Post4PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post4Caption;
             }
+            else if (post.Equals(post5Name))
+            {
+                if (!recall) lblPost5JumAnVal.Text = queueCount;
+
+                lblPost5No.Text = prefix + number;
+                lblPost5CounterNo.Text = GetStationIdAsChar(_id);
+
+                // animate label
+                timerPost5.Start();
+                swPost5.Start();
+
+                topTextPost5 = String.Format("{0} : Nomor {1} di {2} {3}  ", post5RunText, prefix + number, textCounterOrLabel, _id);
+
+                playAudio = Properties.Settings.Default.Post5PlayAudio;
+                postMainCaption = Properties.Settings.Default.Post5Caption;
+            }
+            else if (post.Equals(post6Name))
+            {
+                if (!recall) lblPost6JumAnVal.Text = queueCount;
+
+                lblPost6No.Text = prefix + number;
+                lblPost6CounterNo.Text = GetStationIdAsChar(_id);
+
+                // animate label
+                timerPost6.Start();
+                swPost6.Start();
+
+                topTextPost6 = String.Format("{0} : Nomor {1} di {2} {3}  ", post6RunText, prefix + number, textCounterOrLabel, _id);
+
+                playAudio = Properties.Settings.Default.Post6PlayAudio;
+                postMainCaption = Properties.Settings.Default.Post6Caption;
+            }
+            else if (post.Equals(post7Name))
+            {
+                if (!recall) lblPost7JumAnVal.Text = queueCount;
+
+                lblPost7No.Text = prefix + number;
+                lblPost7CounterNo.Text = GetStationIdAsChar(_id);
+
+                // animate label
+                timerPost7.Start();
+                swPost7.Start();
+
+                topTextPost7 = String.Format("{0} : Nomor {1} di {2} {3}  ", post7RunText, prefix + number, textCounterOrLabel, _id);
+
+                playAudio = Properties.Settings.Default.Post7PlayAudio;
+                postMainCaption = Properties.Settings.Default.Post7Caption;
+            }
+            else if (post.Equals(post8Name))
+            {
+                if (!recall) lblPost8JumAnVal.Text = queueCount;
+
+                lblPost8No.Text = prefix + number;
+                lblPost8CounterNo.Text = GetStationIdAsChar(_id);
+
+                // animate label
+                timerPost8.Start();
+                swPost8.Start();
+
+                topTextPost8 = String.Format("{0} : Nomor {1} di {2} {3}  ", post8RunText, prefix + number, textCounterOrLabel, _id);
+
+                playAudio = Properties.Settings.Default.Post8PlayAudio;
+                postMainCaption = Properties.Settings.Default.Post8Caption;
+            }
+            else if (post.Equals(post9Name))
+            {
+                if (!recall) lblPost9JumAnVal.Text = queueCount;
+
+                lblPost9No.Text = prefix + number;
+                lblPost9CounterNo.Text = GetStationIdAsChar(_id);
+
+                // animate label
+                timerPost9.Start();
+                swPost9.Start();
+
+                topTextPost9 = String.Format("{0} : Nomor {1} di {2} {3}  ", post9RunText, prefix + number, textCounterOrLabel, _id);
+
+                playAudio = Properties.Settings.Default.Post9PlayAudio;
+                postMainCaption = Properties.Settings.Default.Post9Caption;
+            }
 
             // Main Post Current number display
-            if (post == Properties.Settings.Default.StationPost || Properties.Settings.Default.UpdateNumberFromOtherPost )
+            if (post == Properties.Settings.Default.StationPost || Properties.Settings.Default.UpdateNumberFromOtherPost)
             {
                 lblPostNumber.Text = prefix + number;
-                lblPostCounter.Text = "Counter " + _id;
+                lblPostCounter.Text = " " + textCounterOrLabel + " " + GetStationIdAsChar(_id);
+
+                if (Tobasa.Properties.Settings.Default.MainPostCounterText.Length > 0)
+                    lblPostCounter.Text = Tobasa.Properties.Settings.Default.MainPostCounterText + " " + GetStationIdAsChar(_id);
+
                 lblPostNameCaption.Text = postMainCaption;
             }
 
@@ -261,67 +451,83 @@ namespace Tobasa
                 PlayAudio(prefix, number, _id);
         }
 
-        public void ProcessDisplayShowMessage(string text)
+        public void ProcessDisplayShowMessage(Message qmessage)
         {
-            if (text.StartsWith(Msg.DISPLAY_SHOW_MESSAGE))   
+            string station  = qmessage.PayloadValues["caller"];
+            string post     = qmessage.PayloadValues["post"];
+            string message  = qmessage.PayloadValues["info"];
+
+            string post0Name = Properties.Settings.Default.Post0Post;
+            string post1Name = Properties.Settings.Default.Post1Post;
+            string post2Name = Properties.Settings.Default.Post2Post;
+            string post3Name = Properties.Settings.Default.Post3Post;
+            string post4Name = Properties.Settings.Default.Post4Post;
+            string post5Name = Properties.Settings.Default.Post5Post;
+            string post6Name = Properties.Settings.Default.Post6Post;
+            string post7Name = Properties.Settings.Default.Post7Post;
+            string post8Name = Properties.Settings.Default.Post8Post;
+            string post9Name = Properties.Settings.Default.Post9Post;
+
+            string post0RunText = Properties.Settings.Default.Post0RunText;
+            string post1RunText = Properties.Settings.Default.Post1RunText;
+            string post2RunText = Properties.Settings.Default.Post2RunText;
+            string post3RunText = Properties.Settings.Default.Post3RunText;
+            string post4RunText = Properties.Settings.Default.Post4RunText;
+            string post5RunText = Properties.Settings.Default.Post5RunText;
+            string post6RunText = Properties.Settings.Default.Post6RunText;
+            string post7RunText = Properties.Settings.Default.Post7RunText;
+            string post8RunText = Properties.Settings.Default.Post8RunText;
+            string post9RunText = Properties.Settings.Default.Post9RunText;
+
+            // if panel POST#3/POST#4/POST#8/POST#9 is hidden, stop process
+            if (post.Equals(post3Name) && !Properties.Settings.Default.Post3Visible)
+                return;
+            else if (post.Equals(post4Name) && !Properties.Settings.Default.Post4Visible)
+                return;
+            else if (post.Equals(post8Name) && !Properties.Settings.Default.Post8Visible)
+                return;
+            else if (post.Equals(post9Name) && !Properties.Settings.Default.Post9Visible)
+                return;
+            else
             {
-                string _station, _post, _message;
-                 _station = _post = _message = "";
+                string _id = station.Substring(station.IndexOf('#') + 1);
 
-                string[] words = text.Split(Msg.Separator.ToCharArray());
-                if (words.Length == 5)
-                {
-                     _station = words[2];
-                     _post = words[3];
-                     _message = words[4];
-
-                     string post0Name = Properties.Settings.Default.Post0Post;
-                     string post1Name = Properties.Settings.Default.Post1Post;
-                     string post2Name = Properties.Settings.Default.Post2Post;
-                     string post3Name = Properties.Settings.Default.Post3Post;
-                     string post4Name = Properties.Settings.Default.Post4Post;
-
-                     string post0RunText = Properties.Settings.Default.Post0RunText;
-                     string post1RunText = Properties.Settings.Default.Post1RunText;
-                     string post2RunText = Properties.Settings.Default.Post2RunText;
-                     string post3RunText = Properties.Settings.Default.Post3RunText;
-                     string post4RunText = Properties.Settings.Default.Post4RunText;
-
-                    // jika panel POST#3 atatu POST#4 di hidden, stop process
-                    if (_post.Equals(post3Name) && !Properties.Settings.Default.Post3Visible)
-                        return;
-                    else if (_post.Equals(post4Name) && !Properties.Settings.Default.Post4Visible)
-                        return;
-                    else
-                    {
-                        string _id = _station.Substring(_station.IndexOf('#') + 1);
-
-                        if (_post.Equals(post0Name))
-                            midTextPost0 = post0RunText + " : " + _message;
-                        else if (_post.Equals(post1Name))
-                            midTextPost1 = post1RunText + " : " + _message;
-                        else if (_post.Equals(post2Name))
-                            midTextPost2 = post2RunText + " : " + _message;
-                        else if (_post.Equals(post3Name))
-                            midTextPost3 = post3RunText + " : " + _message;
-                        else if (_post.Equals(post4Name))
-                            midTextPost4 = post4RunText + " : " + _message;
-                    }
-                }
+                if (post.Equals(post0Name))
+                    midTextPost0 = post0RunText + " : " + message;
+                else if (post.Equals(post1Name))
+                    midTextPost1 = post1RunText + " : " + message;
+                else if (post.Equals(post2Name))
+                    midTextPost2 = post2RunText + " : " + message;
+                else if (post.Equals(post3Name))
+                    midTextPost3 = post3RunText + " : " + message;
+                else if (post.Equals(post4Name))
+                    midTextPost4 = post4RunText + " : " + message;
+                else if (post.Equals(post5Name))
+                    midTextPost5 = post5RunText + " : " + message;
+                else if (post.Equals(post6Name))
+                    midTextPost6 = post6RunText + " : " + message;
+                else if (post.Equals(post7Name))
+                    midTextPost7 = post7RunText + " : " + message;
+                else if (post.Equals(post8Name))
+                    midTextPost8 = post8RunText + " : " + message;
+                else if (post.Equals(post9Name))
+                    midTextPost9 = post9RunText + " : " + message;
             }
         }
 
-        public void ProcessDisplayUpdateFinishedJob(string text)
+        public void ProcessDisplayUpdateFinishedJob(Message qmessage)
         {
-            char[] charSeparators = new char[] { ',' };
-            string[] words = text.Split(charSeparators);
+            string csvData = qmessage.PayloadValues["data"];
 
-            /// Reset first
+            char[] charSeparators = new char[] { ',' };
+            string[] words = csvData.Split(charSeparators);
+
+            // Reset first
             lblFin0.Text = ""; lblFin1.Text = ""; lblFin2.Text = ""; lblFin3.Text = ""; lblFin4.Text = "";
             lblFin5.Text = ""; lblFin6.Text = ""; lblFin7.Text = ""; lblFin8.Text = ""; lblFin9.Text = "";
                 
-            /// then update
-            int i=0;
+            // then update
+            int i = 0;
             while (i < words.Length)
             {
                 Label _lbl = null;
@@ -393,65 +599,48 @@ namespace Tobasa
         public Display()
         {
             startUpCompleted = false;
-            labelRecordList = new ArrayList();
-            topTextPost0 = topTextPost1 = topTextPost2 = topTextPost3 = string.Empty;
-            isFullScreen = false;
+            labelRecordList  = new ArrayList();
+            isFullScreen     = false;
             
             InitializeComponent();
+
             // need this so we can SetLocation to another screen
             StartPosition = FormStartPosition.Manual;
+            
             // we want to receive key event
             KeyPreview = true;
 
-            leftDivLogo.Visible = Properties.Settings.Default.ShowLogo;
-            lblTopText1.Visible = Properties.Settings.Default.ShowInfoTextTop0;
-            lblTopText0.Visible = Properties.Settings.Default.ShowInfoTextTop1;
+            SetPostCaptions();
+            InitLogo();
+            SetLoketOrCounterText();
+            RecordLabelSize();
+            AdaptCenterLayout();
+            AdaptLeftDivPostLayout();
+            AdaptRightDivPostLayout();
+            AdaptMainLeftAndRightLayout();
 
-            if (Properties.Settings.Default.BasicQueueMode)
-            {
-                pnlResepSelesai.Visible = false;
-                tableLayoutPanelAdv.ColumnStyles[0].Width = 0F;
-                tableLayoutPanelAdv.ColumnStyles[1].Width = 100F;
-            }
-            else
-            {
-                pnlResepSelesai.Visible = true;
-                tableLayoutPanelAdv.ColumnStyles[0].Width = 50F;
-                tableLayoutPanelAdv.ColumnStyles[1].Width = 50F;
-            }
+            if (Properties.Settings.Default.StartNumberWithUnderscore)
+                ResetDisplayNumbers();
 
-            lblPost0Caption.Text = Properties.Settings.Default.Post0Caption;
-            lblPost1Caption.Text = Properties.Settings.Default.Post1Caption;
-            lblPost2Caption.Text = Properties.Settings.Default.Post2Caption;
-            lblPost3Caption.Text = Properties.Settings.Default.Post3Caption;
-            lblPost4Caption.Text = Properties.Settings.Default.Post4Caption;
-
+            // set two built in runnning text
             AddRunningText(Properties.Settings.Default.RunningText0);
             AddRunningText(Properties.Settings.Default.RunningText1);
 
-            lblPostNameCaption.Text = Properties.Settings.Default.Post0Caption;
+            dsEngine = new DSEngine(this.centerPanelVideo, this.Handle);
 
-            InitLogo();
-            RecordLabelSize();
-            StartTimers();
-
-            dsEngine = new DSEngine(this.pnlVideo,this.Handle);
-
-            /// Set location to another screen if available
+            // Set location to another screen if available
             ShowToSecondScreen();
 
             if (Properties.Settings.Default.StartDisplayFullScreen)
                 SetFullScreen();
             else
                 DontFullScreen();
-            
-            if (Properties.Settings.Default.StartNumberWithUnderscore)
-                ResetDisplayNumbers();
-            
-            AdaptLeftDivPostLayout();
+
+            StartTimers();
 
             startUpCompleted = true;
         }
+
         #endregion
 
         #region Autoresize Form's Label stuffs
@@ -464,11 +653,14 @@ namespace Tobasa
         private void RecordLabelSize()
         {
             // Logo Text
-            labelRecordList.Add(new LabelRecord(lblLogo0));
+            labelRecordList.Add(new LabelRecord(lblBranding));
 
-            // Jam
-            labelRecordList.Add(new LabelRecord(lblClock));
+            // Informasi Hari, Tanggal, Jam
             labelRecordList.Add(new LabelRecord(lblDate));
+            
+            // Top info strip
+            labelRecordList.Add(new LabelRecord(lblTopText0));
+            labelRecordList.Add(new LabelRecord(lblTopText1));
 
             // POST#0
             labelRecordList.Add(new LabelRecord(lblPost0Caption));
@@ -505,7 +697,42 @@ namespace Tobasa
             labelRecordList.Add(new LabelRecord(lblPost4JumAnVal));
             labelRecordList.Add(new LabelRecord(lblPost4CounterNo));
 
-            labelRecordList.Add(new LabelRecord(lblResepFin));
+            // POST#5
+            labelRecordList.Add(new LabelRecord(lblPost5Caption));
+            labelRecordList.Add(new LabelRecord(lblPost5JumAn));
+            labelRecordList.Add(new LabelRecord(lblPost5No));
+            labelRecordList.Add(new LabelRecord(lblPost5JumAnVal));
+            labelRecordList.Add(new LabelRecord(lblPost5CounterNo));
+
+            // POST#6
+            labelRecordList.Add(new LabelRecord(lblPost6Caption));
+            labelRecordList.Add(new LabelRecord(lblPost6JumAn));
+            labelRecordList.Add(new LabelRecord(lblPost6No));
+            labelRecordList.Add(new LabelRecord(lblPost6JumAnVal));
+            labelRecordList.Add(new LabelRecord(lblPost6CounterNo));
+
+            // POST#7
+            labelRecordList.Add(new LabelRecord(lblPost7Caption));
+            labelRecordList.Add(new LabelRecord(lblPost7JumAn));
+            labelRecordList.Add(new LabelRecord(lblPost7No));
+            labelRecordList.Add(new LabelRecord(lblPost7JumAnVal));
+            labelRecordList.Add(new LabelRecord(lblPost7CounterNo));
+
+            // POST#8
+            labelRecordList.Add(new LabelRecord(lblPost8Caption));
+            labelRecordList.Add(new LabelRecord(lblPost8JumAn));
+            labelRecordList.Add(new LabelRecord(lblPost8No));
+            labelRecordList.Add(new LabelRecord(lblPost8JumAnVal));
+            labelRecordList.Add(new LabelRecord(lblPost8CounterNo));
+
+            // POST#9
+            labelRecordList.Add(new LabelRecord(lblPost9Caption));
+            labelRecordList.Add(new LabelRecord(lblPost9JumAn));
+            labelRecordList.Add(new LabelRecord(lblPost9No));
+            labelRecordList.Add(new LabelRecord(lblPost9JumAnVal));
+            labelRecordList.Add(new LabelRecord(lblPost9CounterNo));
+
+            labelRecordList.Add(new LabelRecord(lblQueueNumberFinished));
             labelRecordList.Add(new LabelRecord(lblFin0));
             labelRecordList.Add(new LabelRecord(lblFin1));
             labelRecordList.Add(new LabelRecord(lblFin2));
@@ -562,75 +789,109 @@ namespace Tobasa
 
         private void StartTimers()
         {
+            bool topInfoStrip0Visible = Properties.Settings.Default.ShowInfoTextTop0;
+            bool topInfoStrip1Visible = Properties.Settings.Default.ShowInfoTextTop1;
+
             timerClock = new Timer();
-            timerClock.Interval = 50;
+            timerClock.Interval = 1000;
             timerClock.Tick += new EventHandler(OnTimerClockTick);
             timerClock.Start();
+            
+            //if (topInfoStrip0Visible)
+            {
+                timerTopText0 = new Timer();
+                timerTopText0.Interval = 4000;
+                timerTopText0.Tick += new EventHandler(OnTimerTopText0Tick);
+                timerTopText0.Start();
+            }
 
-            timerTopText = new Timer();
-            timerTopText.Interval = 2000;
-            timerTopText.Tick += new EventHandler(OnTimerTopTextTick);
-            timerTopText.Start();
+            //if (topInfoStrip1Visible)
+            {
+                timerTopText1 = new Timer();
+                timerTopText1.Interval = 4000;
+                timerTopText1.Tick += new EventHandler(OnTimerTopText1Tick);
+                timerTopText1.Start();
+            }
 
             timerPost0.Interval = 500;
             timerPost1.Interval = 500;
             timerPost2.Interval = 500;
             timerPost3.Interval = 500;
             timerPost4.Interval = 500;
+            timerPost5.Interval = 500;
+            timerPost6.Interval = 500;
+            timerPost7.Interval = 500;
+            timerPost8.Interval = 500;
+            timerPost9.Interval = 500;
         }
 
         private void OnTimerClockTick(object sender, EventArgs e)
         {
+            CultureInfo enUS = CultureInfo.CreateSpecificCulture("en-US");
+
             string hari = "";
-            if (DateTime.Now.ToString("dddd") == "Sunday")
+            string dayName = DateTime.Now.ToString("dddd", enUS.DateTimeFormat);
+
+            if (dayName == "Sunday")
                 hari = "Minggu";
-            else if (DateTime.Now.ToString("dddd") == "Monday")
+            else if (dayName == "Monday")
                 hari = "Senin";
-            else if (DateTime.Now.ToString("dddd") == "Tuesday")
+            else if (dayName == "Tuesday")
                 hari = "Selasa";
-            else if (DateTime.Now.ToString("dddd") == "Wednesday")
+            else if (dayName == "Wednesday")
                 hari = "Rabu";
-            else if (DateTime.Now.ToString("dddd") == "Thursday")
+            else if (dayName == "Thursday")
                 hari = "Kamis";
-            else if (DateTime.Now.ToString("dddd") == "Friday")
+            else if (dayName == "Friday")
                 hari = "Jumat";
-            else if (DateTime.Now.ToString("dddd") == "Saturday")
+            else if (dayName == "Saturday")
                 hari = "Sabtu";
 
-            lblClock.Text = DateTime.Now.ToString("HH:mm ");
-            lblDate.Text = hari + DateTime.Now.ToString("  dd-MM-yyyy ");
-            //lblDate.Text = DateTime.Now.ToString("dd MMMM yyyy");
+            string jamMenit = DateTime.Now.ToString("HH.mm.ss ");
+            lblDate.Text = hari + DateTime.Now.ToString(" dd-MM-yyyy ") + jamMenit;
         }
 
-        private void OnTimerTopTextTick(object sender, EventArgs e)
+        private void OnTimerTopText0Tick(object sender, EventArgs e)
         {
-            switch (currentTopText)
+            switch (currentTopText0)
             {
-                case 0: 
-                    lblTopText0.Text = topTextPost0;
-                    lblTopText1.Text = midTextPost0;
-                    break;
-                case 1: 
-                    lblTopText0.Text = topTextPost1;
-                    lblTopText1.Text = midTextPost1;
-                    break;
-                case 2: 
-                    lblTopText0.Text = topTextPost2;
-                    lblTopText1.Text = midTextPost2;
-                    break;
-                case 3: 
-                    lblTopText0.Text = topTextPost3;
-                    lblTopText1.Text = midTextPost3;
-                    break;
-                case 4:
-                    lblTopText0.Text = topTextPost4;
-                    lblTopText1.Text = midTextPost4;
-                    break;
+                case 0: lblTopText0.Text = topTextPost0; break;
+                case 1: lblTopText0.Text = topTextPost1; break;
+                case 2: lblTopText0.Text = topTextPost2; break;
+                case 3: lblTopText0.Text = topTextPost3; break;
+                case 4: lblTopText0.Text = topTextPost4; break;
+                case 5: lblTopText0.Text = topTextPost5; break;
+                case 6: lblTopText0.Text = topTextPost6; break;
+                case 7: lblTopText0.Text = topTextPost7; break;
+                case 8: lblTopText0.Text = topTextPost8; break;
+                case 9: lblTopText0.Text = topTextPost9; break;
             }
-            if (currentTopText == 4)
-                currentTopText = 0;
+
+            if (currentTopText0 == 9)
+                currentTopText0 = 0;
             else
-                currentTopText++;
+                currentTopText0++;
+        }
+
+        private void OnTimerTopText1Tick(object sender, EventArgs e)
+        {
+            switch (currentTopText1)
+            {
+                case 0: lblTopText1.Text = midTextPost0; break;
+                case 1: lblTopText1.Text = midTextPost1; break;
+                case 2: lblTopText1.Text = midTextPost2; break;
+                case 3: lblTopText1.Text = midTextPost3; break;
+                case 4: lblTopText1.Text = midTextPost4; break;
+                case 5: lblTopText1.Text = midTextPost5; break;
+                case 6: lblTopText1.Text = midTextPost6; break;
+                case 7: lblTopText1.Text = midTextPost7; break;
+                case 8: lblTopText1.Text = midTextPost8; break;
+                case 9: lblTopText1.Text = midTextPost9; break;
+            }
+            if (currentTopText1 == 9)
+                currentTopText1 = 0;
+            else
+                currentTopText1++;
         }
 
         private void OnTimer(object sender, EventArgs e)
@@ -669,6 +930,36 @@ namespace Tobasa
                 lblNo = lblPost4No;
                 lblCtr = lblPost4CounterNo;
                 sw = swPost4;
+            }
+            if (tmr == timerPost5)
+            {
+                lblNo = lblPost5No;
+                lblCtr = lblPost5CounterNo;
+                sw = swPost5;
+            }
+            else if (tmr == timerPost6)
+            {
+                lblNo = lblPost6No;
+                lblCtr = lblPost6CounterNo;
+                sw = swPost6;
+            }
+            else if (tmr == timerPost7)
+            {
+                lblNo = lblPost7No;
+                lblCtr = lblPost7CounterNo;
+                sw = swPost7;
+            }
+            else if (tmr == timerPost8)
+            {
+                lblNo = lblPost8No;
+                lblCtr = lblPost8CounterNo;
+                sw = swPost8;
+            }
+            else if (tmr == timerPost9)
+            {
+                lblNo = lblPost9No;
+                lblCtr = lblPost9CounterNo;
+                sw = swPost9;
             }
 
             // animate label
@@ -725,7 +1016,7 @@ namespace Tobasa
             base.Dispose(disposing);
         }
 
-        protected override void WndProc(ref Message m)
+        protected override void WndProc(ref System.Windows.Forms.Message m)
         {
             if (startUpCompleted)
             {
@@ -746,6 +1037,22 @@ namespace Tobasa
             base.WndProc(ref m);
         }
 
+        private String GetStationIdAsChar(string id)
+        {
+            if (Tobasa.Properties.Settings.Default.AudioLoketIDUseAlphabet)
+            {
+                // ASCII characters: 65 to 90
+                // we use 1 = A = 65 ,  2 = B = 66
+                int staId = Convert.ToInt32(id);
+                staId = 64 + staId;
+                
+                string stChar = ((char)staId).ToString();
+                return stChar;
+            }
+            
+            return id;
+        }        
+
         #endregion
 
         #region Form appearance stuff
@@ -757,8 +1064,8 @@ namespace Tobasa
             else
                 displayLogoImg = Properties.Resources.QueueLogo150;
 
-            picBoxLogo.Image = displayLogoImg;
-            lblLogo0.Text = Properties.Settings.Default.DisplayLogoText;
+            pictureBoxLogo.Image = displayLogoImg;
+            lblBranding.Text = Properties.Settings.Default.DisplayLogoText;
         }
 
         public void ResetDisplayNumbers()
@@ -768,12 +1075,22 @@ namespace Tobasa
             lblPost2No.Text = "_";
             lblPost3No.Text = "_";
             lblPost4No.Text = "_";
+            lblPost5No.Text = "_";
+            lblPost6No.Text = "_";
+            lblPost7No.Text = "_";
+            lblPost8No.Text = "_";
+            lblPost9No.Text = "_";
 
             lblPost0CounterNo.Text = "_";
             lblPost1CounterNo.Text = "_";
             lblPost2CounterNo.Text = "_";
             lblPost3CounterNo.Text = "_";
             lblPost4CounterNo.Text = "_";
+            lblPost5CounterNo.Text = "_";
+            lblPost6CounterNo.Text = "_";
+            lblPost7CounterNo.Text = "_";
+            lblPost8CounterNo.Text = "_";
+            lblPost9CounterNo.Text = "_";
 
             lblPostNumber.Text = "_";
 
@@ -782,6 +1099,11 @@ namespace Tobasa
             lblPost2JumAnVal.Text = "_";
             lblPost3JumAnVal.Text = "_";
             lblPost4JumAnVal.Text = "_";
+            lblPost5JumAnVal.Text = "_";
+            lblPost6JumAnVal.Text = "_";
+            lblPost7JumAnVal.Text = "_";
+            lblPost8JumAnVal.Text = "_";
+            lblPost9JumAnVal.Text = "_";
 
             lblFin0.Text = "_";
             lblFin1.Text = "_";
@@ -837,17 +1159,218 @@ namespace Tobasa
             }
         }
 
+        private void AdaptRightDivPostLayout()
+        {
+            bool visible8 = Properties.Settings.Default.Post8Visible;
+            pnlPost8.Visible = visible8;
+
+            bool visible9 = Properties.Settings.Default.Post9Visible;
+            pnlPost9.Visible = visible9;
+
+            if (visible8 && visible9)
+            {
+                foreach (RowStyle style in rightDivPost.RowStyles)
+                {
+                    style.SizeType = SizeType.Percent;
+                    style.Height = 20F;
+                }
+            }
+            else if (!visible8 && !visible9)
+            {
+                rightDivPost.RowStyles[0].Height = 33.33F;
+                rightDivPost.RowStyles[1].Height = 33.33F;
+                rightDivPost.RowStyles[2].Height = 33.33F;
+                rightDivPost.RowStyles[3].Height = 0F;
+                rightDivPost.RowStyles[4].Height = 0F;
+            }
+            else if (!visible8 && visible9)
+            {
+                rightDivPost.RowStyles[0].Height = 25F;
+                rightDivPost.RowStyles[1].Height = 25F;
+                rightDivPost.RowStyles[2].Height = 25F;
+                rightDivPost.RowStyles[3].Height = 0F;
+                rightDivPost.RowStyles[4].Height = 25F;
+            }
+            else if (visible8 && !visible9)
+            {
+                rightDivPost.RowStyles[0].Height = 25F;
+                rightDivPost.RowStyles[1].Height = 25F;
+                rightDivPost.RowStyles[2].Height = 25F;
+                rightDivPost.RowStyles[3].Height = 25F;
+                rightDivPost.RowStyles[4].Height = 0F;
+            }
+        }
+
+        private void AdaptMainLeftAndRightLayout()
+        {
+            bool rightDivVisible = Properties.Settings.Default.ShowRightPosts;
+            bool leftDivVisible   = Properties.Settings.Default.ShowLeftPosts;
+
+            if (rightDivVisible == false && leftDivVisible == true)
+            {
+                rightDiv.Visible = false;
+                leftDiv.Visible  = true;
+
+                topDiv.ColumnStyles[0].Width = 35F;
+                topDiv.ColumnStyles[1].Width = 65F;
+                topDiv.ColumnStyles[2].Width = 0F;
+            }
+            else if (rightDivVisible == true && leftDivVisible == false)
+            {
+                leftDiv.Visible  = false;
+                rightDiv.Visible = true;
+
+                topDiv.ColumnStyles[0].Width = 0F;
+                topDiv.ColumnStyles[1].Width = 65F;
+                topDiv.ColumnStyles[2].Width = 35F;
+            }
+        }
+
+        private void AdaptCenterLayout()
+        {
+            bool logoVisible          = Properties.Settings.Default.ShowLogo;
+            bool topInfoStrip0Visible = Properties.Settings.Default.ShowInfoTextTop0;
+            bool topInfoStrip1Visible = Properties.Settings.Default.ShowInfoTextTop1;
+            bool centerMiddleVisible  = Properties.Settings.Default.ShowCenterMiddleDiv;
+            
+            if (!logoVisible && topInfoStrip0Visible && topInfoStrip1Visible && centerMiddleVisible)
+            {
+                centerBrandDiv.Visible = false;
+                centerDiv.RowStyles[0].Height = 0F;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 5F;
+                centerDiv.RowStyles[3].Height = 5F;
+                centerDiv.RowStyles[4].Height = 25F;
+                centerDiv.RowStyles[5].Height = 60F;
+            }
+            else if (!logoVisible && !topInfoStrip0Visible && topInfoStrip1Visible && centerMiddleVisible)
+            {
+                centerBrandDiv.Visible = false;
+                centerDiv.RowStyles[0].Height = 0F;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 0F;
+                centerDiv.RowStyles[3].Height = 5F;
+                centerDiv.RowStyles[4].Height = 30F;
+                centerDiv.RowStyles[5].Height = 60F;
+            }
+            else if (!logoVisible && topInfoStrip0Visible && !topInfoStrip1Visible && centerMiddleVisible)
+            {
+                centerBrandDiv.Visible = false;
+                centerDiv.RowStyles[0].Height = 0F;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 5F;
+                centerDiv.RowStyles[3].Height = 0F;
+                centerDiv.RowStyles[4].Height = 30F;
+                centerDiv.RowStyles[5].Height = 60F;
+            }
+            else if (!logoVisible && !topInfoStrip0Visible && !topInfoStrip1Visible && centerMiddleVisible)
+            {
+                centerBrandDiv.Visible = false;
+                centerDiv.RowStyles[0].Height = 0F;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 0F;
+                centerDiv.RowStyles[3].Height = 0F;
+                centerDiv.RowStyles[4].Height = 30F;
+                centerDiv.RowStyles[5].Height = 65F;
+            }
+            else if (logoVisible && !topInfoStrip0Visible && !topInfoStrip1Visible && centerMiddleVisible)
+            {
+                centerDiv.RowStyles[0].Height = 13;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 0F;
+                centerDiv.RowStyles[3].Height = 0F;
+                centerDiv.RowStyles[4].Height = 25F;
+                centerDiv.RowStyles[5].Height = 57F;
+            }
+            else if (logoVisible && topInfoStrip0Visible && !topInfoStrip1Visible && centerMiddleVisible)
+            {
+                centerDiv.RowStyles[0].Height = 13;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 5F;
+                centerDiv.RowStyles[3].Height = 0F;
+                centerDiv.RowStyles[4].Height = 25F;
+                centerDiv.RowStyles[5].Height = 52F;
+            }
+            else if (logoVisible && !topInfoStrip0Visible && topInfoStrip1Visible && centerMiddleVisible)
+            {
+                centerDiv.RowStyles[0].Height = 13;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 0F;
+                centerDiv.RowStyles[3].Height = 5F;
+                centerDiv.RowStyles[4].Height = 25F;
+                centerDiv.RowStyles[5].Height = 52F;
+            }
+            else if (logoVisible && topInfoStrip0Visible && topInfoStrip1Visible && !centerMiddleVisible)
+            {
+                centerDiv.RowStyles[0].Height = 15;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 5F;
+                centerDiv.RowStyles[3].Height = 5F;
+                centerDiv.RowStyles[4].Height = 0F;
+                centerDiv.RowStyles[5].Height = 65F;
+            }
+            else if (logoVisible && !topInfoStrip0Visible && topInfoStrip1Visible && !centerMiddleVisible)
+            {
+                centerDiv.RowStyles[0].Height = 15;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 0F;
+                centerDiv.RowStyles[3].Height = 5F;
+                centerDiv.RowStyles[4].Height = 0F;
+                centerDiv.RowStyles[5].Height = 70F;
+            }
+            else if (logoVisible && topInfoStrip0Visible && !topInfoStrip1Visible && !centerMiddleVisible)
+            {
+                centerDiv.RowStyles[0].Height = 15;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 5F;
+                centerDiv.RowStyles[3].Height = 0F;
+                centerDiv.RowStyles[4].Height = 0F;
+                centerDiv.RowStyles[5].Height = 70F;
+            }
+            else if (logoVisible && !topInfoStrip0Visible && !topInfoStrip1Visible && !centerMiddleVisible)
+            {
+                centerDiv.RowStyles[0].Height = 15;
+                centerDiv.RowStyles[1].Height = 5F;
+                centerDiv.RowStyles[2].Height = 5F;
+                centerDiv.RowStyles[3].Height = 0F;
+                centerDiv.RowStyles[4].Height = 0F;
+                centerDiv.RowStyles[5].Height = 70F;
+            }
+            else
+            {
+                centerDiv.RowStyles[0].Height = 13F;  // branding/logo div
+                centerDiv.RowStyles[1].Height = 4F;   // date time
+                centerDiv.RowStyles[2].Height = 4F;   // topInfoStrip0
+                centerDiv.RowStyles[3].Height = 4F;   // topInfoStrip1
+                centerDiv.RowStyles[4].Height = 25F;  // centerMiddleDiv
+                centerDiv.RowStyles[5].Height = 50F;  // video panel
+            }
+
+            if (Properties.Settings.Default.BasicQueueMode)
+            {
+                pnlAntrianFinished.Visible = false;
+                centerMiddleDiv.ColumnStyles[0].Width = 0F;
+                centerMiddleDiv.ColumnStyles[1].Width = 100F;
+            }
+            else
+            {
+                pnlAntrianFinished.Visible = true;
+                centerMiddleDiv.ColumnStyles[0].Width = 50F;
+                centerMiddleDiv.ColumnStyles[1].Width = 50F;
+            }
+        }
+
         public void ShowToSecondScreen()
         {
             Screen[] screens = Screen.AllScreens;
             if (screens.Length > 1)
             {
-                /// There are multiple monitors.
+                // There are multiple monitors.
                 foreach (Screen scr in screens)
                 {
                     if (!scr.Primary)
                     {
-                        /// This is not the primary monitor.
+                        // This is not the primary monitor.
                         var workingArea = scr.WorkingArea;
                         this.Left = workingArea.Left;
                         this.Top = workingArea.Top;
@@ -896,14 +1419,44 @@ namespace Tobasa
             }
         }
 
+        private void SetLoketOrCounterText()
+        {
+            if (Tobasa.Properties.Settings.Default.AudioUseLoket)
+            {
+                lblCounterLeft.Text = "Loket";
+                lblCounterRight.Text = "Loket";
+            }
+            else
+            {
+                lblCounterLeft.Text = "Counter";
+                lblCounterRight.Text = "Counter";
+            }
+        }
+
+        private void SetPostCaptions()
+        {
+            lblPost0Caption.Text = Properties.Settings.Default.Post0Caption;
+            lblPost1Caption.Text = Properties.Settings.Default.Post1Caption;
+            lblPost2Caption.Text = Properties.Settings.Default.Post2Caption;
+            lblPost3Caption.Text = Properties.Settings.Default.Post3Caption;
+            lblPost4Caption.Text = Properties.Settings.Default.Post4Caption;
+            lblPost5Caption.Text = Properties.Settings.Default.Post5Caption;
+            lblPost6Caption.Text = Properties.Settings.Default.Post6Caption;
+            lblPost7Caption.Text = Properties.Settings.Default.Post7Caption;
+            lblPost8Caption.Text = Properties.Settings.Default.Post8Caption;
+            lblPost9Caption.Text = Properties.Settings.Default.Post9Caption;
+
+            lblPostNameCaption.Text = Properties.Settings.Default.Post0Caption;
+        }
+
         #endregion
 
         #region Form event handlers
 
         private void Display_Move(object sender, System.EventArgs e)
         {
-            if (! this.DSEngine.AudioOnly)
-                this.DSEngine.ResizeVideoWindow(this.pnlVideo);
+            if (!this.DSEngine.AudioOnly)
+                this.DSEngine.ResizeVideoWindow(this.centerPanelVideo);
         }
 
         private void Display_Resize(object sender, System.EventArgs e)
@@ -912,7 +1465,7 @@ namespace Tobasa
                 return;
 
             if (!this.DSEngine.AudioOnly)
-                this.DSEngine.ResizeVideoWindow(this.pnlVideo);
+                this.DSEngine.ResizeVideoWindow(this.centerPanelVideo);
         }
 
         private void Display_FormClosing(object sender, FormClosingEventArgs e)

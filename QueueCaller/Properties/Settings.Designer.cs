@@ -12,7 +12,7 @@ namespace Tobasa.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -59,17 +59,6 @@ namespace Tobasa.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antr" +
-            "i")]
-        public string ConnectionString {
-            get {
-                return ((string)(this["ConnectionString"]));
-            }
-        }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("POST0")]
@@ -91,18 +80,6 @@ namespace Tobasa.Properties {
             }
             set {
                 this["SecuritySalt"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ad7415644add93d6e719d2b593da6e6e")]
-        public string ConnectionStringPassword {
-            get {
-                return ((string)(this["ConnectionStringPassword"]));
-            }
-            set {
-                this["ConnectionStringPassword"] = value;
             }
         }
         
@@ -139,6 +116,11 @@ namespace Tobasa.Properties {
   <string>POST2|Pendaftaran RJ</string>
   <string>POST3|BPJS Kesehatan</string>
   <string>POST4|Customer Service</string>
+  <string>POST5|Poli Gigi</string>
+  <string>POST6|Poli Anak</string>
+  <string>POST7|Poli Mata</string>
+  <string>POST8|Poli Kulit</string>
+  <string>POST9|Poli THT</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection UIPostList {
             get {
@@ -151,25 +133,37 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("POST0")]
-        public string UpdateDisplayJobStatusPost {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ManageAllPostAdvanceQueue {
             get {
-                return ((string)(this["UpdateDisplayJobStatusPost"]));
+                return ((bool)(this["ManageAllPostAdvanceQueue"]));
             }
             set {
-                this["UpdateDisplayJobStatusPost"] = value;
+                this["ManageAllPostAdvanceQueue"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool BasicQueueMode {
+        public bool ManageAdvanceQueue {
             get {
-                return ((bool)(this["BasicQueueMode"]));
+                return ((bool)(this["ManageAdvanceQueue"]));
             }
             set {
-                this["BasicQueueMode"] = value;
+                this["ManageAdvanceQueue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowPostsButtonDiv {
+            get {
+                return ((bool)(this["ShowPostsButtonDiv"]));
+            }
+            set {
+                this["ShowPostsButtonDiv"] = value;
             }
         }
     }

@@ -117,14 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="menuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 3</value>
+  </metadata>
   <data name="textBox2.Text" xml:space="preserve">
     <value>Station adalah Identitas aplikasi Antrian yang diinstall pada komputer - yaitu ADMIN,  DISPLAY, CALLER dan TICKET
 Format ID untuk Station yaitu: NamaID#NomorUrut, contoh: CALLER#1 , CALLER#2, DISPLAY#2 , maximum 10 karakter
 Jika canlogin di set "False" Station tidak bisa login ke server antrian</value>
   </data>
-  <metadata name="menuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>25</value>
   </metadata>

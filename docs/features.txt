@@ -1,0 +1,20 @@
+* Settingan default menggunakan database embedded, jadi tidak perlu menginstall database server.
+* Bila diperlukan, dapat menggunakan SQL Server sebagai database.
+
+* Panggilan audio
+* Melayani hingga 10 POS layanan
+* Settingan default satu POS layanan dengan sepuluh Loket
+* Text dan audio Loket bisa diganti dengan Counter
+* Memanggil kembali nomor yang sudah terpanggil di loket lain (pada POS yang sama)
+* POS layanan yang tampil pada Modul Display dan Tiket dapat diatur dengan mudah.
+* Modul Display dan Tiket dapat menampilkan minimal tiga POS layanan
+* Branding/Logo dapat diubah dengan mudah
+* Nama-nama POS layanan dan Menu tiket dapat diubah dengan mudah
+* Menampilkan video atau TV
+* Mengubah/menambah running text dengan mudah
+
+Modul Tiket
+* Mencetak ke kertas ukutan 8 cm
+* Pengaturan jumlah print out yang berbeda untuk masing-masing POS layanan
+* Pengaturan audio, visibilitas, print out tiket, spesifik untuk masing-masing POS layanan
+

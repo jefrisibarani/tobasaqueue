@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@ namespace Tobasa
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-			Util.CheckUserConfigurationFile();
+            Util.CheckUserConfigurationFile();
 
-			Logger.Log("--------------------------------------------------------------------------------------");
+            Logger.Log("-------------------------------------------------------------------------------");
             Logger.Log("Starting " + Application.ProductName + " ...");
             Logger.Log("From " + Util.ProcessPath);
 

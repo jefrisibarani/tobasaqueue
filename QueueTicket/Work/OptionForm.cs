@@ -1,3 +1,23 @@
+#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
 using System;
 using System.Windows.Forms;
 
@@ -5,21 +25,61 @@ namespace Tobasa
 {
     public partial class OptionForm : Form
     {
-      
+        private PostPropertyCollection postProperties = new PostPropertyCollection();
         public OptionForm()
         {
             InitializeComponent();
 
-            /// Populate cbPost
+            // Get POST Ids
+            string[] postIds = new string[Properties.Settings.Default.UIPostList.Count];
+            Properties.Settings.Default.UIPostList.CopyTo(postIds, 0);
+            
+            // Populate PostPropertyCollection
+            foreach (string id in postIds )
+            {
+                postProperties.Add(id, new PostProperty(id));
+            }
+
+            // Populate cbPost
             cbPost.Items.Clear();
-            string[] cbPostItems = new string[Properties.Settings.Default.UIPostList.Count];
-            Properties.Settings.Default.UIPostList.CopyTo(cbPostItems, 0);
-            cbPost.Items.AddRange(cbPostItems);
-            cbPost.Text = Properties.Settings.Default.StationPost;
+            cbPost.Items.AddRange(postIds);
+
+            // Populate cbSelectPost
+            cbSelectPost.Items.Clear();
+            cbSelectPost.Items.AddRange(postIds);
 
             RestoreSettings();
         }
 
+        private void SetPostPropertiesControl(string postid)
+        {
+            string postId = postid;
+            PostProperty postProperty = postProperties.FindById(postId);
+
+            if (postProperty != null)
+            {
+                tbPostName.Text = postProperty.Name;
+                tbPostId.Text = postProperty.Id;
+                tbPostCaption.Text = postProperty.Caption;
+                chkPostEnabled.Checked = postProperty.Enabled;
+                tbPostBtnImgOn.Text = postProperty.BtnImageOn;
+                tbPostBtnImgOff.Text = postProperty.BtnImageOff;
+                pickPostPrintCopies.Value = (decimal)postProperty.PrintCopies;
+                tbPostTicketHeader.Text = postProperty.PrintHeader;
+
+                if (postProperty.Index == 0 || postProperty.Index == 1 || postProperty.Index == 2 ||
+                   postProperty.Index == 5 || postProperty.Index == 6 || postProperty.Index == 7)
+                {
+                    chkPostVisible.Checked = true;
+                    chkPostVisible.Enabled = false;
+                }
+                else
+                {
+                    chkPostVisible.Checked = postProperty.Visible;
+                    chkPostVisible.Enabled = true;
+                }
+            }
+        }
         private void RestoreSettings()
         {
             tbServer.Text = Properties.Settings.Default.QueueServerHost;
@@ -38,53 +98,20 @@ namespace Tobasa
             tbImgHeader.Text = Properties.Settings.Default.DisplayHeaderImg;
             tbImgBG.Text = Properties.Settings.Default.DisplayHeaderBg;
 
-            post0Name.Text = Properties.Settings.Default.Post0Name;
-            post0Post.Text = Properties.Settings.Default.Post0Post;
-            post0Caption.Text = Properties.Settings.Default.Post0Caption;
-            post0Chk.Checked = Properties.Settings.Default.Post0Enabled;
-            post0ImgOn.Text = Properties.Settings.Default.Post0BtnImgOn;
-            post0ImgOff.Text = Properties.Settings.Default.Post0BtnImgOff;
-            post0Copies.Value = (decimal)Properties.Settings.Default.Post0PrintCopies;
-            post0PrintHeader.Text = Properties.Settings.Default.Post0PrintHeader;
+            chkButtonsWithLabel.Checked = Properties.Settings.Default.DrawLabelOnButtons;
+            btnFontSizeChanger.Value = Properties.Settings.Default.ButtonLabelFontSize;
+            labelFontSizeChanger.Value = Properties.Settings.Default.MainMenuLabelFontSize;
 
-            post1Name.Text = Properties.Settings.Default.Post1Name;
-            post1Post.Text = Properties.Settings.Default.Post1Post;
-            post1Caption.Text = Properties.Settings.Default.Post1Caption;
-            post1Chk.Checked = Properties.Settings.Default.Post1Enabled;
-            post1ImgOn.Text = Properties.Settings.Default.Post1BtnImgOn;
-            post1ImgOff.Text = Properties.Settings.Default.Post1BtnImgOff;
-            post1Copies.Value = (decimal)Properties.Settings.Default.Post1PrintCopies;
-            post1PrintHeader.Text = Properties.Settings.Default.Post1PrintHeader;
+            chkShowLeftMenu.Checked = Properties.Settings.Default.ShowLeftMenu;
+            chkShowRightMenu.Checked = Properties.Settings.Default.ShowRightMenu;
 
-            post2Name.Text = Properties.Settings.Default.Post2Name;
-            post2Post.Text = Properties.Settings.Default.Post2Post;
-            post2Caption.Text = Properties.Settings.Default.Post2Caption;
-            post2Chk.Checked = Properties.Settings.Default.Post2Enabled;
-            post2ImgOn.Text = Properties.Settings.Default.Post2BtnImgOn;
-            post2ImgOff.Text = Properties.Settings.Default.Post2BtnImgOff;
-            post2Copies.Value = (decimal)Properties.Settings.Default.Post2PrintCopies;
-            post2PrintHeader.Text = Properties.Settings.Default.Post2PrintHeader;
+            // Setup post options
+            postProperties.LoadFromConfiguration();
+            cbSelectPost.Text = "POST0";
+            var postId = cbSelectPost.Text;
+            SetPostPropertiesControl(postId);
 
-            post3Name.Text = Properties.Settings.Default.Post3Name;
-            post3Post.Text = Properties.Settings.Default.Post3Post;
-            post3Caption.Text = Properties.Settings.Default.Post3Caption;
-            post3Chk.Checked = Properties.Settings.Default.Post3Enabled;
-            post3ChkVisible.Checked = Properties.Settings.Default.Post3Visible;
-            post3ImgOn.Text = Properties.Settings.Default.Post3BtnImgOn;
-            post3ImgOff.Text = Properties.Settings.Default.Post3BtnImgOff;
-            post3Copies.Value = (decimal)Properties.Settings.Default.Post3PrintCopies;
-            post3PrintHeader.Text = Properties.Settings.Default.Post3PrintHeader;
-
-            post4Name.Text = Properties.Settings.Default.Post4Name;
-            post4Post.Text = Properties.Settings.Default.Post4Post;
-            post4Caption.Text = Properties.Settings.Default.Post4Caption;
-            post4Chk.Checked = Properties.Settings.Default.Post4Enabled;
-            post4ChkVisible.Checked = Properties.Settings.Default.Post4Visible;
-            post4ImgOn.Text = Properties.Settings.Default.Post4BtnImgOn;
-            post4ImgOff.Text = Properties.Settings.Default.Post4BtnImgOff;
-            post4Copies.Value = (decimal)Properties.Settings.Default.Post4PrintCopies;
-            post4PrintHeader.Text = Properties.Settings.Default.Post4PrintHeader;
-
+            SetRadioButtonMainMenuLabelState();
         }
 
         private void SaveSettings()
@@ -102,54 +129,57 @@ namespace Tobasa
             Properties.Settings.Default.DisplayHeaderImg = tbImgHeader.Text;
             Properties.Settings.Default.DisplayHeaderBg = tbImgBG.Text;
 
-            Properties.Settings.Default.Post0Name = post0Name.Text;
-            Properties.Settings.Default.Post0Post = post0Post.Text;
-            Properties.Settings.Default.Post0Caption = post0Caption.Text;
-            Properties.Settings.Default.Post0Enabled = post0Chk.Checked;
-            Properties.Settings.Default.Post0BtnImgOn = post0ImgOn.Text;
-            Properties.Settings.Default.Post0BtnImgOff = post0ImgOff.Text;
-            Properties.Settings.Default.Post0PrintCopies = (short)post0Copies.Value;
-            Properties.Settings.Default.Post0PrintHeader = post0PrintHeader.Text;
+            Properties.Settings.Default.DrawLabelOnButtons = chkButtonsWithLabel.Checked;
+            Properties.Settings.Default.ButtonLabelFontSize = (int) btnFontSizeChanger.Value;
+            Properties.Settings.Default.MainMenuLabelFontSize = (int)labelFontSizeChanger.Value;
+            Properties.Settings.Default.MainMenuLabelAlignment = GetMainMenuLabelAlignmentValue();
 
-            Properties.Settings.Default.Post1Name = post1Name.Text;
-            Properties.Settings.Default.Post1Post = post1Post.Text;
-            Properties.Settings.Default.Post1Caption = post1Caption.Text;
-            Properties.Settings.Default.Post1Enabled = post1Chk.Checked;
-            Properties.Settings.Default.Post1BtnImgOn = post1ImgOn.Text;
-            Properties.Settings.Default.Post1BtnImgOff = post1ImgOff.Text;
-            Properties.Settings.Default.Post1PrintCopies = (short)post1Copies.Value;
-            Properties.Settings.Default.Post1PrintHeader = post1PrintHeader.Text;
+            Properties.Settings.Default.ShowLeftMenu = chkShowLeftMenu.Checked;
+            Properties.Settings.Default.ShowRightMenu = chkShowRightMenu.Checked;
 
-            Properties.Settings.Default.Post2Name = post2Name.Text;
-            Properties.Settings.Default.Post2Post = post2Post.Text;
-            Properties.Settings.Default.Post2Caption = post2Caption.Text;
-            Properties.Settings.Default.Post2Enabled = post2Chk.Checked;
-            Properties.Settings.Default.Post2BtnImgOn = post2ImgOn.Text;
-            Properties.Settings.Default.Post2BtnImgOff = post2ImgOff.Text;
-            Properties.Settings.Default.Post2PrintCopies = (short)post2Copies.Value;
-            Properties.Settings.Default.Post2PrintHeader = post2PrintHeader.Text;
-
-            Properties.Settings.Default.Post3Name = post3Name.Text;
-            Properties.Settings.Default.Post3Post = post3Post.Text;
-            Properties.Settings.Default.Post3Caption = post3Caption.Text;
-            Properties.Settings.Default.Post3Enabled = post3Chk.Checked;
-            Properties.Settings.Default.Post3Visible = post3ChkVisible.Checked;
-            Properties.Settings.Default.Post3BtnImgOn = post3ImgOn.Text;
-            Properties.Settings.Default.Post3BtnImgOff = post3ImgOff.Text;
-            Properties.Settings.Default.Post3PrintCopies = (short)post3Copies.Value;
-            Properties.Settings.Default.Post3PrintHeader = post3PrintHeader.Text;
-
-            Properties.Settings.Default.Post4Name = post4Name.Text;
-            Properties.Settings.Default.Post4Post = post4Post.Text;
-            Properties.Settings.Default.Post4Caption = post4Caption.Text;
-            Properties.Settings.Default.Post4Enabled = post4Chk.Checked;
-            Properties.Settings.Default.Post4Visible = post4ChkVisible.Checked;
-            Properties.Settings.Default.Post4BtnImgOn = post4ImgOn.Text;
-            Properties.Settings.Default.Post4BtnImgOff = post4ImgOff.Text;
-            Properties.Settings.Default.Post4PrintCopies = (short)post4Copies.Value;
-            Properties.Settings.Default.Post4PrintHeader = post4PrintHeader.Text;
+            // save post options
+            var postId = cbSelectPost.Text;
+            PostProperty prop = postProperties.FindById(postId);
+            if (prop != null)
+            {
+                prop.Name = tbPostName.Text;
+                //prop.Id = tbPostId.Text;
+                prop.Caption = tbPostCaption.Text;
+                prop.Visible = chkPostVisible.Checked;
+                prop.Enabled = chkPostEnabled.Checked;
+                prop.BtnImageOn = tbPostBtnImgOn.Text;
+                prop.BtnImageOff = tbPostBtnImgOff.Text;
+                prop.PrintHeader = tbPostTicketHeader.Text;
+                //prop.PrintFooter = tbPostTicketFooter.Text;
+                prop.PrintCopies = (short) pickPostPrintCopies.Value;
+            }
+            postProperties.SaveToConfiguration();
 
             Properties.Settings.Default.Save();
+        }
+
+        private String GetMainMenuLabelAlignmentValue()
+        {
+            if (rbLabelLeft.Checked)
+                return "Left";
+            else if (rbLabelMiddle.Checked)
+                return "Middle";
+            else if (rbLabelRight.Checked)
+                return "Right";
+
+            return "Middle";
+        }
+
+        private void SetRadioButtonMainMenuLabelState()
+        {
+            if (Properties.Settings.Default.MainMenuLabelAlignment == "Left")
+                rbLabelLeft.Checked = true;
+            else if (Properties.Settings.Default.MainMenuLabelAlignment == "Middle")
+                rbLabelMiddle.Checked = true;
+            else if (Properties.Settings.Default.MainMenuLabelAlignment == "Right")
+                rbLabelRight.Checked = true;
+            else
+                rbLabelMiddle.Checked = true;
         }
 
         private void OnClosing(object sender, FormClosingEventArgs e)
@@ -177,53 +207,61 @@ namespace Tobasa
             DialogResult result = fileDlg.ShowDialog();
             if (result == DialogResult.OK)
             {
-                Button btn = (Button)sender ;
-                if (btn == btnSetPost0ImgOn)
-                    post0ImgOn.Text = fileDlg.FileName;
-                else if (btn == btnSetPost0ImgOff)
-                    post0ImgOff.Text = fileDlg.FileName;
-                else if (btn == btnSetPost1ImgOn)
-                    post1ImgOn.Text = fileDlg.FileName;
-                else if (btn == btnSetPost1ImgOff)
-                    post1ImgOff.Text = fileDlg.FileName;
-                else if (btn == btnSetPost2ImgOn)
-                    post2ImgOn.Text = fileDlg.FileName;
-                else if (btn == btnSetPost2ImgOff)
-                    post2ImgOff.Text = fileDlg.FileName;
-                else if (btn == btnSetPost3ImgOn)
-                    post3ImgOn.Text = fileDlg.FileName;
-                else if (btn == btnSetPost3ImgOff)
-                    post3ImgOff.Text = fileDlg.FileName;
-                else if (btn == btnSetPost4ImgOn)
-                    post4ImgOn.Text = fileDlg.FileName;
-                else if (btn == btnSetPost4ImgOff)
-                    post4ImgOff.Text = fileDlg.FileName;
-                else if (btn == btnSetLogoImg)
-                    tbImgLogo.Text = fileDlg.FileName;
-                else if (btn == btnSetHeaderImg)
-                    tbImgHeader.Text = fileDlg.FileName;
-                else if (btn == btnSetHeaderBgImg)
-                    tbImgBG.Text = fileDlg.FileName;
+                var postId = cbSelectPost.Text;
+                var postProperty = postProperties.FindById(postId);
+                if (postProperty != null)
+                {
+                    if ((Button)sender == btnPostImgOnSelect)
+                    {
+                        tbPostBtnImgOn.Text = fileDlg.FileName;
+                        postProperty.BtnImageOn = fileDlg.FileName;
+                    }
+                    else if ((Button)sender == btnPostImgOffSelect)
+                    {
+                        tbPostBtnImgOff.Text = fileDlg.FileName;
+                        postProperty.BtnImageOff = fileDlg.FileName;
+                    }
+                }
             }
         }
 
         private void OnPrintCopiesValueChanged(object sender, EventArgs e)
         {
-            if ((NumericUpDown)sender == post0Copies)
-                Properties.Settings.Default.Post0PrintCopies = (short)post0Copies.Value;
-            else if ((NumericUpDown)sender == post1Copies)
-                Properties.Settings.Default.Post1PrintCopies = (short)post1Copies.Value;
-            else if ((NumericUpDown)sender == post2Copies)
-                Properties.Settings.Default.Post2PrintCopies = (short)post2Copies.Value;
-            else if ((NumericUpDown)sender == post3Copies)
-                Properties.Settings.Default.Post3PrintCopies = (short)post3Copies.Value;
-            else if ((NumericUpDown)sender == post4Copies)
-                Properties.Settings.Default.Post4PrintCopies = (short)post4Copies.Value;
+            var postId = cbSelectPost.Text;
+            var printCopieS = ((NumericUpDown)sender).Value;
+            PostProperty prop = postProperties.FindById(postId);
+            if (prop != null)
+            {
+                prop.PrintCopies = (short)printCopieS;
+            }
         }
 
         private void OnPrintTicketChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.PrintTicket = chkPrintTicket.Checked;
         }
+
+        private void OnCbSelectPostChanged(object sender, EventArgs e)
+        {
+            string postId = cbSelectPost.Text;
+            SetPostPropertiesControl(postId);
+        }
+
+        private void OnChkShowLeft(object sender, EventArgs e)
+        {
+            if (!chkShowLeftMenu.Checked && !chkShowRightMenu.Checked)
+            {
+                chkShowRightMenu.Checked = true;
+            }
+        }
+
+        private void OnChkShowRight(object sender, EventArgs e)
+        {
+            if (!chkShowRightMenu.Checked && !chkShowLeftMenu.Checked)
+            {
+                chkShowLeftMenu.Checked = true;
+            }
+        }
     }
 }
+

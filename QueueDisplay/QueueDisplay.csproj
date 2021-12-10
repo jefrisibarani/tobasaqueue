@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -33,6 +33,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +43,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +52,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -59,6 +62,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -68,6 +72,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>queue.ico</ApplicationIcon>
@@ -80,6 +85,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -89,6 +95,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
@@ -101,9 +108,6 @@
     <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -111,7 +115,6 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Work\AboutBox.cs">
@@ -165,6 +168,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Work\PostProperty.cs" />
     <Compile Include="Work\RuntextLabel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -230,7 +234,9 @@
     <None Include="Resources\lblbluebig.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="img\DisplayLogoImg.png" />
     <Content Include="queue.ico" />
+    <Content Include="Resources\bgblue_rounded133_1x40b.png" />
     <None Include="Resources\bgblue4.png" />
     <None Include="Resources\QueueLogo150.png" />
     <None Include="Resources\bgblue_rounded133_1x401.png" />
@@ -253,29 +259,39 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF NOT EXIST $(SolutionDir)_OUTPUT MD $(SolutionDir)_OUTPUT
-IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName) MD $(SolutionDir)_OUTPUT\$(ProjectName)
-COPY /Y $(TargetDir)$(TargetFileName) $(SolutionDir)_OUTPUT\$(ProjectName)
-COPY /Y $(TargetDir)Libtobasa.dll $(SolutionDir)_OUTPUT\$(ProjectName)
-COPY /Y $(TargetDir)$(TargetFileName).config $(SolutionDir)_OUTPUT\$(ProjectName)
-
+    <PostBuildEvent>REM Create output folder struture, and debug mode basic folder struccture
+REM -------------------------------------------------------------------------
+IF NOT EXIST $(SolutionDir)_OUTPUT                                            MD $(SolutionDir)_OUTPUT
+IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)              MD $(SolutionDir)_OUTPUT\$(ProjectName)
 IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)\movie MD $(SolutionDir)_OUTPUT\$(ProjectName)\movie
-IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)\wav MD $(SolutionDir)_OUTPUT\$(ProjectName)\wav
+IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)\wav     MD $(SolutionDir)_OUTPUT\$(ProjectName)\wav
+IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)\img     MD $(SolutionDir)_OUTPUT\$(ProjectName)\img
 
-COPY /Y $(TargetDir)$(TargetFileName).config $(SolutionDir)_OUTPUT\$(ProjectName)
-COPY /Y $(SolutionDir)startall_output.cmd $(SolutionDir)_OUTPUT\
-COPY /Y $(SolutionDir)README.md $(SolutionDir)_OUTPUT\
-COPY /Y $(SolutionDir)LICENSE $(SolutionDir)_OUTPUT\
+IF NOT EXIST $(TargetDir)movie MD $(TargetDir)movie
+IF NOT EXIST $(TargetDir)wav     MD $(TargetDir)wav
+IF NOT EXIST $(TargetDir)img     MD $(TargetDir)img
 
-COPY /Y $(SolutionDir)MediaFiles\wav\*.wav $(SolutionDir)_OUTPUT\$(ProjectName)\wav\
+REM Copy required files/resources
+REM -------------------------------------------------------------------------
+COPY /Y $(TargetDir)$(TargetFileName)               $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)Libtobasa.dll                         $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)$(TargetFileName).config   $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(SolutionDir)startall_output.cmd         $(SolutionDir)_OUTPUT\
+COPY /Y $(SolutionDir)README.md                     $(SolutionDir)_OUTPUT\
+COPY /Y $(SolutionDir)LICENSE                             $(SolutionDir)_OUTPUT\
+COPY /Y $(ProjectDir)img\*.*                                 $(SolutionDir)_OUTPUT\$(ProjectName)\img\
+COPY /Y $(SolutionDir)MediaFiles\audio\*.wav                         $(SolutionDir)_OUTPUT\$(ProjectName)\wav\
+COPY /Y $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv     $(SolutionDir)_OUTPUT\$(ProjectName)\movie\
+
+COPY /Y $(ProjectDir)img\*.*                                                         $(TargetDir)img\
+COPY /Y $(SolutionDir)MediaFiles\audio\*.wav                          $(TargetDir)wav\
+COPY /Y $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv      $(TargetDir)movie\
+
 REM type nul &gt; $(SolutionDir)_OUTPUT\$(ProjectName)\movie\put_your_video_files_here
-
-
-mkdir $(TargetDir)img
-COPY /Y $(ProjectDir)img\*.*  $(TargetDir)img
-
-IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)img MD $(SolutionDir)_OUTPUT\$(ProjectName)\img
-COPY /Y $(ProjectDir)img\*.*  $(SolutionDir)_OUTPUT\$(ProjectName)\img</PostBuildEvent>
+</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>IF EXIST $(SolutionDir)_OUTPUT\$(ProjectName)   rmdir /q /s $(SolutionDir)_OUTPUT\$(ProjectName)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -29,12 +29,12 @@ using System.Drawing.Imaging;
 using System.Configuration;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace Tobasa
 {
     public class Util
     {
-
         public static string GetPasswordHash(string password, string username)
         {
             string result = "";
@@ -92,14 +92,13 @@ namespace Tobasa
             return hashedBytes;
         }
 
-        /// <summary>
-        /// Encrypt with Blowfish
-        /// </summary>
-        /// <param name="key">string with key value</param>
-        /// <param name="salt">string with salt</param>
-        /// <param name="data">string with actual original data </param>
-        /// <returns>return encrypted string</returns>
-        // key max 56 char
+        /** Encrypt with Blowfish
+            @param key string with key value
+            @param salt string with salt
+            @param data string with actual original data
+            @returns encrypted string
+            Note: key max 56 char
+        */
         public static string EncryptBlowFish(string key, string salt, string data)
         {
             string result = "";
@@ -118,13 +117,13 @@ namespace Tobasa
 
             return result;
         }
-        /// <summary>
-        /// Derypt with Blowfish
-        /// </summary>
-        /// <param name="key">string with key value</param>
-        /// <param name="salt">string with salt</param>
-        /// <param name="data">string with actual decrypted data </param>
-        /// <returns>return decrypted string</returns>
+
+        /** Derypt with Blowfish
+            @param key string with key value
+            @param salt string with salt
+            @param data string with actual decrypted data
+            @returns decrypted string
+        */
         public static string DecryptBlowFish(string key, string salt, string data)
         {
             string clearText = "";
@@ -188,13 +187,13 @@ namespace Tobasa
 
         public static Bitmap MakeGrayscale3(Bitmap original)
         {
-            //create a blank bitmap the same size as original
+            // create a blank bitmap the same size as original
             Bitmap newBitmap = new Bitmap(original.Width, original.Height);
 
-            //get a graphics object from the new image
+            // get a graphics object from the new image
             Graphics g = Graphics.FromImage(newBitmap);
 
-            //create the grayscale ColorMatrix
+            // create the grayscale ColorMatrix
             ColorMatrix colorMatrix = new ColorMatrix(
                new float[][] 
               {
@@ -205,14 +204,14 @@ namespace Tobasa
                  new float[] {0, 0, 0, 0, 1}
               });
 
-            //create some image attributes
+            // create some image attributes
             ImageAttributes attributes = new ImageAttributes();
 
-            //set the color matrix attribute
+            // set the color matrix attribute
             attributes.SetColorMatrix(colorMatrix);
 
-            //draw the original image on the new image
-            //using the grayscale color matrix
+            // draw the original image on the new image
+            // using the grayscale color matrix
             g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height),
                0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
 
@@ -221,11 +220,13 @@ namespace Tobasa
             return newBitmap;
         }
 
-		/// Check User Configuration Setting File.
-		/// Fungsi ini dijalankan pertama kali oleh aplikasi untuk memeriksa apakah file konfigurasi
-		/// user setting dalam kondisi corrupt atau OK.
-		/// Bila file konfigurasi dalam kondisi OK, fungsi ini akan membuat backup
-		/// yang akan digunakan pada waktu file konfigurasi corrupt
+
+		/** Check User Configuration Setting File.
+            Fungsi ini dijalankan pertama kali oleh aplikasi untuk memeriksa apakah file konfigurasi
+            user setting dalam kondisi corrupt atau OK.
+            Bila file konfigurasi dalam kondisi OK, fungsi ini akan membuat backup
+            yang akan digunakan pada waktu file konfigurasi corrupt
+        */
 		public static void CheckUserConfigurationFile()
 		{
 			try
@@ -238,13 +239,13 @@ namespace Tobasa
 				{
 					if (File.Exists(confOri))
 					{
-						// File konfigurasi ada dan dalam kondisi OK, backup!
+						// Configuration file exxists and valid, backup!
 						File.Copy(confOri, confBak, true);
 					}
 				}
 				catch (DirectoryNotFoundException e)
 				{
-					// Pertama kali dijalankan, file konfigurasi belum ada
+					// First time run, no configuration file exists
 					return;
 				}
 				catch (Exception e)
@@ -282,7 +283,7 @@ namespace Tobasa
 				if (MessageBox.Show(pesan, "File user settings corrupt",
 									MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
 				{
-					// Periksa apakah ada backup, bila ada restore
+					// Check for existing backup. Restore if exists
 					if (File.Exists(fileBak))
 					{
 						try
@@ -302,5 +303,44 @@ namespace Tobasa
 			}
 		}
 
-	}
+        public static bool StrToBool(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            if (value.ToUpper() == "T"
+               || value.ToUpper() == "TRUE"
+               || value.ToUpper() == "ON"
+               || value.ToUpper() == "Y"
+               || value.ToUpper() == "YES"
+               || value == "1")
+                return true;
+
+            return false;
+        }
+
+        public static string BoolToStr(bool value, string valIfTrue = "1", string valIfFalse = "0")
+        {
+            return value ? valIfTrue : valIfFalse;
+        }
+
+        public static void ShowConnectionError(IWin32Window owner)
+        {
+            MessageBox.Show(owner,"Not connected with server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        #region unmanaged
+
+        [DllImport("kernel32.dll")] static extern IntPtr GetModuleHandleW(IntPtr _);
+        
+        //! check if we are running in GUI 
+        //  NOTE: https://stackoverflow.com/a/8711036
+        public static bool IsRunInGUI()
+        {
+            var p = GetModuleHandleW(default);
+            return Marshal.ReadInt16(p, Marshal.ReadInt32(p, 0x3C) + 0x5C) == 2;
+        }
+
+        #endregion
+    }
 }

@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -89,18 +89,18 @@ namespace Tobasa
 
             if (disposing)
             {
-                this.ClientClosed = null;
-                this.ClientAccepted = null;
-                this.IncomingConnection = null;
-                this.ServerStarted = null;
-                this.DataReceived = null;
+                ClientClosed = null;
+                ClientAccepted = null;
+                IncomingConnection = null;
+                ServerStarted = null;
+                DataReceived = null;
 
                 // Free any other managed objects here. 
             }
 
             // Free any unmanaged objects here. 
-            this.Stop();
-            this.Close();
+            Stop();
+            Close();
             disposed = true;
         }
 
@@ -144,7 +144,7 @@ namespace Tobasa
                     args.Summary = "TCP Port out of range";
                     args.Source = "TCPServer";
                     args.Message = "Port number must be in the 1024-65535 range.";
-                    args.Exception = new Exception(args.Message);
+                    args.Exception = null;
 
                     OnNotifyError(args);
                 }
@@ -177,13 +177,7 @@ namespace Tobasa
             }
             catch (SocketException e)
             {
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "SocketException";
-                args.Source = "TCPServer";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
+                OnNotifyError("TCPServer", e);
             }
 
             // Connect our local client accepted event handler
@@ -213,51 +207,13 @@ namespace Tobasa
             }
             catch (SocketException e)
             {
+                OnNotifyError("TCPServer", e);
                 Close();
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "SocketException";
-                args.Source = "TCPServer";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (ArgumentNullException e)
-            {
-                Close();
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "ArgumentNullException";
-                args.Source = "TCPServer";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
-            }
-            catch (NullReferenceException e)
-            {
-                Close();
-
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "NullReferenceException";
-                args.Source = "TCPServer";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
             }
             catch (Exception e)
             {
+                OnNotifyError("TCPServer", e);
                 Close();
-                
-                NotifyEventArgs args = new NotifyEventArgs();
-                args.Summary = "Exception";
-                args.Source = "TCPServer";
-                args.Message = e.Message;
-                args.Exception = e;
-
-                OnNotifyError(args);
             }
 
             return true;
@@ -276,12 +232,18 @@ namespace Tobasa
             if (!socketClosed)
             {
                 ArrayList tmpList = new ArrayList();
+
                 // copy sessions into new tmpList
-                foreach (KeyValuePair<int, NetSession> kv in sessions) tmpList.Add(kv.Value);
+                foreach (KeyValuePair<int, NetSession> kv in sessions)
+                {
+                    tmpList.Add(kv.Value);
+                }
+
                 // from tmpList, Close() every session
                 // NetSession.Close() will call its ConnClosed handler
                 // which resolved to OnSessionClosed()
                 // OnSessionClosed() will clear sessions 
+
                 foreach (NetSession ses in tmpList)
                 {
                     ses.Dispose();
@@ -295,7 +257,7 @@ namespace Tobasa
 
                 socketClosed = true;
 
-               Logger.Log("TCPServer : Socket closed");
+                OnNotifyLog("TCPServer", "Socket closed");
             }
             closed = true;
         }
@@ -303,16 +265,13 @@ namespace Tobasa
         private bool CanConnect(IPEndPoint ep)
         {
             bool allowed = false;
-            if (IncomingConnection != null)
-                IncomingConnection(ep, out allowed);
+            IncomingConnection?.Invoke(ep, out allowed);
 
             return allowed;
         }
 
-        /// <summary>
-        /// Socket's BeginAccept() callback
-        /// Handles new connection and create session
-        /// </summary>
+        //! Socket's BeginAccept() callback
+        //  Handles new connection and create session
         private void AcceptCallback(IAsyncResult ar)
         {
             // our session
@@ -332,9 +291,11 @@ namespace Tobasa
                 if (CanConnect(ep))
                 {
                     // setup the session 
-                    ses = new NetSession(handler);
-                    ses.Id = NewSessionId();
-                    
+                    ses = new NetSession(handler)
+                    {
+                        Id = NewSessionId()
+                    };
+
                     // bind session event handler 
                     ses.Notified += new Action<NotifyEventArgs>(NetSession_Notified);
                     ses.ConnectionClosed += new ConnectionClosed(NetSession_Closed);
@@ -349,8 +310,7 @@ namespace Tobasa
                     }
 
                     // Call ClientAccepted handler
-                    if (ClientAccepted != null)
-                        ClientAccepted(ses);
+                    ClientAccepted?.Invoke(ses);
                 }
                 else
                 {
@@ -366,7 +326,7 @@ namespace Tobasa
                 if (ses != null)
                     ses.Close();
 
-                //Queue the next accept, think this should be here, stop attacks based on killing the waiting listeners
+                // Queue the next accept, think this should be here, stop attacks based on killing the waiting listeners
                 if (sock != null)
                     sock.BeginAccept(new AsyncCallback(AcceptCallback), sock);
             }
@@ -375,7 +335,7 @@ namespace Tobasa
                 if (ses != null)
                     ses.Close();
 
-                //Queue the next accept, think this should be here, stop attacks based on killing the waiting listeners
+                // Queue the next accept, think this should be here, stop attacks based on killing the waiting listeners
                 if (sock !=null)
                     sock.BeginAccept(new AsyncCallback(AcceptCallback), sock);
             }
@@ -393,8 +353,7 @@ namespace Tobasa
         private void NetSession_Closed(NetSession ses)
         {
             // Raise event to consumer
-            if (ClientClosed != null)
-                ClientClosed(ses);
+            ClientClosed?.Invoke(ses);
 
             lock (sessions)
             {
@@ -406,10 +365,7 @@ namespace Tobasa
         private void NetSession_DataReceived(DataReceivedEventArgs arg)
         {
             // Raise event to consumer
-            if (DataReceived != null)
-            {
-                DataReceived(arg);
-            }
+            DataReceived?.Invoke(arg);
         }
 
         #endregion

@@ -1,8 +1,29 @@
-﻿using System;
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.OleDb;
+using Newtonsoft.Json;
 
 namespace Tobasa
 {
@@ -10,39 +31,63 @@ namespace Tobasa
     {
         #region Member variables
 
-        private delegate void ProcessMessageCallback(DataReceivedEventArgs arg, string text);
-        private delegate void ProcessErrorCallBack(NotifyEventArgs e);
-        private TCPClient client = null;
+        private delegate void NetSessionDataReceivedCb(DataReceivedEventArgs arg);
+        private delegate void TCPClientNotifiedCb(NotifyEventArgs arg);
+        private delegate void LogServerMessageCb(string text);
+
+        private Tobasa.Properties.Settings _settings = Tobasa.Properties.Settings.Default;
+        private TCPClient _client = null;
+        public event MessageReceived MessageReceived;
+        public TCPClient TcpClient
+        {
+            get => _client;
+        }
+        Dictionary<string, TableProp> _tableProps = new Dictionary<string, TableProp>()
+        {
+            [Tbl.runningtexts] = new TableProp(Tbl.runningtexts),
+            [Tbl.ipaccesslists] = new TableProp(Tbl.ipaccesslists),
+            [Tbl.stations] = new TableProp(Tbl.stations),
+            [Tbl.posts] = new TableProp(Tbl.posts),
+            [Tbl.logins] = new TableProp(Tbl.logins)
+        };
 
         #endregion
 
-        #region Constructor / Destructor
-
+        #region Form Starting/Stopping
         public MainForm()
         {
             InitializeComponent();
-            groupBox1.Visible = false;
-            tabControl.TabPages.Remove(tabPageDiag);
-
-            Database.Me.Connect(GetConnectionString());
-            InitIPAccessList();
-            InitStations();
-            InitPosts();
-            InitLogins();
-            InitRunText();
+            gbEnryptTool.Visible = true;
+            //tabControl.TabPages.Remove(tabPageDiag);
 
             StartClient();
+        }
+
+        private void OnFormShown(object sender, EventArgs e)
+        {
         }
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
             CloseConnection();
-            Tobasa.Properties.Settings.Default.Save();
+            _settings.Save();
+        }
+
+        private void OnLoggedOn()
+        {
+            if (_client != null && _client.Connected)
+            {
+                RequestTableFromServer(Tbl.runningtexts);
+                RequestTableFromServer(Tbl.posts);
+                RequestTableFromServer(Tbl.logins);
+                RequestTableFromServer(Tbl.stations);
+                RequestTableFromServer(Tbl.ipaccesslists);
+            }
         }
 
         #endregion
-        
-        #region Encryption
+
+        #region Encryption stuff
 
         private void OnEncryptCheck(object sender, EventArgs e)
         {
@@ -69,7 +114,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, ex.GetType().Name);
             }
         }
 
@@ -85,7 +130,7 @@ namespace Tobasa
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, ex.GetType().Name);
                 }
             }
             else if (rbSHA.Checked)
@@ -99,7 +144,7 @@ namespace Tobasa
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, ex.GetType().Name);
                 }
             }
         }
@@ -113,7 +158,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, ex.GetType().Name);
             }
         }
 
@@ -125,136 +170,281 @@ namespace Tobasa
             txtECSPass.Text = output;
         }
 
-
         #endregion
 
         #region QueueServer message handler
 
-        private void NetSession_DataReceived(DataReceivedEventArgs arg)
-        {
-            string text = "";
-            /*
-            // Deserialize the message
-            object message = Message.Deserialize(arg.Data);
-
-            // Handle the message
-            StringMessage stringMessage = message as StringMessage;
-            if (stringMessage != null)
-                text = stringMessage.Message;
-
-            */
-            string stringMessage = Encoding.UTF8.GetString(arg.Data);
-            if (stringMessage != null)
-            {
-                text = stringMessage;
-                ProcessMessage(arg, text);
-            }
-        }
-
         // cross thread safe handler
-        private void ProcessMessage(DataReceivedEventArgs arg, string text)
+        private void NetSessionDataReceived(DataReceivedEventArgs arg)
         {
             // InvokeRequired required compares the thread ID of the 
             // calling thread to the thread ID of the creating thread. 
             // If these threads are different, it returns true. 
             if (this.InvokeRequired)
             {
-                ProcessMessageCallback d = new ProcessMessageCallback(ProcessMessage);
-                this.Invoke(d, new object[] { arg, text });
+                NetSessionDataReceivedCb dlg = new NetSessionDataReceivedCb(NetSessionDataReceived);
+                this.Invoke(dlg, new object[] { arg });
             }
             else
             {
-                if (text.StartsWith("ADMIN"))
-                    HandleMessage(arg, text);
-                else if (text.StartsWith("LOGIN"))
-                {
-                    string _response = text;
-                    if (_response == Msg.LOGIN_OK)
-                    {
-                        lblStatus.Text = "Connected to Server : " + client.Session.RemoteInfo + " - Post :" + Tobasa.Properties.Settings.Default.StationPost + "  Station:" + Tobasa.Properties.Settings.Default.StationName;
-                        Logger.Log("QueueAdmin : Successfully logged in");
-                    }
-                    else
-                    {
-                        string reason = _response.Substring(10);
-                        string msg = "QueueAdmin : Could not logged in to server, \r\nReason: " + reason;
-                        Logger.Log(msg);
-                        MessageBox.Show(this, msg, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        CloseConnection();
-                    }
-                }
+                if (arg.DataString.StartsWith("SYS"))
+                    HandleMessage(arg);
                 else
                 {
-                    tbLog.AppendText("\r\n" + text);
-
-                    string logmsg = String.Format("Unhandled session message from: {0} - MSG: {1} ", arg.RemoteInfo, text);
+                    LogServerMessage(string.Format("[Info] {0}", arg.DataString));
+                    string logmsg = String.Format("[QueueAdmin] Unhandled session message from: {0}", arg.RemoteInfo);
                     Logger.Log(logmsg);
                 }
             }
         }
 
-        private void HandleMessage(DataReceivedEventArgs arg, string text)
+        private void HandleMessage(DataReceivedEventArgs arg)
         {
+            try
+            {
+                Message qmessage = new Message(arg);
+
+                Logger.Log("[QueueAdmin] Processing " + qmessage.MessageType.String + " from " + arg.Session.RemoteInfo);
+
+                // Handle SysLogin
+                if (qmessage.MessageType == Msg.SysLogin && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string result = qmessage.PayloadValues["result"];
+                    string data   = qmessage.PayloadValues["data"];
+
+                    if (result == "OK")
+                    {
+                        lblStatus.Text = "Connected to Server : " + _client.Session.RemoteInfo + " - Post :" + _settings.StationPost + "  Station:" + _settings.StationName;
+                        Logger.Log("[QueueAdmin] Successfully logged in");
+                        
+                        OnLoggedOn();
+                    }
+                    else
+                    {
+                        string reason = data;
+                        string msg = "[QueueAdmin] Could not logged in to server, reason: " + reason;
+
+                        Logger.Log(msg);
+                        MessageBox.Show(this, msg, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        CloseConnection();
+                    }
+                }
+                // Handle SysDelTable, SysUpdTable, SysInsTable
+                else if ((qmessage.MessageType == Msg.SysDelTable ||
+                          qmessage.MessageType == Msg.SysUpdTable ||
+                          qmessage.MessageType == Msg.SysInsTable ) &&
+                          qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string tableName = qmessage.PayloadValues["tablename"];
+                    string result    = qmessage.PayloadValues["result"];
+                    string affected  = qmessage.PayloadValues["affected"];
+
+                    string cmdType;
+                    if (qmessage.MessageType == Msg.SysDelTable)
+                        cmdType = "deleted";
+                    else if (qmessage.MessageType == Msg.SysUpdTable)
+                        cmdType = "updated";
+                    else
+                        cmdType = "inserted";
+
+                    LogServerMessage(string.Format("[Info] {0} row {1}, table {2}", affected, cmdType, tableName));
+
+                    // Update relevant grid view
+                    RequestTableFromServer(tableName);
+                }
+                // Handle SysGetTable
+                else if (qmessage.MessageType == Msg.SysGetTable && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string tableName     = qmessage.PayloadValues["tablename"];
+                    string jsonDataTable = qmessage.PayloadValues["result"];
+                    string totalrow      = qmessage.PayloadValues["totalrow"];
+
+                    int totalRowInt = Convert.ToInt32(totalrow);
+
+                    if (tableName == Tbl.runningtexts)
+                    {
+                        _tableProps[tableName].TotalRows = totalRowInt;
+                        InitGridRunningText(jsonDataTable);
+                        tbReordStatus.Text = _tableProps[tableName].NavigationStatus;
+                        btnDeleteData.Enabled = totalRowInt > 0;
+                    }
+                    else if (tableName == Tbl.ipaccesslists)
+                    {
+                        _tableProps[tableName].TotalRows = totalRowInt;
+                        InitGridIpAccessList(jsonDataTable);
+                        tbReordStatus.Text = _tableProps[tableName].NavigationStatus;
+                        btnDeleteData.Enabled = totalRowInt > 0;
+                    }
+                    else if (tableName == Tbl.stations)
+                    {
+                        _tableProps[tableName].TotalRows = totalRowInt;
+                        InitGridStation(jsonDataTable);
+                        tbReordStatus.Text = _tableProps[tableName].NavigationStatus;
+                        btnDeleteData.Enabled = totalRowInt > 0;
+                    }
+                    else if (tableName == Tbl.posts)
+                    {
+                        _tableProps[tableName].TotalRows = totalRowInt;
+                        InitGridPost(jsonDataTable);
+                        tbReordStatus.Text = _tableProps[tableName].NavigationStatus;
+                        btnDeleteData.Enabled = totalRowInt > 0;
+                    }
+                    else if (tableName == Tbl.logins)
+                    {
+                        _tableProps[tableName].TotalRows = totalRowInt;
+                        InitGridLogin(jsonDataTable);
+                        tbReordStatus.Text = _tableProps[tableName].NavigationStatus;
+                        btnDeleteData.Enabled = totalRowInt > 0;
+                    }
+                    else
+                    { 
+                    }
+                }
+                // Handle SysNotify
+                else if (qmessage.MessageType == Msg.SysNotify)
+                {
+                    // extract payload
+                    string notifyTyp = qmessage.PayloadValues["type"];
+                    string notifyMsg = qmessage.PayloadValues["message"];
+
+                    if (notifyTyp == "ERROR")
+                        MessageBox.Show(notifyMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    { }  // WARNING, INFO
+
+                    LogServerMessage(string.Format("[{0}] {1}", notifyTyp,notifyMsg));
+                }
+                else
+                { }
+
+                // Forward message to subform, by executing registered subform's handler
+                MessageReceived?.Invoke(qmessage);
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueAdmin", e);
+            }
+        }
+        private void LogServerMessage(string text)
+        {
+            // InvokeRequired required compares the thread ID of the 
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true. 
+            if (this.InvokeRequired)
+            {
+                LogServerMessageCb dlg = new LogServerMessageCb(LogServerMessage);
+                this.Invoke(dlg, new object[] { text });
+            }
+            else
+            {
+                string logmessage = DateTime.Now.ToString("yyyy-MM-dd") + " " +
+                                    DateTime.Now.ToString("HH:mm:ss") + " : " +
+                                    text;
+
+                tbServerMessages.AppendText(logmessage + Environment.NewLine);
+            }
+        }
+
+        #endregion
+
+        #region Request/Delete table content from server
+        
+        private void RequestTableFromServer(string tablename)
+        {
+            _tableProps[tablename].RequestTableFromServer(this);
+        }
+
+        private void DeleteTableFromServer(string tablename, string param, string param1="")
+        {
+            if (_client != null && _client.Connected)
+            {
+                string message = Msg.SysDelTable.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + tablename +
+                                 Msg.CompDelimiter + param;
+
+                if (!string.IsNullOrWhiteSpace(param1))
+                {
+                    message += Msg.CompDelimiter + param1;
+                }
+                else
+                {
+                    message += Msg.CompDelimiter + "unused";
+                }
+
+                _client.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
         }
 
         #endregion
 
         #region TCP Connection stuffs
 
-        private void TCPClient_Notified(NotifyEventArgs e)
-        {
-            ProcessError(e);
-        }
-
-        private void ProcessError(NotifyEventArgs e)
+        private void TCPClientNotified(NotifyEventArgs arg)
         {
             if (this.InvokeRequired)
             {
-                ProcessErrorCallBack d = new ProcessErrorCallBack(ProcessError);
-                this.Invoke(d, new object[] { e });
+                TCPClientNotifiedCb dlg = new TCPClientNotifiedCb(TCPClientNotified);
+                this.Invoke(dlg, new object[] { arg });
             }
             else
             {
-                MessageBox.Show(this, e.Message, e.Summary, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (arg.Type == NotifyType.NOTIFY_ERR)
+                {
+                    MessageBox.Show(arg.Message, arg.Summary, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                
+                Logger.Log(arg);
             }
         }
 
         public void StartClient()
         {
-            client = null;
+            _client = null;
 
-            string dispServerHost = Tobasa.Properties.Settings.Default.QueueServerHost;
-            int dispServerPort = Tobasa.Properties.Settings.Default.QueueServerPort;
-            string stationName = Tobasa.Properties.Settings.Default.StationName;
-            string stationPost = Tobasa.Properties.Settings.Default.StationPost;
-            string userName = Tobasa.Properties.Settings.Default.QueueUserName;
-            string password = Tobasa.Properties.Settings.Default.QueuePassword;
+            string dispServerHost = _settings.QueueServerHost;
+            int dispServerPort    = _settings.QueueServerPort;
+            string stationName    = _settings.StationName;
+            string stationPost    = _settings.StationPost;
+            string userName       = _settings.QueueUserName;
+            string password       = _settings.QueuePassword;
 
-            client = new TCPClient(dispServerHost, dispServerPort);
-            client.Notified += new Action<NotifyEventArgs>(TCPClient_Notified);
+            _client = new TCPClient(dispServerHost, dispServerPort);
+            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
 
-            client.Start();
+            _client.Start();
 
-            if (client.Connected)
+            if (_client.Connected)
             {
-                client.Session.DataReceived += new DataReceived(NetSession_DataReceived);
+                _client.Session.DataReceived += new DataReceived(NetSessionDataReceived);
 
-                string salt = Properties.Settings.Default.SecuritySalt;
+                string salt = _settings.SecuritySalt;
                 string clearPwd = Util.DecryptPassword(password, salt);
                 string passwordHash = Util.GetPasswordHash(clearPwd, userName);
 
-                // Send LOGIN message + our station name to server
-                string message = String.Empty;
-                message = "LOGIN" + Msg.Separator + "ADMIN" + Msg.Separator + stationName + Msg.Separator + stationPost + Msg.Separator + userName + Msg.Separator + passwordHash;
-                client.Send(message);
+                // SYS|LOGIN|REQ|[Module!Post!Station!Username!Password]
+                string message =
+                    Msg.SysLogin.Text +
+                    Msg.Separator + "REQ" +
+                    Msg.Separator + "ADMIN" +
+                    Msg.CompDelimiter + stationPost +
+                    Msg.CompDelimiter + stationName +
+                    Msg.CompDelimiter + userName +
+                    Msg.CompDelimiter + passwordHash;
+
+                _client.Send(message);
             }
         }
 
         private void CloseConnection()
         {
-            if (client.Connected)
+            if (_client.Connected)
             {
-                client.Stop();
+                _client.Stop();
             }
         }
 
@@ -264,7 +454,7 @@ namespace Tobasa
 
         private void OnSendXXXData(object sender, EventArgs e)
         {
-            if (client.Connected)
+            if (_client.Connected)
             {
                 if (chkSend1024.Checked)
                     SendData(1024);
@@ -276,27 +466,23 @@ namespace Tobasa
                     SendData(4096);
             }
             else
-            {
-                MessageBox.Show(this, "Could not connect to server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                Util.ShowConnectionError(this);
         }
 
         private void OnSendData(object sender, EventArgs e)
         {
-            if (client.Connected)
+            if (_client.Connected)
             {
                 string message = cbCmd.Text;
-                client.Send(message);
+                _client.Send(message);
             }
             else
-            {
-                MessageBox.Show(this, "Could not connect to server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                Util.ShowConnectionError(this);
         }
 
         private void SendData(int length)
         {
-            if (!client.Connected)
+            if (!_client.Connected)
                 return;
 
             int byteLength = length;
@@ -315,570 +501,705 @@ namespace Tobasa
             string txt = Encoding.ASCII.GetString(dataToSend, 0, dataToSend.Length);
             int lgth = txt.Length;
 
-            client.Send(txt);
+            _client.Send(txt);
         }
 
-        #endregion
-
-        #region Connection  string
-        private string GetConnectionString()
-        {
-            string partialConnStr = Properties.Settings.Default.ConnectionString;
-            OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder();
-            builder.ConnectionString = partialConnStr;
-
-            string encryptedPwd = Properties.Settings.Default.ConnectionStringPassword;
-            string salt = Properties.Settings.Default.SecuritySalt;
-            string clearPwd = Util.DecryptPassword(encryptedPwd, salt);
-
-            builder.Add("Password", clearPwd);
-
-            return builder.ToString();
-        }
         #endregion
 
         #region Init DataGridView
 
-        private void InitIPAccessList()
+        private void InitGridIpAccessList(string jsonDataTable)
         {
-            if (Database.Me.Connected)
+            try
             {
-                string sql = "SELECT ipaddress,allowed,keterangan FROM ipaccesslists";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    OleDbDataAdapter sda = new OleDbDataAdapter(sql, Database.Me.Connection);
+                DataTable dataTable = null;
+                dataTable = (DataTable)JsonConvert.DeserializeObject(jsonDataTable, (typeof(DataTable)));
 
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    gridIpAccess.DataSource = dt;
+                if (dataTable == null || dataTable.Rows.Count == 0)
+                {
+                    gridIpAccess.DataSource = null;
+                    return;
+                }
 
-                    DataGridView gridView = gridIpAccess;
-                    DataGridViewColumn column = null;
-                    column = gridView.Columns[0];
-                      column.Width = 100;
-                      column.HeaderText = "IP Address";
-                    column = gridView.Columns[1];
-                      column.Width = 50;
-                      column.HeaderText = "Allowed";
-                    column = gridView.Columns[2];
-                      column.Width = 347;
-                      column.HeaderText = "Remark";
-                }
-                catch (ArgumentException e)
-                {
-                    Logger.Log("QueueService : ArgumentException : " + e.Message);
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("QueueService : Exception : " + e.Message);
-                }
+                gridIpAccess.DataSource = dataTable;
+                DataGridView gridView = gridIpAccess;
+
+                DataGridViewColumn column = null;
+                column = gridView.Columns[0];
+                    column.Width = 100;
+                    column.HeaderText = "IP Address";
+                column = gridView.Columns[1];
+                    column.Width = 50;
+                    column.HeaderText = "Allowed";
+                column = gridView.Columns[2];
+                    column.Width = 347;
+                    column.HeaderText = "Remark";
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueAdmin", e);
             }
         }
 
-        private void InitStations()
+        private void InitGridStation(string jsonDataTable)
         {
-            if (Database.Me.Connected)
+            try
             {
-                string sql = "SELECT name,post,canlogin,keterangan FROM stations";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    OleDbDataAdapter sda = new OleDbDataAdapter(sql, Database.Me.Connection);
+                DataTable dataTable = null;
+                dataTable = (DataTable)JsonConvert.DeserializeObject(jsonDataTable, (typeof(DataTable)));
 
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    gridStations.DataSource = dt;
+                if (dataTable == null || dataTable.Rows.Count == 0)
+                {
+                    gridStations.DataSource = null;
+                    return;
+                }
 
-                    DataGridView gridView = gridStations;
-                    DataGridViewColumn column = null;
-                    column = gridView.Columns[0];
-                      column.Width = 80;
-                      column.HeaderText = "Station";
-                    column = gridView.Columns[1];
-                      column.Width = 81;
-                      column.HeaderText = "Post";
-                    column = gridView.Columns[2];
-                      column.Width = 70;
-                      column.HeaderText = "Can Login";
-                    column = gridView.Columns[3];
-                      column.Width = 266;
-                      column.HeaderText = "Remark";
-                }
-                catch (ArgumentException e)
-                {
-                    Logger.Log("QueueAdmin : ArgumentException : " + e.Message);
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("QueueAdmin : Exception : " + e.Message);
-                }
+                gridStations.DataSource = dataTable;
+                DataGridView gridView = gridStations;
+
+                DataGridViewColumn column = null;
+                column = gridView.Columns[0];
+                    column.Width = 80;
+                    column.HeaderText = "Station";
+                column = gridView.Columns[1];
+                    column.Width = 81;
+                    column.HeaderText = "Post";
+                column = gridView.Columns[2];
+                    column.Width = 70;
+                    column.HeaderText = "Can Login";
+                column = gridView.Columns[3];
+                    column.Width = 266;
+                    column.HeaderText = "Remark";
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueAdmin", e);
             }
         }
 
-        private void InitPosts()
+        private void InitGridPost(string jsonDataTable)
         {
-            if (Database.Me.Connected)
+            try
             {
-                string sql = "SELECT name,keterangan,numberprefix FROM posts";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    OleDbDataAdapter sda = new OleDbDataAdapter(sql, Database.Me.Connection);
+                DataTable dataTable = null;
+                dataTable = (DataTable)JsonConvert.DeserializeObject(jsonDataTable, (typeof(DataTable)));
 
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    gridPosts.DataSource = dt;
-
-                    DataGridView gridView = gridPosts;
-                    DataGridViewColumn column = null;
-                    column = gridView.Columns[0];
-                      column.Width = 114;
-                      column.HeaderText = "Post";
-                    column = gridView.Columns[1];
-                      column.Width = 383;
-                      column.HeaderText = "Remark";
-                   column = gridView.Columns[3];
-                      column.Width = 114;
-                      column.HeaderText = "Prefix";
-
-                }
-                catch (ArgumentException e)
+                if (dataTable == null || dataTable.Rows.Count == 0)
                 {
-                    Logger.Log("QueueAdmin : ArgumentException : " + e.Message);
+                    gridPosts.DataSource = null;
+                    return;
                 }
-                catch (Exception e)
-                {
-                    Logger.Log("QueueAdmin : Exception : " + e.Message);
-                }
+
+                gridPosts.DataSource = dataTable;
+                DataGridView gridView = gridPosts;
+
+                DataGridViewColumn column = null;
+                column = gridView.Columns[0];
+                    column.Width = 114;
+                    column.HeaderText = "Post";
+                column = gridView.Columns[1];
+                    column.Width = 114;
+                    column.HeaderText = "Prefix";
+                column = gridView.Columns[2];
+                    column.Width = 300;
+                    column.HeaderText = "Remark";
+
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueAdmin", e);
             }
         }
 
-        private void InitLogins()
+        private void InitGridLogin(string jsonDataTable)
         {
-            if (Database.Me.Connected)
+            try
             {
-                string sql = "SELECT username,password,expired,active FROM logins";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    OleDbDataAdapter sda = new OleDbDataAdapter(sql, Database.Me.Connection);
+                DataTable dataTable = null;
+                dataTable = (DataTable)JsonConvert.DeserializeObject(jsonDataTable, (typeof(DataTable)));
 
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    gridLogins.DataSource = dt;
+                if (dataTable == null || dataTable.Rows.Count == 0)
+                {
+                    gridLogins.DataSource = null;
+                    return;
+                }
 
-                    DataGridView gridView = gridLogins;
-                    DataGridViewColumn column = null;
-                    column = gridView.Columns[0];
-                      column.Width = 100;
-                      column.HeaderText = "User Name";
-                    column = gridView.Columns[1];
-                      column.Width = 265;
-                      column.HeaderText = "Password";
-                    column = gridView.Columns[2];
-                      column.Width = 81;
-                      column.HeaderText = "Expired";
-                    column = gridView.Columns[3];
-                      column.Width = 50;
-                      column.HeaderText = "Active";
-                }
-                catch (ArgumentException e)
-                {
-                    Logger.Log("QueueAdmin : ArgumentException : " + e.Message);
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("QueueAdmin : Exception : " + e.Message);
-                }
+                gridLogins.DataSource = dataTable;
+                DataGridView gridView = gridLogins;
+
+                DataGridViewColumn column = null;
+                column = gridView.Columns[0];
+                    column.Width = 100;
+                    column.HeaderText = "User Name";
+                column = gridView.Columns[1];
+                    column.Width = 265;
+                    column.HeaderText = "Password";
+                column = gridView.Columns[2];
+                    column.Width = 81;
+                    column.HeaderText = "Expired";
+                column = gridView.Columns[3];
+                    column.Width = 50;
+                    column.HeaderText = "Active";
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueAdmin", e);
             }
         }
 
-        private void InitRunText()
+        private void InitGridRunningText(string jsonDataTable)
         {
-            if (Database.Me.Connected)
+            try
             {
-                string sql = "SELECT id,station_name,sticky,active,running_text FROM runningtexts";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    OleDbDataAdapter sda = new OleDbDataAdapter(sql, Database.Me.Connection);
+                DataTable dataTable = null;
+                dataTable = (DataTable)JsonConvert.DeserializeObject(jsonDataTable, (typeof(DataTable)));
 
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    gridRunText.DataSource = dt;
+                if (dataTable == null || dataTable.Rows.Count == 0)
+                {
+                    gridRunText.DataSource = null;
+                    return;
+                }
 
-                    DataGridViewColumn column = null;
-                    column = gridRunText.Columns[0];
-                      column.Width = 20;
-                      column.HeaderText = "ID";
-                    column = gridRunText.Columns[1];
-                      column.Width = 70;
-                      column.HeaderText = "Station";
-                    column = gridRunText.Columns[2];
-                      column.Width = 40;
-                      column.HeaderText = "Sticky";
-                    column = gridRunText.Columns[3];
-                      column.Width = 40;
-                      column.HeaderText = "Active";
-                    column = gridRunText.Columns[4];
-                      column.Width = 325;
-                      column.HeaderText = "Running Text";
-                }
-                catch (ArgumentException e)
-                {
-                    Logger.Log("QueueAdmin : ArgumentException : " + e.Message);
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("QueueAdmin : Exception : " + e.Message);
-                }
+                gridRunText.DataSource = dataTable;
+                DataGridView gridView = gridRunText;
+
+                DataGridViewColumn column = null;
+                column = gridView.Columns[0];
+                    column.Width = 20;
+                    column.HeaderText = "ID";
+                column = gridView.Columns[1];
+                    column.Width = 70;
+                    column.HeaderText = "Station";
+                column = gridView.Columns[2];
+                    column.Width = 40;
+                    column.HeaderText = "Sticky";
+                column = gridView.Columns[3];
+                    column.Width = 40;
+                    column.HeaderText = "Active";
+                column = gridView.Columns[4];
+                    column.Width = 325;
+                    column.HeaderText = "Running Text";
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueAdmin", e);
             }
         }
 
         #endregion
 
-        #region Login/Logout handler
+        #region Add/Delete table data
 
-        private void menuLogin_Click(object sender, EventArgs e)
+        private void AddDataIPAccess()
         {
-            if (!Database.Me.Connected)
-            {
-                string connStr = GetConnectionString();
-                if (Database.Me.Connect(connStr))
-                    MessageBox.Show("Database Connected", "Info", MessageBoxButtons.OK);
-                else
-                    MessageBox.Show("Could not connect to database", "Info", MessageBoxButtons.OK);
-            }
-            else
-                MessageBox.Show("Database Already Connected", "Info", MessageBoxButtons.OK);
+            FormIPAccess form = new FormIPAccess(this);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
+            form.ShowDialog();
         }
 
-        private void menuLogout_Click(object sender, EventArgs e)
+        private void AddDataStation()
         {
-            if (Database.Me.Connected)
+            FormStation form = new FormStation(this);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
+            form.ShowDialog();
+        }
+
+        private void AddDataPost()
+        {
+            FormPost form = new FormPost(this);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
+            form.ShowDialog();
+        }
+
+        private void AddDataLogin()
+        {
+            FormLogin form = new FormLogin(this);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
+            form.ShowDialog();
+        }
+
+        private void AddDataRunningText()
+        {
+            FormRunText form = new FormRunText(this);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
+            form.ShowDialog();
+        }
+
+        private void DeleteDataRunningText()
+        {
+            try
             {
-                if (Database.Me.Disconnect())
-                    MessageBox.Show("Database Disconnected", "Info", MessageBoxButtons.OK);
-                else
-                    MessageBox.Show("Could not close connection to database", "Info", MessageBoxButtons.OK);
+                if (gridRunText.RowCount == 0)
+                    return;
+
+                int row = gridRunText.CurrentCell.RowIndex;
+                int id = Convert.ToInt32(gridRunText.Rows[row].Cells[0].Value);
+                if (id < 0)
+                    return;
+
+                if (MessageBox.Show(this,"Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
+
+                DeleteTableFromServer(Tbl.runningtexts, id.ToString());
             }
-            else
-                MessageBox.Show("Database Already Disconnected", "Info", MessageBoxButtons.OK);
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DeleteDataIpAccess()
+        {
+            try
+            {
+                if (gridIpAccess.RowCount == 0)
+                    return;
+
+                int row = gridIpAccess.CurrentCell.RowIndex;
+                string ipaddress = Convert.ToString(gridIpAccess.Rows[row].Cells[0].Value);
+                if (ipaddress == "")
+                    return;
+
+                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
+
+                DeleteTableFromServer(Tbl.ipaccesslists, ipaddress);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DeleteDataStation()
+        {
+            try
+            {
+                if (gridStations.RowCount == 0)
+                    return;
+
+                int row = gridStations.CurrentCell.RowIndex;
+                string staName = Convert.ToString(gridStations.Rows[row].Cells[0].Value);
+                string postName = Convert.ToString(gridStations.Rows[row].Cells[1].Value);
+
+                if (staName == "" || postName == "")
+                    return;
+
+                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
+
+                DeleteTableFromServer(Tbl.stations, staName, postName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DeleteDataPost()
+        {
+            try
+            {
+                if (gridPosts.RowCount == 0)
+                    return;
+
+                int row = gridPosts.CurrentCell.RowIndex;
+                string postName = Convert.ToString(gridPosts.Rows[row].Cells[0].Value);
+                if (postName == "")
+                    return;
+
+                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
+
+                DeleteTableFromServer(Tbl.posts, postName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DeleteDataLogin()
+        {
+            try
+            {
+                if (gridLogins.RowCount == 0)
+                    return;
+
+                int row = gridLogins.CurrentCell.RowIndex;
+                string usrName = Convert.ToString(gridLogins.Rows[row].Cells[0].Value);
+                if (usrName == "")
+                    return;
+
+                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
+
+                DeleteTableFromServer(Tbl.logins, usrName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         #endregion
 
-        #region SQL Form DataChanged handler
-
-        private void FormIPAccess_DataChanged(EventArgs arg)
+        #region Other form handler
+        private void OnSubformDataChanged(string tablename)
         {
-            InitIPAccessList();
+            RequestTableFromServer(tablename);
         }
 
-        private void FormStation_DataChanged(EventArgs arg)
+        private void OnTabPageSelected(object sender, TabControlEventArgs e)
         {
-            InitStations();
+            TabPage page = e.TabPage;
+
+            if (page == tabIpAccessList)
+                RequestTableFromServer(Tbl.ipaccesslists);
+            else if (page == tabStation)
+                RequestTableFromServer(Tbl.stations);
+            if (page == tabLogin)
+                RequestTableFromServer(Tbl.logins);
+            else if (page == tabPost)
+                RequestTableFromServer(Tbl.posts);
+            else if (page == tabRunText)
+                RequestTableFromServer(Tbl.runningtexts);
         }
 
-        private void FormPost_DataChanged(EventArgs arg)
+        private void OnGridIpAccessSelectionChanged(object sender, EventArgs e)
         {
-            InitPosts();
+            //int row = gridIpAccess.CurrentCell.RowIndex;
+            //Logger.Log("[QueueAdmin] Current row is " + row);
         }
 
-        private void FormLogin_DataChanged(EventArgs arg)
+        private void OnAbout(object sender, EventArgs e)
         {
-            InitLogins();
+            Form about = new AboutBox();
+            about.ShowDialog();
         }
 
-        private void FormRunText_DataChanged(EventArgs arg)
+        private void OnOptions(object sender, EventArgs e)
         {
-            InitRunText();
+
+        }
+
+        private void OnExit(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Exit application?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
         }
 
         #endregion
 
-        #region DataGridView Handlers
+        #region Table Grid double  Click handler
 
-        private void gridIpAccess_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void OnGgridIpAccessListCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
                 return;
 
             string ipaddress = Convert.ToString(gridIpAccess.Rows[e.RowIndex].Cells[0].Value);
+            string allowed   = Convert.ToString(gridIpAccess.Rows[e.RowIndex].Cells[1].Value);
+            string remark    = Convert.ToString(gridIpAccess.Rows[e.RowIndex].Cells[2].Value);
+            
             if (ipaddress == "")
                 return;
+
+            Dictionary<string, string> record = new Dictionary<string, string>
+            {
+                ["ipaddress"] = ipaddress.Trim(),
+                ["allowed"]   = allowed.Trim(),
+                ["remark"]    = remark.Trim()
+            };
+
+            FormIPAccess form = new FormIPAccess(this, record);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
+            form.ShowDialog();
+        }
+
+        private void OnGgridStationsCellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            string name       = Convert.ToString(gridStations.Rows[e.RowIndex].Cells[0].Value);
+            string post       = Convert.ToString(gridStations.Rows[e.RowIndex].Cells[1].Value);
+            string canlogin   = Convert.ToString(gridStations.Rows[e.RowIndex].Cells[2].Value);
+            string keterangan = Convert.ToString(gridStations.Rows[e.RowIndex].Cells[3].Value);
             
-            FormIPAccess form = new FormIPAccess(ipaddress.Trim());
-            form.DataChanged += new Action<EventArgs>(FormIPAccess_DataChanged);
+            if (name == "" || post == "")
+                return;
+
+            Dictionary<string, string> record = new Dictionary<string, string>
+            {
+                ["name"]        = name.Trim(),
+                ["post"]        = post.Trim(),
+                ["canlogin"]    = canlogin.Trim(),
+                ["keterangan"]  = keterangan.Trim()
+            };
+
+            FormStation form = new FormStation(this, record);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
-        private void gridStations_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void OnGridPostsCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
                 return;
 
-            string staName = Convert.ToString(gridStations.Rows[e.RowIndex].Cells[0].Value);
-            string postName = Convert.ToString(gridStations.Rows[e.RowIndex].Cells[1].Value);
-            if (staName == "" || postName == "")
+            string postname = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[0].Value);
+            string prefix   = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[1].Value);
+            string remark   = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[2].Value);
+
+            if (postname == "")
                 return;
 
-            FormStation form = new FormStation(staName.Trim(), postName.Trim());
-            form.DataChanged += new Action<EventArgs>(FormStation_DataChanged);
+            Dictionary<string, string> data = new Dictionary<string, string>
+            {
+                { "postname", postname.Trim() },
+                { "remark",   remark.Trim() },
+                { "prefix",   prefix.Trim() }
+            };
+
+            FormPost form = new FormPost(this, data);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
-        private void gridPosts_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void OnGridLoginsCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
                 return;
 
-            string postName = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[0].Value);
-            if (postName == "")
-                return;
+            string usrName  = Convert.ToString(gridLogins.Rows[e.RowIndex].Cells[0].Value);
+            string password = Convert.ToString(gridLogins.Rows[e.RowIndex].Cells[1].Value);
+            string expired  = Convert.ToString(gridLogins.Rows[e.RowIndex].Cells[2].Value);
+            string active   = Convert.ToString(gridLogins.Rows[e.RowIndex].Cells[3].Value);
 
-            FormPost form = new FormPost(postName.Trim());
-            form.DataChanged += new Action<EventArgs>(FormPost_DataChanged);
-            form.ShowDialog();
-        }
-
-        private void gridLogins_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0)
-                return;
-
-            string usrName = Convert.ToString(gridLogins.Rows[e.RowIndex].Cells[0].Value);
             if (usrName == "")
                 return;
 
-            FormLogin form = new FormLogin(usrName.Trim());
-            form.DataChanged += new Action<EventArgs>(FormLogin_DataChanged);
+            Dictionary<string, string> data = new Dictionary<string, string>
+            {
+                { "username", usrName.Trim() },
+                { "password", password.Trim() },
+                { "expired",  expired.Trim() },
+                { "active",   active.Trim() }
+            };
+
+            FormLogin form = new FormLogin(this, data);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
-        private void gridRunText_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void OnGridRunTextCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
                 return;
 
-            string id = Convert.ToString(gridRunText.Rows[e.RowIndex].Cells[0].Value);
+            string id      = Convert.ToString(gridRunText.Rows[e.RowIndex].Cells[0].Value);
+            string station = Convert.ToString(gridRunText.Rows[e.RowIndex].Cells[1].Value);
+            string sticky  = Convert.ToString(gridRunText.Rows[e.RowIndex].Cells[2].Value);
+            string active  = Convert.ToString(gridRunText.Rows[e.RowIndex].Cells[3].Value);
+            string runText = Convert.ToString(gridRunText.Rows[e.RowIndex].Cells[4].Value);
+
             if (id == "")
                 return;
 
-            FormRunText form = new FormRunText(id.Trim());
-            form.DataChanged += new Action<EventArgs>(FormRunText_DataChanged);
-            form.ShowDialog();
-        }
-
-        private void btnAddDataAccess_Click(object sender, EventArgs e)
-        {
-            FormIPAccess form = new FormIPAccess();
-            form.DataChanged += new Action<EventArgs>(FormIPAccess_DataChanged);
-            form.ShowDialog();
-        }
-
-        private void btnAddDataStation_Click(object sender, EventArgs e)
-        {
-            FormStation form = new FormStation();
-            form.DataChanged += new Action<EventArgs>(FormStation_DataChanged);
-            form.ShowDialog();
-        }
-
-        private void btnAddPost_Click(object sender, EventArgs e)
-        {
-            FormPost form = new FormPost();
-            form.DataChanged += new Action<EventArgs>(FormPost_DataChanged);
-            form.ShowDialog();
-        }
-
-        private void btnAddLogin_Click(object sender, EventArgs e)
-        {
-            FormLogin form = new FormLogin();
-            form.DataChanged += new Action<EventArgs>(FormLogin_DataChanged);
-            form.ShowDialog();
-        }
-
-        private void btnAddRunText_Click(object sender, EventArgs e)
-        {
-            FormRunText form = new FormRunText();
-            form.DataChanged += new Action<EventArgs>(FormRunText_DataChanged);
-            form.ShowDialog();
-        }
-
-        private void btnDeleteRunText_Click(object sender, EventArgs e)
-        {
-            int row = gridRunText.CurrentCell.RowIndex;
-            int id = Convert.ToInt32(gridRunText.Rows[row].Cells[0].Value);
-            if (id < 0 )
-                return;
-
-            if (Database.Me.Connected)
+            Dictionary<string, string> data = new Dictionary<string, string>
             {
-                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
+                { "id",      id.Trim() },
+                { "station", station.Trim() },
+                { "sticky",  sticky.Trim() },
+                { "active",  active.Trim() },
+                { "runText", runText.Trim() }
+            };
 
-                string sql = "DELETE FROM runningtexts WHERE id = ?";
-
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.Integer).Value = id;
-                        int changed = cmd.ExecuteNonQuery();
-                        if (changed > 0)
-                            InitRunText();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void btnDeleteDataAccess_Click(object sender, EventArgs e)
-        {
-            int row = gridIpAccess.CurrentCell.RowIndex;
-            string ipaddress = Convert.ToString(gridIpAccess.Rows[row].Cells[0].Value);
-            if (ipaddress == "")
-                return;
-
-            if (Database.Me.Connected)
-            {
-                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
-
-                string sql = "DELETE FROM ipaccesslists WHERE ipaddress = ?";
-
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 15).Value = ipaddress.Trim();
-                        int changed = cmd.ExecuteNonQuery();
-                        if (changed >0 )
-                            InitIPAccessList();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void btnDeleteStation_Click(object sender, EventArgs e)
-        {
-            int row = gridStations.CurrentCell.RowIndex;
-            string staName = Convert.ToString(gridStations.Rows[row].Cells[0].Value);
-            if (staName == "")
-                return;
-
-            if (Database.Me.Connected)
-            {
-                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
-
-                string sql = "DELETE FROM stations WHERE name = ?";
-
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 32).Value = staName.Trim();
-                        int changed = cmd.ExecuteNonQuery();
-                        if (changed > 0)
-                            InitStations();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void btnDeletePost_Click(object sender, EventArgs e)
-        {
-            int row = gridPosts.CurrentCell.RowIndex;
-            string postName = Convert.ToString(gridPosts.Rows[row].Cells[0].Value);
-            if (postName == "")
-                return;
-
-            if (Database.Me.Connected)
-            {
-                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
-
-                string sql = "DELETE FROM posts WHERE name = ?";
-
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 32).Value = postName.Trim();
-                        int changed = cmd.ExecuteNonQuery();
-                        if (changed > 0)
-                            InitPosts();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void btnDeleteLogin_Click(object sender, EventArgs e)
-        {
-            int row = gridLogins.CurrentCell.RowIndex;
-            string usrName = Convert.ToString(gridLogins.Rows[row].Cells[0].Value);
-            if (usrName == "")
-                return;
-
-            if (Database.Me.Connected)
-            {
-                if (MessageBox.Show("Do you want to delete record?", "Action", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
-
-                string sql = "DELETE FROM logins WHERE username = ?";
-
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 50).Value = usrName.Trim();
-                        int changed = cmd.ExecuteNonQuery();
-                        if (changed > 0)
-                            InitLogins();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void gridStations_SelectionChanged(object sender, EventArgs e)
-        {
-            //int row = gridStations.CurrentCell.RowIndex;
-            //Logger.Log("Current row is " + row);
-        }
-
-        private void gridIpAccess_SelectionChanged(object sender, EventArgs e)
-        {
-            //int row = gridIpAccess.CurrentCell.RowIndex;
-            //Logger.Log("Current row is " + row);
+            FormRunText form = new FormRunText(this, data);
+            form.DataChanged += new Action<string>(OnSubformDataChanged);
+            form.ShowDialog();
         }
 
         #endregion
 
+        #region Form Navigation
+        private void OnBtnNextPage(object sender, EventArgs e)
+        {
+            TabPage tab = tabTable.SelectedTab;
+
+            if (tab == tabIpAccessList)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.ipaccesslists].MoveNextPage(this);
+            }
+            else if (tab == tabStation)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.stations].MoveNextPage(this);
+            }
+            else if (tab == tabLogin)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.logins].MoveNextPage(this);
+            }
+            else if (tab == tabPost)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.posts].MoveNextPage(this);
+            }
+            else if (tab == tabRunText)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.runningtexts].MoveNextPage(this);
+            }
+        }
+
+        private void OnBtnPrevPage(object sender, EventArgs e)
+        {
+            TabPage tab = tabTable.SelectedTab;
+
+            if (tab == tabIpAccessList)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.ipaccesslists].MovePreviousPage(this);
+            }
+            else if (tab == tabStation)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.stations].MovePreviousPage(this);
+            }
+            else if (tab == tabLogin)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.logins].MovePreviousPage(this);
+            }
+            else if (tab == tabPost)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.posts].MovePreviousPage(this);
+            }
+            else if (tab == tabRunText)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.runningtexts].MovePreviousPage(this);
+            }
+        }
+
+        private void OnBtnLastPage(object sender, EventArgs e)
+        {
+            TabPage tab = tabTable.SelectedTab;
+
+            if (tab == tabIpAccessList)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.ipaccesslists].MoveLastPage(this);
+            }
+            else if (tab == tabStation)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.stations].MoveLastPage(this);
+            }
+            else if (tab == tabLogin)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.logins].MoveLastPage(this);
+            }
+            else if (tab == tabPost)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.posts].MoveLastPage(this);
+            }
+            else if (tab == tabRunText)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.runningtexts].MoveLastPage(this);
+            }
+        }
+
+        private void OnBtnFirstPage(object sender, EventArgs e)
+        {
+            TabPage tab = tabTable.SelectedTab;
+
+            if (tab == tabIpAccessList)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.ipaccesslists].MoveFirstPage(this);
+            }
+            else if (tab == tabStation)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.stations].MoveFirstPage(this);
+            }
+            else if (tab == tabLogin)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.logins].MoveFirstPage(this);
+            }
+            else if (tab == tabPost)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.posts].MoveFirstPage(this);
+            }
+            else if (tab == tabRunText)
+            {
+                tbReordStatus.Text = _tableProps[Tbl.runningtexts].MoveFirstPage(this);
+            }
+        }
+
+        private void OnBtnAddData(object sender, EventArgs e)
+        {
+            TabPage tab = tabTable.SelectedTab;
+
+            if (tab == tabIpAccessList)
+            {
+                AddDataIPAccess();
+            }
+            else if (tab == tabStation)
+            {
+                AddDataStation();
+            }
+            else if (tab == tabLogin)
+            {
+                AddDataLogin();
+            }
+            else if (tab == tabPost)
+            {
+                AddDataPost();
+            }
+            else if (tab == tabRunText)
+            {
+                AddDataRunningText();
+            }
+        }
+
+        private void OnBtnDeleteData(object sender, EventArgs e)
+        {
+            TabPage tab = tabTable.SelectedTab;
+
+            if (tab == tabIpAccessList)
+            {
+                DeleteDataIpAccess();
+            }
+            else if (tab == tabStation)
+            {
+                DeleteDataStation();
+            }
+            else if (tab == tabLogin)
+            {
+                DeleteDataLogin();
+            }
+            else if (tab == tabPost)
+            {
+                DeleteDataPost();
+            }
+            else if (tab == tabRunText)
+            {
+                DeleteDataRunningText();
+            }
+        }
+
+
+        #endregion
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.O:
+                    {
+                        // Ctrl + O
+                        if (e.Control)
+                        {
+                            this.WindowState = FormWindowState.Normal;
+                            this.BringToFront();
+                        }
+                        break;
+                    }
+            }
+        }
     }
 }

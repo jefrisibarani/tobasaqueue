@@ -12,7 +12,7 @@ namespace Tobasa.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -524,6 +524,11 @@ namespace Tobasa.Properties {
   <string>POST2</string>
   <string>POST3</string>
   <string>POST4</string>
+  <string>POST5</string>
+  <string>POST6</string>
+  <string>POST7</string>
+  <string>POST8</string>
+  <string>POST9</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection UIPostList {
             get {
@@ -656,18 +661,6 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool BasicQueueMode {
-            get {
-                return ((bool)(this["BasicQueueMode"]));
-            }
-            set {
-                this["BasicQueueMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39")]
         public string SecuritySalt {
             get {
@@ -728,7 +721,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool Post4PlayAudio {
             get {
                 return ((bool)(this["Post4PlayAudio"]));
@@ -740,7 +733,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool Post4Visible {
             get {
                 return ((bool)(this["Post4Visible"]));
@@ -776,7 +769,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowInfoTextTop0 {
             get {
                 return ((bool)(this["ShowInfoTextTop0"]));
@@ -788,13 +781,493 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowInfoTextTop1 {
             get {
                 return ((bool)(this["ShowInfoTextTop1"]));
             }
             set {
                 this["ShowInfoTextTop1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AudioUseLoket {
+            get {
+                return ((bool)(this["AudioUseLoket"]));
+            }
+            set {
+                this["AudioUseLoket"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AudioLoketIDUseAlphabet {
+            get {
+                return ((bool)(this["AudioLoketIDUseAlphabet"]));
+            }
+            set {
+                this["AudioLoketIDUseAlphabet"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool BasicQueueMode {
+            get {
+                return ((bool)(this["BasicQueueMode"]));
+            }
+            set {
+                this["BasicQueueMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI GIGI")]
+        public string Post5Caption {
+            get {
+                return ((string)(this["Post5Caption"]));
+            }
+            set {
+                this["Post5Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST5")]
+        public string Post5Post {
+            get {
+                return ((string)(this["Post5Post"]));
+            }
+            set {
+                this["Post5Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Gigi")]
+        public string Post5Name {
+            get {
+                return ((string)(this["Post5Name"]));
+            }
+            set {
+                this["Post5Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Gigi")]
+        public string Post5RunText {
+            get {
+                return ((string)(this["Post5RunText"]));
+            }
+            set {
+                this["Post5RunText"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post5PlayAudio {
+            get {
+                return ((bool)(this["Post5PlayAudio"]));
+            }
+            set {
+                this["Post5PlayAudio"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post5Visible {
+            get {
+                return ((bool)(this["Post5Visible"]));
+            }
+            set {
+                this["Post5Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI ANAK")]
+        public string Post6Caption {
+            get {
+                return ((string)(this["Post6Caption"]));
+            }
+            set {
+                this["Post6Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST6")]
+        public string Post6Post {
+            get {
+                return ((string)(this["Post6Post"]));
+            }
+            set {
+                this["Post6Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Anak")]
+        public string Post6Name {
+            get {
+                return ((string)(this["Post6Name"]));
+            }
+            set {
+                this["Post6Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Anak")]
+        public string Post6RunText {
+            get {
+                return ((string)(this["Post6RunText"]));
+            }
+            set {
+                this["Post6RunText"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post6PlayAudio {
+            get {
+                return ((bool)(this["Post6PlayAudio"]));
+            }
+            set {
+                this["Post6PlayAudio"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post6Visible {
+            get {
+                return ((bool)(this["Post6Visible"]));
+            }
+            set {
+                this["Post6Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI MATA")]
+        public string Post7Caption {
+            get {
+                return ((string)(this["Post7Caption"]));
+            }
+            set {
+                this["Post7Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST7")]
+        public string Post7Post {
+            get {
+                return ((string)(this["Post7Post"]));
+            }
+            set {
+                this["Post7Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Mata")]
+        public string Post7Name {
+            get {
+                return ((string)(this["Post7Name"]));
+            }
+            set {
+                this["Post7Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Mata")]
+        public string Post7RunText {
+            get {
+                return ((string)(this["Post7RunText"]));
+            }
+            set {
+                this["Post7RunText"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post7PlayAudio {
+            get {
+                return ((bool)(this["Post7PlayAudio"]));
+            }
+            set {
+                this["Post7PlayAudio"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post7Visible {
+            get {
+                return ((bool)(this["Post7Visible"]));
+            }
+            set {
+                this["Post7Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI KULIT")]
+        public string Post8Caption {
+            get {
+                return ((string)(this["Post8Caption"]));
+            }
+            set {
+                this["Post8Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST8")]
+        public string Post8Post {
+            get {
+                return ((string)(this["Post8Post"]));
+            }
+            set {
+                this["Post8Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Kulit")]
+        public string Post8Name {
+            get {
+                return ((string)(this["Post8Name"]));
+            }
+            set {
+                this["Post8Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli Kulit")]
+        public string Post8RunText {
+            get {
+                return ((string)(this["Post8RunText"]));
+            }
+            set {
+                this["Post8RunText"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post8PlayAudio {
+            get {
+                return ((bool)(this["Post8PlayAudio"]));
+            }
+            set {
+                this["Post8PlayAudio"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post8Visible {
+            get {
+                return ((bool)(this["Post8Visible"]));
+            }
+            set {
+                this["Post8Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POLI THT")]
+        public string Post9Caption {
+            get {
+                return ((string)(this["Post9Caption"]));
+            }
+            set {
+                this["Post9Caption"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("POST9")]
+        public string Post9Post {
+            get {
+                return ((string)(this["Post9Post"]));
+            }
+            set {
+                this["Post9Post"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli THT")]
+        public string Post9Name {
+            get {
+                return ((string)(this["Post9Name"]));
+            }
+            set {
+                this["Post9Name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Poli THT")]
+        public string Post9RunText {
+            get {
+                return ((string)(this["Post9RunText"]));
+            }
+            set {
+                this["Post9RunText"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post9PlayAudio {
+            get {
+                return ((bool)(this["Post9PlayAudio"]));
+            }
+            set {
+                this["Post9PlayAudio"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post9Visible {
+            get {
+                return ((bool)(this["Post9Visible"]));
+            }
+            set {
+                this["Post9Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post0Visible {
+            get {
+                return ((bool)(this["Post0Visible"]));
+            }
+            set {
+                this["Post0Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post1Visible {
+            get {
+                return ((bool)(this["Post1Visible"]));
+            }
+            set {
+                this["Post1Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post2Visible {
+            get {
+                return ((bool)(this["Post2Visible"]));
+            }
+            set {
+                this["Post2Visible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MainPostCounterText {
+            get {
+                return ((string)(this["MainPostCounterText"]));
+            }
+            set {
+                this["MainPostCounterText"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowRightPosts {
+            get {
+                return ((bool)(this["ShowRightPosts"]));
+            }
+            set {
+                this["ShowRightPosts"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowLeftPosts {
+            get {
+                return ((bool)(this["ShowLeftPosts"]));
+            }
+            set {
+                this["ShowLeftPosts"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowCenterMiddleDiv {
+            get {
+                return ((bool)(this["ShowCenterMiddleDiv"]));
+            }
+            set {
+                this["ShowCenterMiddleDiv"] = value;
             }
         }
     }

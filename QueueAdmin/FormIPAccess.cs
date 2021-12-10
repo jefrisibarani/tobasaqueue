@@ -1,38 +1,145 @@
-﻿using System;
+﻿#region License
+/*
+    Sotware Antrian Tobasa
+    Copyright (C) 2021  Jefri Sibarani
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+#endregion
+
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using System.Data.OleDb;
 using System.Net;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+
 namespace Tobasa
 {
     public partial class FormIPAccess : Form
     {
-        public event Action<EventArgs> DataChanged;
-        private bool insertMode = false;
-        private String ipAddress;
+        #region Member variables
 
-        public FormIPAccess(string ip)
+        public event Action<string> DataChanged;
+        private readonly MainForm _mainForm;
+        private bool _insertMode = false;
+        Dictionary<string, string> _initialData;
+
+        #endregion
+
+        #region Form Loading/Unloading
+
+        public FormIPAccess(MainForm form, Dictionary<string, string> data)
         {
-            ipAddress = ip;
+            _mainForm = form;
+            //_mainForm.MessageReceived += new MessageReceived(ProcessMessage);
+
+            _initialData = data;
             InitializeComponent();
 
-            if (insertMode) btnAction.Text = "&Insert";
-            else btnAction.Text = "&Update";
+            if (_insertMode) 
+                btnAction.Text = "&Insert";
+            else 
+                btnAction.Text = "&Update";
         }
 
-        public FormIPAccess()
+        public FormIPAccess(MainForm form)
         {
-            insertMode = true;
+            _mainForm = form;
+            _mainForm.MessageReceived += new MessageReceived(ProcessMessage);
+
+            _insertMode = true;
             InitializeComponent();
 
-            if (insertMode) btnAction.Text = "&Insert";
-            else btnAction.Text = "&Update";
+            if (_insertMode) 
+                btnAction.Text = "&Insert";
+            else 
+                btnAction.Text = "&Update";
         }
 
-        private void OnDataChanged()
+        private void OnFormLoad(object sender, EventArgs e)
         {
-            if (DataChanged != null)
-                DataChanged(new EventArgs());
+            if (!_insertMode && _initialData.Count > 0)
+            {
+                bool canConnnect        = Convert.ToBoolean(Convert.ToInt32(_initialData["allowed"]));
+                txtIPAddress.Text       = _initialData["ipaddress"];
+                txtRemark.Text          = _initialData["remark"];
+                rbCanConnect.Checked    = canConnnect;
+                rbCannotConnect.Checked = !canConnnect;
+            }
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            //_mainForm.MessageReceived -= ProcessMessage;
+        }
+
+        #endregion
+
+        public void ProcessMessage(Message message)
+        {
+        }
+
+        private void InsertUpdateDataIpAccess(string ipaddress, bool allowed, string remark)
+        {
+            if (_mainForm.TcpClient != null && _mainForm.TcpClient.Connected)
+            {
+                string messageT;
+                string commandType;
+                string ipOld_;
+
+                if (_insertMode)
+                {
+                    messageT = Msg.SysInsTable.Text;
+                    commandType = "INSERT";
+                    ipOld_ = "";
+                }
+                else
+                {
+                    messageT = Msg.SysUpdTable.Text;
+                    commandType = "UPDATE";
+                    ipOld_ = _initialData["ipaddress"];
+                }
+
+                Dto.IpAccessList ipAccess = new Dto.IpAccessList()
+                {
+                    IpAddressOld = ipOld_,
+                    IpAddress = ipaddress,
+                    Allowed = allowed,
+                    Keterangan = remark
+                };
+
+                string jsonA = JsonConvert.SerializeObject(ipAccess, Formatting.None);
+                Dictionary<string, string> paramDict = new Dictionary<string, string>()
+                {
+                    ["command"] = commandType,
+                    ["data"] = jsonA,
+                };
+
+                string jsonParam = JsonConvert.SerializeObject(paramDict, Formatting.None);
+
+                // SYS|INS_TABLE|REQ|Identifier|[Name!Params]
+                string message = messageT +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + Tbl.ipaccesslists +  // tablename
+                                 Msg.CompDelimiter + jsonParam;       // parameter
+
+                _mainForm.TcpClient.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
         }
 
         private void OnClose(object sender, EventArgs e)
@@ -42,100 +149,44 @@ namespace Tobasa
 
         private void OnAction(object sender, EventArgs e)
         {
-
             IPAddress valid;
-            if (IPAddress.TryParse(txtIPAddress.Text, out valid) != true)
+            if (IPAddress.TryParse(txtIPAddress.Text.Trim(), out valid) != true)
             {
                 MessageBox.Show("Invalid IP Address : " + txtIPAddress.Text, "Error", MessageBoxButtons.OK);
                 return;
             }
 
-            if (Database.Me.Connected)
-            {
-                string msg = "";
-                if (insertMode)
-                    msg = "Do you want to insert record?";
-                else
-                    msg = "Do you want to update record?";
-
-                if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
-
-                string sql = "";
-                if (insertMode)
-                    sql = "INSERT INTO ipaccesslists (ipaddress,allowed,keterangan) VALUES (?,?,?)";
-                else
-                    sql = "UPDATE ipaccesslists SET ipaddress = ? , allowed = ? , keterangan = ? WHERE ipaddress = ?";
-                
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 15).Value = txtIPAddress.Text;
-                        cmd.Parameters.Add("?", OleDbType.Boolean).Value = rbCanConnect.Checked;
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 50).Value = txtRemark.Text;
-
-                        if (!insertMode) // UPDATE
-                            cmd.Parameters.Add("?", OleDbType.VarChar, 15).Value = ipAddress;
-
-                        cmd.ExecuteNonQuery();
-                        OnDataChanged();
-                        this.Close();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void IPAccessForm_Load(object sender, EventArgs e)
-        {
-            if (Database.Me.Connected)
-            {
-                string sql = "SELECT ipaddress,allowed,keterangan FROM ipaccesslists WHERE ipaddress = ?";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (OleDbCommand cmd = new OleDbCommand(sql, Database.Me.Connection))
-                    {
-                        cmd.Parameters.Add("?", OleDbType.VarChar, 15).Value = ipAddress;
-
-                        using (OleDbDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                reader.Read();
-                                bool _allowed = reader.GetBoolean(1);
-                                var remark = reader.GetValue(2);
-                                if(remark !=null) 
-                                    txtRemark.Text = remark.ToString().Trim();
-                                txtIPAddress.Text = ipAddress;
-                                rbCanConnect.Checked = _allowed;
-                                rbCannotConnect.Checked = !_allowed;
-                            }
-                        }
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log("QueueAdmin : Exception : " + ex.Message);
-                }
-            }
-        }
-
-        private void txtIPAddress_Validating(object sender, CancelEventArgs e)
-        {
-            /*
-            IPAddress valid;
-            if (IPAddress.TryParse(txtIPAddress.Text, out valid) == true)
-                e.Cancel = true;
+            string msg = "";
+            if (_insertMode)
+                msg = "Do you want to insert record?";
             else
-                MessageBox.Show("Invalid IP Address : " + txtIPAddress.Text, "Error", MessageBoxButtons.YesNo);
-            */
+                msg = "Do you want to update record?";
+
+            if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.No)
+                return;
+
+            try
+            {
+                // Send Insert/Update request to QueueServer
+                // On receiving response from server in MainForm.HandleMessage, 
+                // tell main form to update relevant grid view
+
+                InsertUpdateDataIpAccess(txtIPAddress.Text.Trim(), rbCanConnect.Checked, txtRemark.Text.Trim());
+
+                // TODO: Remove DataChanged event, since MainForm now update 
+                // relevant grid in its HandleMessage method
+                //DataChanged?.Invoke(Tbl.ipaccesslists);
+
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void OnIPAddressValidating(object sender, CancelEventArgs e)
+        {
         }
     }
 }

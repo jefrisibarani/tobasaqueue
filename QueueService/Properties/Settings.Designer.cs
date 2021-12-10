@@ -12,7 +12,7 @@ namespace Tobasa.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,8 +26,7 @@ namespace Tobasa.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antr" +
-            "i")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=d:\\projects\\tobasaqueue_foss\\Database\\antri.db3;Version=3;")]
         public string ConnectionString {
             get {
                 return ((string)(this["ConnectionString"]));
@@ -45,7 +44,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ad7415644add93d6e719d2b593da6e6e")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ConnectionStringPassword {
             get {
                 return ((string)(this["ConnectionStringPassword"]));
@@ -88,6 +87,18 @@ namespace Tobasa.Properties {
             }
             set {
                 this["FilterClientIPAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SQLITE")]
+        public string ProviderType {
+            get {
+                return ((string)(this["ProviderType"]));
+            }
+            set {
+                this["ProviderType"] = value;
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2018  Jefri Sibarani
+    Copyright (C) 2021  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -27,12 +27,13 @@ namespace Tobasa
 {
     public class Logger
     {
-        private static string logFile;
-        
-        /// Init log file in temporary folder
+        private static string _logFile;
+        private static readonly object _locker = new object();
+
+        // Init log file in temporary folder
         public Logger()
         {
-            logFile = GetTempFilePath();
+            _logFile = GetTempFilePath();
         }
 
         private static string GetTempFilePath()
@@ -44,34 +45,47 @@ namespace Tobasa
 
         public static string LogFile
         {
-            get { return logFile; }
-            set { logFile = value; }
+            get { return _logFile; }
+            set { _logFile = value; }
         }
 
-        private static readonly object locker = new object();
+        //  Log message to file, rotate everyday
+        public static void Log(string source, string message)
+        {
+            Log(string.Format("[{0}] {1}", source, message));
+        }
 
-        ///  Log message to file, create new file everyday
+        public static void Log(string source, Exception exp)
+        {
+            Log(string.Format("[{0}] {1}: {2}", source, exp.GetType().Name, exp.Message));
+        }
+
+        public static void Log(NotifyEventArgs arg)
+        {
+            Logger.Log(string.Format("[{0}] {1} : {2}", arg.Source, arg.Summary, arg.Message));
+        }
+
         public static void Log(string message)
         {
-            lock (locker)
+            lock (_locker)
             {
-                /// No logFile defined, use  temporary file in %TEMP%
-                if (logFile == null)
+                // No logFile defined, use  temporary file in %TEMP%
+                if (_logFile == null)
                     Logger.LogFile = GetTempFilePath();
 
-                if (File.Exists(logFile))
+                if (File.Exists(_logFile))
                 {
-                    DateTime dt = File.GetLastAccessTime(logFile);
+                    DateTime dt = File.GetLastAccessTime(_logFile);
                     if (dt.Date != DateTime.Now.Date)
                     {
-                        /// rename filenya
+                        // rename the file
 
                         string oldDate = dt.ToString("yyyyMMdd_HHmmss");
-                        string oldName = Path.GetFileNameWithoutExtension(logFile);
-                        string newName = oldDate + "_" + oldName;  // no extension here
+                        string oldName = Path.GetFileNameWithoutExtension(_logFile);
+                        string newName = oldDate + "_" + oldName;  // without file extension
 
-                        string oldNameFull = Path.GetFullPath(logFile);
-                        string newNameFull = Path.GetDirectoryName(logFile)+ @"\" + newName + ".log";
+                        string oldNameFull = Path.GetFullPath(_logFile);
+                        string newNameFull = Path.GetDirectoryName(_logFile)+ @"\" + newName + ".log";
                         try
                         {
                             File.Move(oldNameFull, newNameFull);
@@ -89,31 +103,15 @@ namespace Tobasa
 
                 try
                 {
-                    using (StreamWriter SW = File.AppendText(logFile))
+                    using (StreamWriter SW = File.AppendText(_logFile))
                     {
                         string msg = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") + " : " + message;
                         SW.WriteLine(msg);
                     }
                 }
-                catch (UnauthorizedAccessException e)
+                catch (Exception ex)
                 {
                     using (StreamWriter SW = File.AppendText( GetTempFilePath() ))
-                    {
-                        string msg = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") + " : " + message;
-                        SW.WriteLine(msg);
-                    }
-                }
-                catch (ArgumentException e)
-                {
-                    using (StreamWriter SW = File.AppendText(GetTempFilePath()))
-                    {
-                        string msg = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") + " : " + message;
-                        SW.WriteLine(msg);
-                    }
-                }
-                catch (DirectoryNotFoundException e)
-                {
-                    using (StreamWriter SW = File.AppendText(GetTempFilePath()))
                     {
                         string msg = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") + " : " + message;
                         SW.WriteLine(msg);
