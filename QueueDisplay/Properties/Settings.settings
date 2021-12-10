@@ -201,13 +201,13 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ShowInfoTextTop0" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ShowInfoTextTop1" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AudioUseLoket" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AudioLoketIDUseAlphabet" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

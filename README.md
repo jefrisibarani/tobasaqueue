@@ -1,18 +1,20 @@
 # Software Antrian Tobasa
 http://www.mangapul.com/p/software-antrian-tobasa.html
 
+Software Antrian Open Source dan gratis.
 Software sistem antrian andal untuk mengelola antrian pelanggan, mengurangi waktu tunggu, 
-meningkatkan kualitas layanan dan memaksimalkan kepuasan customer.
+meningkatkan kualitas layanan dan memaksimalkan kepuasan pelanggan.
 
 ## Kebutuhan minimal
 * Windows 7 Service Pack 1 
-* Microsoft .NET Framework 4.8
+* Microsoft .NET Framework 4.0
 
 Bila ingin menggunakan SQL Server sebagai database:
 * Microsoft SQL Server 2008 R2 Express Edition 
 
-Dengan konfigurasi default, tidak perlu menggunakan SQL Server, karena Antrian Tobasa
-menggunakan database embedded SQLite.
+Dengan konfigurasi default, tidak perlu menggunakan Microsoft SQL Server, 
+karena Antrian Tobasa menggunakan database SQLite.
+
 
 ## Build/Compile dari source code
 * Clone/download project source code dari https://github.com/jefrisibarani/tobasaqueue
@@ -33,6 +35,7 @@ _OUTPUT
    \---QueueTicket
        \---img
    \---LICENSE
+   \---QueueConfig.exe
    \---README.md
    \---startall_output.cmd
 ```

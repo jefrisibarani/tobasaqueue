@@ -38,7 +38,7 @@ namespace Tobasa
     {
         public static string DEFAULT_SQLSRV_CONNSTRING = "Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;";
         public static string DEFAULT_SQLSRV_CONNSTRING_PASSWORD = "ad7415644add93d6e719d2b593da6e6e";
-        public static string DEFAULT_SQLITE_CONNSTRING = "Data Source=.\\Database\\antri.db3;Version=3;";
+        public static string DEFAULT_SQLITE_CONNSTRING = "Data Source=..\\Database\\antri.db3;Version=3;";
         public static string DEFAULT_SQLITE_CONNSTRING_PASSWORD = "";
         public static string DEFAULT_SECURITY_SALT = "C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39";
 
@@ -166,7 +166,7 @@ namespace Tobasa
                 if (_providerType == ProviderType.SQLITE)
                 {
                     conString = GetConnectionString(
-                        DEFAULT_SQLSRV_CONNSTRING,
+                        DEFAULT_SQLITE_CONNSTRING,
                         DEFAULT_SECURITY_SALT,
                         DEFAULT_SQLSRV_CONNSTRING_PASSWORD);
 

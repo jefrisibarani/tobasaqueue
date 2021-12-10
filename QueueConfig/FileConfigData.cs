@@ -94,5 +94,6 @@
         public string name;
         public string path;
         public bool backup = false;
+        public bool exists = false;
     }
 }

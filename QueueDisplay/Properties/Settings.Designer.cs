@@ -769,7 +769,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ShowInfoTextTop0 {
             get {
                 return ((bool)(this["ShowInfoTextTop0"]));
@@ -781,7 +781,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ShowInfoTextTop1 {
             get {
                 return ((bool)(this["ShowInfoTextTop1"]));
@@ -793,7 +793,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AudioUseLoket {
             get {
                 return ((bool)(this["AudioUseLoket"]));

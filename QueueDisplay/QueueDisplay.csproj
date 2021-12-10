@@ -285,7 +285,8 @@ COPY /Y $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv     $(SolutionDir)_OUTPU
 
 COPY /Y $(ProjectDir)img\*.*                                                         $(TargetDir)img\
 COPY /Y $(SolutionDir)MediaFiles\audio\*.wav                          $(TargetDir)wav\
-COPY /Y $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv      $(TargetDir)movie\
+
+IF EXIST $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv COPY /Y $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv   $(TargetDir)movie\
 
 REM type nul &gt; $(SolutionDir)_OUTPUT\$(ProjectName)\movie\put_your_video_files_here
 </PostBuildEvent>

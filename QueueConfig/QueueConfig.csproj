@@ -122,6 +122,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>COPY /Y $(TargetDir)$(TargetFileName)   $(SolutionDir)_OUTPUT\</PostBuildEvent>
+    <PostBuildEvent>IF NOT EXIST $(SolutionDir)_OUTPUT       MD $(SolutionDir)_OUTPUT
+COPY /Y $(TargetDir)$(TargetFileName)   $(SolutionDir)_OUTPUT\</PostBuildEvent>
   </PropertyGroup>
 </Project>

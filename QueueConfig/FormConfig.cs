@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -47,7 +48,6 @@ namespace Tobasa
             { "Admin",    new ConfigFile(){ name = "QueueAdmin",    path = ".\\QueueAdmin\\QueueAdmin.exe.config"  }        },
             { "Caller",   new ConfigFile(){ name = "QueueCaller",   path = ".\\QueueCaller\\QueueCaller.exe.config"  }      },
             { "Display",  new ConfigFile(){ name = "QueueDisplay",  path = ".\\QueueDisplay\\QueueDisplay.exe.config"  }    },
-            { "Display5", new ConfigFile(){ name = "QueueDisplay5", path = ".\\QueueDisplay5\\QueueDisplay5.exe.config"  }  },
             { "Service",  new ConfigFile(){ name = "QueueService",  path = ".\\QueueService\\QueueService.exe.config"  }    },
             { "Ticket",   new ConfigFile(){ name = "QueueTicket",   path = ".\\QueueTicket\\QueueTicket.exe.config"  }      },
         };
@@ -223,8 +223,47 @@ namespace Tobasa
             }
         }
 
+        private bool ValidateTobasaModules()
+        {
+            string moduleNames = "";
+            foreach (KeyValuePair<string, ConfigFile> kv in configFileDict)
+            {
+                ConfigFile cfg = kv.Value;
+                try
+                {
+                    if( !File.Exists(cfg.path))
+                    {
+                        if (moduleNames.Length > 0)
+                            moduleNames += ", ";
+
+                        moduleNames += cfg.name;
+                    }
+                }
+                catch (Exception)
+                {
+                    //MessageBox.Show(ex.Message, ex.GetType().Name);
+                }
+            }
+
+            if (moduleNames.Length == 0)
+                return true;
+            else
+            {
+                MessageBox.Show($"Module {moduleNames} tidak ditemukan. Tool ini harus dijalankan pada folder bundling Software Antrian Tobasa",
+                    "Informasi",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
+
+                return false;
+            }
+        }
+
         private void OnApplyConfig(object sender, EventArgs e)
         {
+            if( !ValidateTobasaModules())
+            {
+                return;
+            }
+
+
             if (!ValidateSecuritySalt())
             {
                 MessageBox.Show("Please check security salt input", "Security salt invalid");

@@ -1,20 +1,45 @@
-* Settingan default menggunakan database embedded, jadi tidak perlu menginstall database server.
-* Bila diperlukan, dapat menggunakan SQL Server sebagai database.
-
-* Panggilan audio
+* Software Antrian Open Source dan gratis.
+* Settingan default menggunakan database SQLite 3, 
+  sehingga tidak perlu menginstall/menggunakan Microsoft SQL Server.
+* Bila diperlukan, dapat menggunakan Microsoft SQL Server sebagai database.
+* Tersedia tool untuk mengubah pengunaan jenis database dan Queue Server.
 * Melayani hingga 10 POS layanan
-* Settingan default satu POS layanan dengan sepuluh Loket
-* Text dan audio Loket bisa diganti dengan Counter
-* Memanggil kembali nomor yang sudah terpanggil di loket lain (pada POS yang sama)
-* POS layanan yang tampil pada Modul Display dan Tiket dapat diatur dengan mudah.
+* Settingan default satu POS layanan dengan sepuluh loket/counter
 * Modul Display dan Tiket dapat menampilkan minimal tiga POS layanan
-* Branding/Logo dapat diubah dengan mudah
+* POS layanan yang tampil pada Modul Display dan Tiket dapat diatur dengan mudah.
 * Nama-nama POS layanan dan Menu tiket dapat diubah dengan mudah
-* Menampilkan video atau TV
+* Branding/Logo pada aplikasi dapat diubah dengan mudah
+* Layout modul Display dan Tiket dapat diatur dengan mudah
+* Running text pada modul Display dan Tiket
 * Mengubah/menambah running text dengan mudah
+* Dokumentasi yang lengkap tersedia pada www.mangapul.com
 
 Modul Tiket
+* Menampilkan minimal tiga POS layanan
 * Mencetak ke kertas ukutan 8 cm
 * Pengaturan jumlah print out yang berbeda untuk masing-masing POS layanan
 * Pengaturan audio, visibilitas, print out tiket, spesifik untuk masing-masing POS layanan
 
+Modul Caller
+* Dapat memanggil ke seluruh POS
+* Memanggil kembali nomor yang sudah terpanggil di loket/counter lain pada POS yang sama
+
+Module Admin
+* Pengaturan akses komputer client
+* Pengaturan ID modul-modul client
+* Pengaturan user/password Module Server
+* Pengaturan kode-kode POS
+* Pengaturan running text Modul Display
+* Encryption tool untuk user/password
+
+Modul Display
+* Menampilkan minimal tiga POS layanan
+* Support penggunaan komputer dengan dua monitor
+* Panggilan audio
+* Text dan audio Loket bisa diganti dengan Counter
+* Menampilkan Video atau siaran TV
+* Pengaturan audio, visibilitas, spesifik untuk masing-masing POS layanan
+* Pengaturan lengkap untuk video dan panggilan audio
+ 
+Modul Service/Server
+* Dapat membatasi koneksi komputer client

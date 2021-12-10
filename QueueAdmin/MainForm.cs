@@ -58,8 +58,7 @@ namespace Tobasa
         {
             InitializeComponent();
             gbEnryptTool.Visible = true;
-            //tabControl.TabPages.Remove(tabPageDiag);
-
+            tabControl.TabPages.Remove(tabPageDiag);
             StartClient();
         }
 
@@ -451,7 +450,10 @@ namespace Tobasa
         #endregion
 
         #region Connection  Send data tests
-
+        /** WARNING/PERINGATAN 
+         * OnSendXXXData(), OnSendData(), SendData() sudah tidak dimaintain.
+         * Digunakan untuk test/diagnostic awal development
+         */
         private void OnSendXXXData(object sender, EventArgs e)
         {
             if (_client.Connected)
@@ -468,7 +470,10 @@ namespace Tobasa
             else
                 Util.ShowConnectionError(this);
         }
-
+        /** WARNING/PERINGATAN 
+         * OnSendXXXData(), OnSendData(), SendData() sudah tidak dimaintain.
+         * Digunakan untuk test/diagnostic awal development
+         */
         private void OnSendData(object sender, EventArgs e)
         {
             if (_client.Connected)
@@ -479,7 +484,10 @@ namespace Tobasa
             else
                 Util.ShowConnectionError(this);
         }
-
+        /** WARNING/PERINGATAN 
+         * OnSendXXXData(), OnSendData(), SendData() sudah tidak dimaintain.
+         * Digunakan untuk test/diagnostic awal development
+         */
         private void SendData(int length)
         {
             if (!_client.Connected)

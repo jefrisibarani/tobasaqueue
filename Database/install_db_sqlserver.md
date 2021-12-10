@@ -24,6 +24,7 @@ Set file konfigurasi aplikasi agar menggunakan SQL server sebagai database.
 - QueueAdmin.exe.config
 - QueueService.exe.config
 - QueueCaller.exe.config
+Atau gunakan tool QueueConfig.exe untuk mengatur konfigurasi pada semua file konfigurasi.
    
 Pada bagian **connectionString**, set dengan:
 `

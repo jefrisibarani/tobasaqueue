@@ -395,22 +395,22 @@
             this.rbSqlserver.AutoSize = true;
             this.rbSqlserver.Location = new System.Drawing.Point(112, 24);
             this.rbSqlserver.Name = "rbSqlserver";
-            this.rbSqlserver.Size = new System.Drawing.Size(80, 17);
+            this.rbSqlserver.Size = new System.Drawing.Size(126, 17);
             this.rbSqlserver.TabIndex = 17;
             this.rbSqlserver.TabStop = true;
-            this.rbSqlserver.Text = "SQL Server";
+            this.rbSqlserver.Text = "Microsoft SQL Server";
             this.rbSqlserver.UseVisualStyleBackColor = true;
             this.rbSqlserver.CheckedChanged += new System.EventHandler(this.OnDBTypeCheckedChanged);
             // 
             // rbSqlite
             // 
             this.rbSqlite.AutoSize = true;
-            this.rbSqlite.Location = new System.Drawing.Point(198, 24);
+            this.rbSqlite.Location = new System.Drawing.Point(254, 24);
             this.rbSqlite.Name = "rbSqlite";
-            this.rbSqlite.Size = new System.Drawing.Size(60, 17);
+            this.rbSqlite.Size = new System.Drawing.Size(66, 17);
             this.rbSqlite.TabIndex = 18;
             this.rbSqlite.TabStop = true;
-            this.rbSqlite.Text = "SQLite ";
+            this.rbSqlite.Text = "SQLite 3";
             this.rbSqlite.UseVisualStyleBackColor = true;
             this.rbSqlite.CheckedChanged += new System.EventHandler(this.OnDBTypeCheckedChanged);
             // 
@@ -477,8 +477,12 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnApplyConfig);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormServerConfig";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Set Tobasa Queue Configuration";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

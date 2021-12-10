@@ -1,0 +1,3 @@
+Porting ke .NET 6
+Android app client
+Web app untuk reporting/dashboard antrian
