@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -767,7 +767,7 @@ namespace Tobasa
             this.runningTextBottom.ForeColor = System.Drawing.Color.Gold;
             this.runningTextBottom.Location = new System.Drawing.Point(3, 0);
             this.runningTextBottom.Name = "runningTextBottom";
-            this.runningTextBottom.Size = new System.Drawing.Size(776, 40);
+            this.runningTextBottom.Size = new System.Drawing.Size(776, 51);
             this.runningTextBottom.TabIndex = 0;
             this.runningTextBottom.Text = "Selamat datang di Sistem Antrian Tobasa. Terimakasih";
             this.runningTextBottom.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

@@ -15,7 +15,7 @@ Software Antrian Tobasa menggunakan SQLite sebagai database default.
 
 ## Build/Compile dari source code
 * Clone/download project source code dari https://github.com/jefrisibarani/tobasaqueue
-* Buka solution TobasaQueue.sln dengan Visual Studio 2019
+* Buka solution TobasaQueue.sln dengan Visual Studio 2022
 * Build solution, aplikasi yang telah dibuild  ada di  folder  ***_OUTPUT***
 
 #### Struktur folder output
@@ -78,4 +78,4 @@ c:\Windows\Microsoft.NET\Framework\v4.0.30319\installutil QueueService.exe
 * https://dotnet.microsoft.com/download/dotnet-framework/net48
 
 
-##### Copyright (C) 2021 Jefri Sibarani
+##### Copyright (C) 2015-2025 Jefri Sibarani

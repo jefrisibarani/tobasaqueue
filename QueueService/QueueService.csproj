@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tobasa</RootNamespace>
     <AssemblyName>QueueService</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -109,6 +109,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CallerHandler.cs" />
+    <Compile Include="DBMigration.cs" />
+    <Compile Include="DBMigration_MSSQL.cs" />
+    <Compile Include="DBMigration_MySQL.cs" />
+    <Compile Include="DBMigration_PostgreSQL.cs" />
+    <Compile Include="DBMigration_SQLite.cs" />
     <Compile Include="DisplayHandler.cs" />
     <Compile Include="dto\IpAccessList.cs" />
     <Compile Include="dto\Login.cs" />
@@ -165,10 +170,22 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\netstandard1.1\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.114.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\lib\net40\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.5.0.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\netstandard1.1\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
@@ -186,6 +203,10 @@
     <PostBuildEvent>IF NOT EXIST $(SolutionDir)_OUTPUT                                       MD $(SolutionDir)_OUTPUT
 IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)          MD $(SolutionDir)_OUTPUT\$(ProjectName)
 IF NOT EXIST $(SolutionDir)_OUTPUT\Database                     MD $(SolutionDir)_OUTPUT\Database
+IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)\Database     MD $(SolutionDir)_OUTPUT\$(ProjectName)\Database
+
+IF EXIST $(TargetDir)Database   rmdir /q /s $(TargetDir)Database
+IF NOT EXIST $(TargetDir)Database MD $(TargetDir)Database
 
 COPY /Y $(TargetDir)$(TargetFileName)                                  $(SolutionDir)_OUTPUT\$(ProjectName)\
 COPY /Y $(TargetDir)Libtobasa.dll                                            $(SolutionDir)_OUTPUT\$(ProjectName)\
@@ -193,6 +214,15 @@ COPY /Y $(TargetDir)$(TargetFileName).config                      $(SolutionDir)
 COPY /Y $(TargetDir)System.Data.SQLite.dll                           $(SolutionDir)_OUTPUT\$(ProjectName)\
 COPY /Y $(TargetDir)$(PlatformName)\SQLite.Interop.dll    $(SolutionDir)_OUTPUT\$(ProjectName)\
 COPY /Y $(TargetDir)Newtonsoft.Json.dll                                $(SolutionDir)_OUTPUT\$(ProjectName)\
+
+
+COPY /Y $(TargetDir)MySqlConnector.dll                                                 $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)System.Buffers.dll                                                    $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)System.Diagnostics.DiagnosticSource.dll             $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)System.Memory.dll                                                  $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)System.Runtime.CompilerServices.Unsafe.dll      $(SolutionDir)_OUTPUT\$(ProjectName)\
+COPY /Y $(TargetDir)System.Threading.Tasks.Extensions.dll                  $(SolutionDir)_OUTPUT\$(ProjectName)\
+
 
 REM Copy Database resources
 REM ----------------------------------------------------------------------------
@@ -204,7 +234,8 @@ COPY /Y $(SolutionDir)Database\sqlite3_antri.db3                      $(Solution
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>IF EXIST $(SolutionDir)_OUTPUT\$(ProjectName)   rmdir /q /s $(SolutionDir)_OUTPUT\$(ProjectName)</PreBuildEvent>
+    <PreBuildEvent>IF EXIST $(SolutionDir)_OUTPUT\$(ProjectName)   rmdir /q /s $(SolutionDir)_OUTPUT\$(ProjectName)
+</PreBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\build\net40\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\build\net40\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

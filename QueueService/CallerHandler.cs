@@ -28,7 +28,7 @@ namespace Tobasa
                         ResponseHandler = (session, result) =>
                         {
                             // Send response to client
-                            if (result != null && result.Count == 4)
+                            if (result != null && result.Count == 6)
                             {
                                 string postPrefix   = result["postPrefix"];
                                 string numberS      = result["number"];
@@ -61,7 +61,7 @@ namespace Tobasa
                         ReceiveHandler = new Func< Dictionary<string, string>, Dictionary<string, string> >(QueueRepository.GetWaitingNumberAndPostSummary),
                         ResponseHandler = (session, result) =>
                         {
-                            if (result != null && result.Count == 4)
+                            if (result != null && result.Count == 6)
                             {
                                 string postPrefix   = result["postPrefix"];
                                 string numberS      = result["number"];

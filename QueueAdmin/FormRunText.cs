@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ namespace Tobasa
     {
         #region Member variables
 
-        public event Action<string> DataChanged;
         private readonly MainForm _mainForm;
         private bool _insertMode = false;
         Dictionary<string, string> _initialData = new Dictionary<string, string>();
@@ -92,7 +91,7 @@ namespace Tobasa
 
         private void InsertUpdateDataRunText(string station, bool sticky, bool active, string runText)
         {
-            if (_mainForm.TcpClient != null && _mainForm.TcpClient.Connected)
+            if (_mainForm.TcpClient != null)
             {
                 string messageT;
                 string commandType;
@@ -166,10 +165,6 @@ namespace Tobasa
                 // tell main form to update relevant grid view
 
                 InsertUpdateDataRunText(txtStation.Text.Trim(), chkSticky.Checked, chkActive.Checked, txtRunText.Text.Trim());
-
-                // TODO: Remove DataChanged event, since MainForm now update 
-                // relevant grid in its HandleMessage method
-                //DataChanged?.Invoke(Tbl.runningtexts);
 
                 this.Close();
             }

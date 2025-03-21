@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ using System.Text;
 namespace Tobasa
 {
     public delegate void DataReceived(DataReceivedEventArgs arg);
-    public delegate void ConnectionClosed(NetSession ses);
+    public delegate void SocketClosed(NetSession ses);
 
     public class DataReceivedEventArgs : EventArgs
     {
@@ -79,16 +79,6 @@ namespace Tobasa
                 if (_data == null)
                     return "";
 
-                /*
-                // Deserialize the message
-                object message = Message.Deserialize(_data);
-
-                // Handle the message
-                StringMessage stringMessage = message as StringMessage;
-                if (stringMessage != null)
-                    return stringMessage.Message;
-                */
-
                 string stringMessage = Encoding.UTF8.GetString(_data);
                 if (stringMessage != null)
                     return stringMessage;
@@ -100,25 +90,28 @@ namespace Tobasa
 
     public class NetSession : Notifier, IDisposable
     {
+        public const int MAX_MESSAGE_SIZE = 102400; // 100 KB, 0 = no maximum message size
+        
         #region Member variables
 
-        public event DataReceived DataReceived;
-        public event ConnectionClosed ConnectionClosed;
+        public event DataReceived OnDataReceived;
+        public event SocketClosed OnSocketClosed;
 
-        bool _disposed = false;
-        private bool _socketClosed = false;
-        private bool _socketDisconnected = false;
-        private Socket _sock = null;
-        private int _id = -1;
-        private string _remoteinfo = string.Empty;
-        private string _localinfo = string.Empty;
-        private int _keepAliveInterval = 5;             // 5 second
+        bool            _disposed           = false;
+        private bool    _socketClosed       = false;
+        private bool    _socketDisconnected = false;
+        private Socket  _socket             = null;
+        private int     _id                 = -1;
+        private string  _remoteinfo         = string.Empty;
+        private string  _localinfo          = string.Empty;
+        private int     _keepAliveInterval  = 5; // 5 second
+        private int     _maxMessageSize     = MAX_MESSAGE_SIZE;
+        private byte[]  _lengthBuffer       = null;
+        private byte[]  _dataBuffer         = null;
+        private int     _bytesReceived      = 0;
+        private bool    _exceptionOccurred  = false;
+
         private System.Timers.Timer _keepaliveTimer;
-        private int _maxMessageSize;                    // 0 = no maximum message size
-        private byte[] _lengthBuffer;
-        private byte[] _dataBuffer;
-        private int _bytesReceived;
-        private bool _exceptionOccurred = false;
 
         #endregion
 
@@ -126,16 +119,16 @@ namespace Tobasa
 
         public NetSession(Socket handler)
         {
-            _sock = handler;
-            if (_sock.Connected)
+            _socket = handler;
+            if (_socket.Connected)
             {
-                _remoteinfo = _sock.RemoteEndPoint.ToString();
-                _localinfo = _sock.LocalEndPoint.ToString();
+                _remoteinfo = _socket.RemoteEndPoint.ToString();
+                _localinfo = _socket.LocalEndPoint.ToString();
             }
 
             // Allocate the buffer for receiving message lengths
             _lengthBuffer = new byte[sizeof(int)];
-            _maxMessageSize = 102400;  // 100KB
+            _maxMessageSize = MAX_MESSAGE_SIZE;
 
             // Initialize the keepalive timer and its default value.
             _keepaliveTimer = new System.Timers.Timer();
@@ -161,8 +154,8 @@ namespace Tobasa
 
             if (disposing)
             {
-                DataReceived = null;
-                ConnectionClosed = null;
+                OnDataReceived = null;
+                OnSocketClosed = null;
                 // Free any other managed objects here. 
             }
 
@@ -181,6 +174,7 @@ namespace Tobasa
 
         private void KeepaliveTimer_Elapsed(object source, System.Timers.ElapsedEventArgs e)
         {
+            // send keep alive ping to remote endpoint
             Send(BitConverter.GetBytes(0), true);
         }
 
@@ -221,14 +215,14 @@ namespace Tobasa
                 _socketDisconnected = true;
                 _socketClosed = true;
 
-                _sock.Shutdown(SocketShutdown.Both);
-                _sock.Close();
+                _socket.Shutdown(SocketShutdown.Both);
+                _socket.Close();
                 
-                _sock = null;
+                _socket = null;
 
                 OnNotifyLog(NetSessionId, "Closed successfully");
 
-                ConnectionClosed?.Invoke(this);
+                OnSocketClosed?.Invoke(this);
             }
         }
 
@@ -250,7 +244,7 @@ namespace Tobasa
 
         public Socket Socket
         {
-            get { return _sock; }
+            get { return _socket; }
         }
 
         public bool Closed
@@ -281,9 +275,9 @@ namespace Tobasa
 
             // Read into the appropriate buffer: length or data
             if (_dataBuffer != null)
-                _sock.BeginReceive(_dataBuffer, _bytesReceived, _dataBuffer.Length - _bytesReceived, 0, new AsyncCallback(ReceiveCallback), this);
+                _socket.BeginReceive(_dataBuffer, _bytesReceived, _dataBuffer.Length - _bytesReceived, 0, new AsyncCallback(ReceiveCallback), this);
             else
-                _sock.BeginReceive(_lengthBuffer, _bytesReceived, _lengthBuffer.Length - _bytesReceived, 0, new AsyncCallback(ReceiveCallback), this);
+                _socket.BeginReceive(_lengthBuffer, _bytesReceived, _lengthBuffer.Length - _bytesReceived, 0, new AsyncCallback(ReceiveCallback), this);
         }
 
         private void ReceiveCallback(IAsyncResult ar)
@@ -293,7 +287,7 @@ namespace Tobasa
 
             try
             {
-                int read = _sock.EndReceive(ar);
+                int read = _socket.EndReceive(ar);
                 ReadData(read);
             }
             catch (SocketException e)
@@ -369,7 +363,7 @@ namespace Tobasa
                 else
                 {
                     // We've gotten an entire packet
-                    OnDataReceived();
+                    CallOnDataReceived();
 
                     // Start reading the length buffer again
                     _dataBuffer = null;
@@ -383,13 +377,6 @@ namespace Tobasa
         {
             if (SendReceiveShouldStop)
                 return;
-            
-            /*
-            Messages.StringMessage message = new Messages.StringMessage();
-            message.Message = data;
-            // Serialize the message to a binary array
-            byte[] binaryMessage = Messages.Util.Serialize(message);
-            */
 
             // Convert the string data to byte data using UTF8 encoding.
             byte[] binaryMessage = Encoding.UTF8.GetBytes(data);
@@ -403,24 +390,25 @@ namespace Tobasa
             try
             {
                 // Begin sending the data to the remote device.
-                lock (_sock)
+                lock (_socket)
                 {
                     if (keepalivemsg)
                     {
-                        _sock.BeginSend(data, 0, data.Length, 0, null, this);
+                        _socket.BeginSend(data, 0, data.Length, 0, null, this);
                     }
                     else
                     {
+                        // we send lengthPrefix over the wire in network byte order/big endian.
+                        
                         // convert string length value to network order
                         int dataLengthNBO = IPAddress.HostToNetworkOrder(data.Length);
-
                         // Get the length prefix for the message
                         byte[] lengthPrefix = BitConverter.GetBytes(dataLengthNBO);
 
-                        // no callback here
-                        _sock.BeginSend(lengthPrefix, 0, lengthPrefix.Length, 0, null, this);
+                        // Send length prefix, no callback here
+                        _socket.BeginSend(lengthPrefix, 0, lengthPrefix.Length, 0, null, this);
                         // Send the actual message, this time enabling the normal callback.
-                        _sock.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), this);
+                        _socket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), this);
                     }
                 }
             }
@@ -446,7 +434,7 @@ namespace Tobasa
             try
             {
                 // Complete sending the data to the remote device.
-                int bytesSent = _sock.EndSend(ar);
+                int bytesSent = _socket.EndSend(ar);
 
                 OnNotifyLog(NetSessionId, String.Format("Sent {0} bytes data to {1}", bytesSent, RemoteInfo));
             }
@@ -464,14 +452,14 @@ namespace Tobasa
             }
         }
         
-        protected virtual void OnDataReceived()
+        protected virtual void CallOnDataReceived()
         {
-            if (DataReceived != null)
+            if (OnDataReceived != null)
             {
                 OnNotifyLog(NetSessionId, String.Format("Received {0} bytes data from {1}", _dataBuffer.Length.ToString(), RemoteInfo));
 
                 DataReceivedEventArgs arg = new DataReceivedEventArgs(this, _dataBuffer);
-                DataReceived(arg);
+                OnDataReceived(arg);
             }
         }
 

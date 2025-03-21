@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -492,9 +492,11 @@ namespace Tobasa
                 .AddRequestPayload(4, "caller")
                 .AddResultPayload(1, "status");
 
+
         /** Refresh finished jobs/numbers on Display
         Issued by QueueServer to QueueDisplay, in response to QueueCaller's Msg.SysUpdateJob
         
+
         Payload     : Position 4
         Syntax REQ  : DISPLAY|SET_FINISHED|REQ|Identifier|[Post!Caller|Data]
            Post     : Post name
@@ -528,6 +530,7 @@ namespace Tobasa
                 .AddRequestPayload(1, "caller")
                 .AddRequestPayload(2, "info")
                 .AddResultPayload(1, "status");
+
 
         /** Reset values on Display
         Payload     : None
@@ -567,6 +570,27 @@ namespace Tobasa
                 .AddRequestPayload(1, "station")
                 .AddRequestPayload(2, "text")
                 .AddResultPayload(0, "status");
+
+
+        /** Get basic summary of a Post, Issued by Modul Display
+        Payload     : 4th token
+        Syntax REQ  : DISPLAY|GET_INFO|REQ|Identifier|[Post]
+            Post    : Post name
+        Syntax RES  : DISPLAY|GET_INFO|RES|Identifier|[PostId!Prefix!Number!Left!Station]
+            PostId  : Post Id (Post name)
+            Prefix  : Post number prefix
+            Number  : Next waiting number
+            Left    : Total waiting queue
+            Station : Caliing Station/Counter
+        */
+        public static readonly Type DisplayGetInfo =
+            CreateType("DISPLAY", "GET_INFO", "DisplayGetInfo", 5, 4, 1, 5)
+                .AddRequestPayload(0, "post")
+                .AddResultPayload(0, "postid")
+                .AddResultPayload(1, "postprefix")
+                .AddResultPayload(2, "number")
+                .AddResultPayload(3, "numberleft")
+                .AddResultPayload(4, "station");
 
 
         /** Request running text from QueueServer.

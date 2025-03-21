@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ namespace Tobasa
     {
         #region Member variables
 
-        public event Action<string> DataChanged;
         private readonly MainForm _mainForm;
         private bool _insertMode = false;
         Dictionary<string, string> _initialData = new Dictionary<string, string>();
@@ -77,6 +76,14 @@ namespace Tobasa
                 var prefix = _initialData["prefix"];
                 if (prefix != null)
                     txtPrefix.Text = prefix.ToString().Trim();
+
+                var quota0 = _initialData["quota0"];
+                if (quota0 != null)
+                    txtQuota0.Text = quota0.ToString().Trim();
+
+                var quota1 = _initialData["quota1"];
+                if (quota1 != null)
+                    txtQuota1.Text = quota1.ToString().Trim();
             }
         }
 
@@ -91,9 +98,9 @@ namespace Tobasa
         {
         }
 
-        private void InsertUpdateDataPost(string postname, string remark, string prefix)
+        private void InsertUpdateDataPost(string postname, string remark, string prefix, string quota0, string quota1)
         {
-            if (_mainForm.TcpClient != null && _mainForm.TcpClient.Connected)
+            if (_mainForm.TcpClient != null)
             {
                 string messageT;
                 string commandType;
@@ -117,7 +124,9 @@ namespace Tobasa
                     NameOld         = postOld_,
                     Name            = postname,
                     NumberPrefix    = prefix,
-                    Keterangan      = remark
+                    Keterangan      = remark,
+                    Quota0          = Int32.Parse(quota0),
+                    Quota1          = Int32.Parse(quota1)
                 };
 
                 string jsonPost = JsonConvert.SerializeObject(post, Formatting.None);
@@ -149,7 +158,7 @@ namespace Tobasa
 
         private void OnAction(object sender, EventArgs e)
         {
-            string msg = "";
+            string msg;
             if (_insertMode)
                 msg = "Do you want to insert record?";
             else 
@@ -163,12 +172,7 @@ namespace Tobasa
                 // Send Insert/Update request to QueueServer
                 // On receiving response from server in MainForm.HandleMessage, 
                 // tell main form to update relevant grid view
-
-                InsertUpdateDataPost(txtPost.Text.Trim(), txtRemark.Text.Trim(), txtPrefix.Text.Trim());
-
-                // TODO: Remove DataChanged event, since MainForm now update 
-                // relevant grid in its HandleMessage method
-                //DataChanged?.Invoke(Tbl.posts);
+                InsertUpdateDataPost(txtPost.Text.Trim(), txtRemark.Text.Trim(), txtPrefix.Text.Trim(), txtQuota0.Text.Trim(), txtQuota1.Text.Trim());
 
                 this.Close();
             }

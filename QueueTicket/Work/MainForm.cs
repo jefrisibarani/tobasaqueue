@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ namespace Tobasa
 
         private delegate void NetSessionDataReceivedCb(DataReceivedEventArgs arg);
         private delegate void TCPClientNotifiedCb(NotifyEventArgs e);
+        private delegate void TCPClientClosedCb(TCPClient e);
 
         Properties.Settings _settings = Properties.Settings.Default;
         private TCPClient _client = null;
@@ -153,48 +154,62 @@ namespace Tobasa
             }
         }
 
-        private void CloseConnection()
+        private void TCPClientConnected(TCPClient client)
         {
-            if (_client != null && _client.Session != null)
-                _client.Session.Close();
-        }
-
-        public void StartClient()
-        {
-            _client = null;
-
-            string dispServerHost = _settings.QueueServerHost;
-            int dispServerPort    = _settings.QueueServerPort;
-            string stationName    = _settings.StationName;
-            string stationPost    = _settings.StationPost;
-            string userName       = _settings.QueueUserName;
-            string password       = _settings.QueuePassword;
-
-            _client = new TCPClient(dispServerHost, dispServerPort);
-            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
-
-            _client.Start();
-
-            if (_client.Connected)
+            if (client.Connected)
             {
-                _client.Session.DataReceived += new DataReceived(NetSessionDataReceived);
+                string clearPwd = Util.DecryptPassword(_settings.QueuePassword, _settings.SecuritySalt);
+                string passwordHash = Util.GetPasswordHash(clearPwd, _settings.QueueUserName);
 
-                string salt = _settings.SecuritySalt;
-                string clearPwd = Util.DecryptPassword(password, salt);
-                string passwordHash = Util.GetPasswordHash(clearPwd, userName);
-
+                // Log in to the server
                 // SYS|LOGIN|REQ|[Module!Post!Station!Username!Password]
                 string message =
                     Msg.SysLogin.Text +
                     Msg.Separator + "REQ" +
                     Msg.Separator + "TICKET" +
-                    Msg.CompDelimiter + stationPost +
-                    Msg.CompDelimiter + stationName +
-                    Msg.CompDelimiter + userName +
+                    Msg.CompDelimiter + _settings.StationPost +
+                    Msg.CompDelimiter + _settings.StationName +
+                    Msg.CompDelimiter + _settings.QueueUserName +
                     Msg.CompDelimiter + passwordHash;
 
-                _client.Send(message);
+                client.Send(message);
             }
+        }
+
+        private void TCPClientClosed(TCPClient client)
+        {
+            if (this.InvokeRequired)
+            {
+                TCPClientClosedCb dlg = new TCPClientClosedCb(TCPClientClosed);
+                this.Invoke(dlg, new object[] { client });
+            }
+            else
+            {
+                //lblStatus.Text = "Not Connected to Server";
+            }
+        }
+
+        public void StartClient()
+        {
+            _client = null;
+            _client = new TCPClient(_settings.QueueServerHost, _settings.QueueServerPort);
+            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
+            _client.OnDataReceived += new DataReceived(NetSessionDataReceived);
+            _client.OnConnected += new ConnectionConnected(TCPClientConnected);
+
+            _client.Start();
+        }
+        private void CloseConnection()
+        {
+            if (_client != null)
+                _client.Stop();
+        }
+
+        private void RestartClient()
+        {
+            Logger.Log("QueueTicket", "Restarting TCPClient");
+            CloseConnection();
+            StartClient();
         }
 
         #endregion
@@ -765,9 +780,10 @@ namespace Tobasa
                     if (notifyTyp == "ERROR")
                         MessageBox.Show(notifyMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     else
-                    { }  // WARNING, INFO
-
-                    //LogServerMessage(string.Format("[{0}] {1}", notifyTyp, notifyMsg));
+                    {
+                        // WARNING, INFO
+                        MessageBox.Show(notifyMsg, notifyTyp, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
                 else
                 {
@@ -851,7 +867,7 @@ namespace Tobasa
 
         private void RequestNewTicket(string postname)
         {
-            if (_client.Connected)
+            if (_client != null)
             {
                 string message =
                         Msg.TicketCreate.Text + 

@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,5 +26,7 @@ namespace Tobasa.Dto
         public string Name { get; set; }
         public string NumberPrefix { get; set; }
         public string Keterangan { get; set; }
+        public int Quota0 { get; set; } = 1000;
+        public int Quota1 { get; set; } = 1000;
     }
 }

@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 using DirectShowLib;
+using System.Net.Sockets;
 
 namespace Tobasa
 {
@@ -32,17 +33,26 @@ namespace Tobasa
 
         private delegate void NetSessionDataReceivedCb(DataReceivedEventArgs arg);
         private delegate void TCPClientNotifiedCb(NotifyEventArgs e);
+        private delegate void TCPClientClosedCb(TCPClient e);
 
         Properties.Settings _settings = Properties.Settings.Default;
         private PostPropertyCollection _postProperties = new PostPropertyCollection();
         private TCPClient _client = null;
 
+        private System.Timers.Timer _keepConnectedTimer;
+        private int _keepConnectedInterval = 10; // 5 second
+        private bool _formIsClosing = false;
+
+        private bool _autoConnectToServer = true;
         #endregion
 
         #region TCP Client stuffs
 
         private void TCPClientNotified(NotifyEventArgs arg)
         {
+            if (this.IsDisposed)
+                return;
+
             if (this.InvokeRequired)
             {
                 TCPClientNotifiedCb dlg = new TCPClientNotifiedCb(TCPClientNotified);
@@ -50,7 +60,18 @@ namespace Tobasa
             }
             else
             {
-                if (arg.Type == NotifyType.NOTIFY_ERR)
+                if (arg.Exception is SocketException)
+                {
+                    SocketException socketEx = (SocketException)arg.Exception;
+                    var errCode  = socketEx.SocketErrorCode;
+                    var errMsg   = socketEx.Message;
+
+                    if (errCode == SocketError.ConnectionRefused) {
+                        // Handle connection refused error
+                    }
+                }
+
+                if (!_autoConnectToServer && arg.Type == NotifyType.NOTIFY_ERR)
                 {
                     MessageBox.Show(arg.Message, arg.Summary, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -59,48 +80,70 @@ namespace Tobasa
             }
         }
 
+        private void TCPClientConnected(TCPClient client)
+        {
+            if (client.Connected)
+            {
+                string clearPwd = Util.DecryptPassword(_settings.QueuePassword, _settings.SecuritySalt);
+                string passwordHash = Util.GetPasswordHash(clearPwd, _settings.QueueUserName);
+
+                // Log in to the server
+                // SYS|LOGIN|REQ|[Module!Post!Station!Username!Password]
+                string message =
+                    Msg.SysLogin.Text +
+                    Msg.Separator + "REQ" +
+                    Msg.Separator + "DISPLAY" +
+                    Msg.CompDelimiter + _settings.StationPost +
+                    Msg.CompDelimiter + _settings.StationName +
+                    Msg.CompDelimiter + _settings.QueueUserName +
+                    Msg.CompDelimiter + passwordHash;
+
+                client.Send(message);
+            }
+        }
+
+        private void TCPClientClosed(TCPClient client)
+        {
+            if (this.IsDisposed)
+                return;
+
+            if (this.InvokeRequired)
+            {
+                TCPClientClosedCb dlg = new TCPClientClosedCb(TCPClientClosed);
+                this.Invoke(dlg, new object[] { client });
+            }
+            else
+            {
+                lblStatus.Text = "Not Connected to Server";
+
+                if (!_client.Connected && _autoConnectToServer)
+                    RestartClient();
+            }
+        }
+
+        public void StartClient()
+        {
+            _client = null;
+            _client = new TCPClient(_settings.QueueServerHost, _settings.QueueServerPort);
+            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
+            _client.OnDataReceived += new DataReceived(NetSessionDataReceived);
+            _client.OnConnected += new ConnectionConnected(TCPClientConnected);
+            _client.OnClosed += new ConnectionClosed(TCPClientClosed);
+
+            _client.Start();
+        }
+
         private void CloseConnection()
         {
             if (_client.Connected)
                 _client.Stop();
         }
 
-        public void StartClient()
+        private void RestartClient()
         {
-            _client = null;
-
-            string dispServerHost = _settings.QueueServerHost;
-            int dispServerPort    = _settings.QueueServerPort;
-            string stationName    = _settings.StationName;
-            string stationPost    = _settings.StationPost;
-            string userName       = _settings.QueueUserName;
-            string password       = _settings.QueuePassword;
-
-            _client = new TCPClient(dispServerHost, dispServerPort);
-            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
-
-            _client.Start();
-
-            if (_client.Connected)
-            {
-                _client.Session.DataReceived += new DataReceived(NetSessionDataReceived);
-
-                string salt = _settings.SecuritySalt;
-                string clearPwd = Util.DecryptPassword(password, salt);
-                string passwordHash = Util.GetPasswordHash(clearPwd, userName);
-
-                // SYS|LOGIN|REQ|[Module!Post!Station!Username!Password]
-                string message =
-                    Msg.SysLogin.Text +
-                    Msg.Separator + "REQ" +
-                    Msg.Separator + "DISPLAY" +
-                    Msg.CompDelimiter + stationPost +
-                    Msg.CompDelimiter + stationName +
-                    Msg.CompDelimiter + userName +
-                    Msg.CompDelimiter + passwordHash;
-
-                _client.Send(message);
-            }
+            Logger.Log("QueueAdmin", "Restarting TCPClient");
+            CloseConnection();
+            StartClient();
         }
 
         #endregion
@@ -152,6 +195,18 @@ namespace Tobasa
 
                         // Request running text stored on database
                         RequestRunningTextFromServer();
+
+                        // Get Last Queue status
+                        GetPostQueueInfo("POST0");
+                        GetPostQueueInfo("POST1");
+                        GetPostQueueInfo("POST2");
+                        GetPostQueueInfo("POST3");
+                        GetPostQueueInfo("POST4");
+                        GetPostQueueInfo("POST5");
+                        GetPostQueueInfo("POST6");
+                        GetPostQueueInfo("POST7");
+                        GetPostQueueInfo("POST8");
+                        GetPostQueueInfo("POST9");
                     }
                     else
                     {
@@ -212,9 +267,14 @@ namespace Tobasa
                     if (notifyTyp == "ERROR")
                         MessageBox.Show(notifyMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     else
-                    { }  // WARNING, INFO
-
-                    //LogServerMessage(string.Format("[{0}] {1}", notifyTyp, notifyMsg));
+                    {
+                        // WARNING, INFO
+                        MessageBox.Show(notifyMsg, notifyTyp, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else if (qmessage.MessageType == Msg.DisplayGetInfo && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    mDisplay.ProcessDisplayGetPostInfo(qmessage);
                 }
                 else
                 {
@@ -229,16 +289,31 @@ namespace Tobasa
 
         private void RequestRunningTextFromServer()
         {
-            string message =
-                Msg.DisplayGetRunText.Text +
-                Msg.Separator + "REQ" +
-                Msg.Separator + "Identifier" +
-                Msg.Separator + _settings.StationPost +
-                Msg.CompDelimiter + _settings.StationName;
-            
-            _client.Send(message);
+            if (_client != null)
+            {
+                string message =
+                    Msg.DisplayGetRunText.Text +
+                    Msg.Separator + "REQ" +
+                    Msg.Separator + "Identifier" +
+                    Msg.Separator + _settings.StationPost +
+                    Msg.CompDelimiter + _settings.StationName;
+
+                _client.Send(message);
+            }
         }
 
+        private void GetPostQueueInfo(string post)
+        {
+            if (_client != null)
+            {
+                string message = Msg.DisplayGetInfo.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + post;
+
+                _client.Send(message);
+            }
+        }
 
         #endregion
 
@@ -414,10 +489,37 @@ namespace Tobasa
             // start tcp client
             StartClient();
 
+            InitKeepConnectedTimer();
+
             //mDisplay.TopMost = true;
             mDisplay.Focus();
             mDisplay.Show();
             startupComplete = true;
+        }
+
+        #endregion
+
+        #region Keep Connected Timer stuff
+
+        private void InitKeepConnectedTimer()
+        {
+            if (_autoConnectToServer)
+            {
+                // Initialize the keepalive timer and its default value.
+                _keepConnectedTimer = new System.Timers.Timer();
+                _keepConnectedTimer.Elapsed += new System.Timers.ElapsedEventHandler(KeepConnectedTimer_Elapsed);
+                _keepConnectedTimer.Interval = _keepConnectedInterval * 1000;
+                _keepConnectedTimer.Enabled = true;
+            }
+        }
+
+        private void KeepConnectedTimer_Elapsed(object source, System.Timers.ElapsedEventArgs e)
+        {
+            if (_formIsClosing)
+                return;
+
+            if (!_client.Connected && _autoConnectToServer)
+                RestartClient();
         }
 
         #endregion
@@ -634,6 +736,7 @@ namespace Tobasa
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
+            _formIsClosing = true;
             CloseConnection();
             SaveSettings();
         }

@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,10 @@
 */
 #endregion
 
+using MySqlConnector;
+
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
@@ -28,18 +31,29 @@ using System.Windows.Forms;
 
 namespace Tobasa
 {
-    public enum ProviderType
+    public enum DatabaseProviderType
     {
         SQLITE,
-        OLEDB
+        MYSQL,
+        PGSQL,
+        MSSQL,
+        UNKNOWN
     }
 
     public class Database : Notifier
     {
-        public static string DEFAULT_SQLSRV_CONNSTRING = "Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;";
-        public static string DEFAULT_SQLSRV_CONNSTRING_PASSWORD = "ad7415644add93d6e719d2b593da6e6e";
-        public static string DEFAULT_SQLITE_CONNSTRING = "Data Source=..\\Database\\antri.db3;Version=3;";
-        public static string DEFAULT_SQLITE_CONNSTRING_PASSWORD = "";
+        public static string DEFAULT_MYSQL_CONNSTRING = "Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;";
+        public static string DEFAULT_MYSQL_CONNSTRING_PASSWORD = "ad7415644add93d6e719d2b593da6e6e";
+        
+        public static string DEFAULT_PGSQL_CONNSTRING = "Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;";
+        public static string DEFAULT_PGSQL_CONNSTRING_PASSWORD = "ad7415644add93d6e719d2b593da6e6e";
+        
+        public static string DEFAULT_MSSQL_CONNSTRING = "Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;";
+        public static string DEFAULT_MSSQL_CONNSTRING_PASSWORD = "ad7415644add93d6e719d2b593da6e6e";
+        
+        public static string DEFAULT_SQLITE_CONNSTRING = "Data Source=.\\Database\\antri.db3;Version=3;";
+        public static string DEFAULT_SQLITE_CONNSTRING_PASSWORD = "ad7415644add93d6e719d2b593da6e6e";
+        
         public static string DEFAULT_SECURITY_SALT = "C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39";
 
         /* A Singleton instance  */
@@ -47,7 +61,7 @@ namespace Tobasa
 
         private Database() 
         {
-            _providerType = ProviderType.SQLITE;
+            _providerType = DatabaseProviderType.SQLITE;
         }
 
         public static Database Me
@@ -55,32 +69,48 @@ namespace Tobasa
             get { return _instance; }
         }
 
-        private ProviderType _providerType;
+        private DatabaseProviderType _providerType;
         private bool _connected = false;
         private DbConnection _conn;
+        private string _databaseName = "";
 
         public void SetProvider(string provider)
         {
             if (provider == "SQLITE")
-                ProviderType = ProviderType.SQLITE;
+                ProviderType = DatabaseProviderType.SQLITE;
+            else if (provider == "MYSQL")
+                ProviderType = DatabaseProviderType.MYSQL;
+            else if (provider == "MSSQL")
+                ProviderType = DatabaseProviderType.MSSQL;
+            else if (provider == "PGSQL")
+                ProviderType = DatabaseProviderType.PGSQL;
             else
-                ProviderType = ProviderType.OLEDB;
+                ProviderType = DatabaseProviderType.UNKNOWN;
         }
 
         public string GetConnectionString(string partialConnStr, string salt, string encryptedPwd = null)
         {
-            if (ProviderType == ProviderType.SQLITE)
+            if (ProviderType == DatabaseProviderType.SQLITE)
             {
                 SQLiteConnectionStringBuilder builder = new SQLiteConnectionStringBuilder();
                 builder.ConnectionString = partialConnStr;
-                if ( ! string.IsNullOrWhiteSpace(encryptedPwd))
+                if (!string.IsNullOrWhiteSpace(encryptedPwd))
                 {
                     string clearPwd = Util.DecryptPassword(encryptedPwd, salt);
-                    builder.Add("Password", clearPwd);
+                    var x = 1;
+                    //builder.Add("Password", clearPwd);
                 }
                 return builder.ToString();
             }
-            else
+            else if (ProviderType == DatabaseProviderType.MYSQL)
+            {
+                MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder();
+                builder.ConnectionString = partialConnStr;
+                string clearPwd = Util.DecryptPassword(encryptedPwd, salt);
+                builder.Add("Password", clearPwd);
+                return builder.ToString();
+            }
+            else if (ProviderType == DatabaseProviderType.MSSQL)
             {
                 OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder();
                 builder.ConnectionString = partialConnStr;
@@ -88,6 +118,8 @@ namespace Tobasa
                 builder.Add("Password", clearPwd);
                 return builder.ToString();
             }
+            else
+                return "";
         }
 
         public bool Connect(string connString)
@@ -96,12 +128,20 @@ namespace Tobasa
             {
                 try
                 {
-                    if (_providerType == ProviderType.SQLITE)
+                    if (_providerType == DatabaseProviderType.SQLITE)
                         _conn = new SQLiteConnection(connString);
-                    else
+                    else if (_providerType == DatabaseProviderType.MYSQL)
+                        _conn = new MySqlConnection(connString);
+                    else if (_providerType == DatabaseProviderType.MSSQL)
                         _conn = new OleDbConnection(connString);
-
+                    else
+                    {
+                        throw new AppException("Connect() Unsupported database provider");
+                    }
                     _conn.Open();
+
+                    _databaseName = _conn.Database;
+
                     _connected = true;
                 }
                 catch (ArgumentException e)
@@ -149,11 +189,8 @@ namespace Tobasa
                 }
             }
 
-            string backendType = "SQLite";
-            if (_providerType == ProviderType.OLEDB)
-                backendType = "SQL Server";
-
-            OnNotifyLog("Database", "Backend " + backendType + " Version " + _conn.ServerVersion);
+            string msgDbInfo = "Backend " + DatabaseProviderTypeString() + " Version " + _conn.ServerVersion;
+            OnNotifyLog("Database", msgDbInfo);
 
             return _connected;
         }
@@ -163,27 +200,42 @@ namespace Tobasa
             try
             {
                 string conString;
-                if (_providerType == ProviderType.SQLITE)
+                if (_providerType == DatabaseProviderType.SQLITE)
                 {
                     conString = GetConnectionString(
                         DEFAULT_SQLITE_CONNSTRING,
                         DEFAULT_SECURITY_SALT,
-                        DEFAULT_SQLSRV_CONNSTRING_PASSWORD);
+                        DEFAULT_MSSQL_CONNSTRING_PASSWORD);
 
                     _conn = new SQLiteConnection(conString);
                     _conn.Open();
                     _connected = true;
                 }
-                else
+                else if (_providerType == DatabaseProviderType.MYSQL)
                 {
                     conString = GetConnectionString(
-                        DEFAULT_SQLSRV_CONNSTRING,
+                        DEFAULT_MYSQL_CONNSTRING,
                         DEFAULT_SECURITY_SALT,
-                        DEFAULT_SQLSRV_CONNSTRING_PASSWORD);
+                        DEFAULT_MYSQL_CONNSTRING_PASSWORD);
+
+                    _conn = new MySqlConnection(conString);
+                    _conn.Open();
+                    _connected = true;
+                }
+                else if (_providerType == DatabaseProviderType.MSSQL)
+                {
+                    conString = GetConnectionString(
+                        DEFAULT_MSSQL_CONNSTRING,
+                        DEFAULT_SECURITY_SALT,
+                        DEFAULT_MSSQL_CONNSTRING_PASSWORD);
 
                     _conn = new OleDbConnection(conString);
                     _conn.Open();
                     _connected = true;
+                }
+                else
+                {
+                    throw new AppException("RetryConnectWithDefaults(): Unsupported database provider");
                 }
             }
             catch (Exception e)
@@ -228,15 +280,42 @@ namespace Tobasa
             get { return _connected; }
         }
 
-        public ProviderType ProviderType
+        public DatabaseProviderType ProviderType
         {
             get { return _providerType; }
             set { _providerType = value; }
         }
 
+        public string DatabaseProviderTypeString()
+        {
+            if (ProviderType == DatabaseProviderType.SQLITE)
+            {
+                return "SQLite";
+            }
+            else if (ProviderType == DatabaseProviderType.MYSQL)
+            {
+                return "MySQL";
+            }
+            else if (ProviderType == DatabaseProviderType.MSSQL)
+            {
+                return "MSSQL";
+            }
+            else if (ProviderType == DatabaseProviderType.PGSQL)
+            {
+                return "PostgreSQL";
+            }
+            else
+                return "";
+        }
+
         public DbConnection Connection
         {
             get { return _conn; }
+        }
+
+        public string DatabaseName
+        {
+            get { return _databaseName; }
         }
 
         public DbDataAdapter CreateDataAdapter(string sql)
@@ -246,10 +325,16 @@ namespace Tobasa
                 try
                 {
                     DbDataAdapter adapter;
-                    if (ProviderType == ProviderType.SQLITE)
+                    if (ProviderType == DatabaseProviderType.SQLITE)
                         adapter = new SQLiteDataAdapter(sql, (SQLiteConnection)_conn);
-                    else
+                    else if (ProviderType == DatabaseProviderType.MYSQL)
+                        adapter = new MySqlDataAdapter(sql, (MySqlConnection)_conn);
+                    else if (ProviderType == DatabaseProviderType.MSSQL)
                         adapter = new OleDbDataAdapter(sql, (OleDbConnection)_conn);
+                    else
+                    {
+                        throw new AppException("CreateDataAdapter(): Unsupported database provider");
+                    }
 
                     return adapter;
                 }
@@ -268,17 +353,27 @@ namespace Tobasa
                 try
                 {
                     DataTable dataTable;
-                    if (ProviderType == ProviderType.SQLITE)
+                    if (ProviderType == DatabaseProviderType.SQLITE)
                     {
                         SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql, (SQLiteConnection)_conn);
                         dataTable = new DataTable();
                         adapter.Fill(dataTable);
                     }
-                    else
+                    else if (ProviderType == DatabaseProviderType.MYSQL)
+                    {
+                        MySqlDataAdapter adapter = new MySqlDataAdapter(sql, (MySqlConnection)_conn);
+                        dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+                    }
+                    else if (ProviderType == DatabaseProviderType.MSSQL)
                     {
                         OleDbDataAdapter adapter = new OleDbDataAdapter(sql, (OleDbConnection)_conn);
                         dataTable = new DataTable();
                         adapter.Fill(dataTable);
+                    }
+                    else
+                    {
+                        throw new AppException("CreateDataTable(): Unsupported database provider");
                     }
 
                     return dataTable;
@@ -332,7 +427,7 @@ namespace Tobasa
         {
             string sql = "";
 
-            if (Database.Me.ProviderType == ProviderType.OLEDB)
+            if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
             {
                 if (ServerVersionMajor > 10)
                 {
@@ -350,13 +445,21 @@ namespace Tobasa
         {
             string sql;
             string currentDate = null;
-            if (ProviderType == ProviderType.SQLITE)
+            if (ProviderType == DatabaseProviderType.SQLITE)
             {
                 sql = "SELECT date('now','localtime')";
             }
-            else
+            else if (ProviderType == DatabaseProviderType.MYSQL)
+            {
+                sql = "SELECT CURDATE()";
+            }
+            else if(ProviderType == DatabaseProviderType.MSSQL)
             {
                 sql = "SELECT CAST(getdate() AS date)";
+            }
+            else
+            {
+                throw new AppException("GetDate(): Unsupported database provider");
             }
 
             Database.Me.OpenConnection();
@@ -377,13 +480,21 @@ namespace Tobasa
         {
             string sql;
             string currentDate = null;
-            if (ProviderType == ProviderType.SQLITE)
+            if (ProviderType == DatabaseProviderType.SQLITE)
             {
                 sql = "SELECT strftime('%Y-%m-%d %H:%M:%f','now', 'localtime')";
             }
-            else
+            else if (ProviderType == DatabaseProviderType.MYSQL)
+            {
+                sql = "SELECT CURRENT_TIMESTAMP";
+            }
+            else if (ProviderType == DatabaseProviderType.MSSQL)
             {
                 sql = "SELECT getdate()";
+            }
+            else
+            {
+                throw new AppException("GetDate(): Unsupported database provider");
             }
 
             Database.Me.OpenConnection();
@@ -398,6 +509,26 @@ namespace Tobasa
             }
 
             return currentDate;
+        }
+
+        public string GetDateTimeSqlString()
+        {
+            if (ProviderType == DatabaseProviderType.SQLITE)
+            {
+                return "strftime('%Y-%m-%d %H:%M:%f','now', 'localtime')";
+            }
+            else if (ProviderType == DatabaseProviderType.MYSQL)
+            {
+                return "CURRENT_TIMESTAMP";
+            }
+            else if (ProviderType == DatabaseProviderType.MSSQL)
+            {
+                return "getdate()";
+            }
+            else
+            {
+                throw new AppException("GetDateTimeSqlString(): Unsupported database provider");
+            }
         }
 
         public int ServerVersionMajor

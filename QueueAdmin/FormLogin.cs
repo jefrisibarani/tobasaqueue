@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ namespace Tobasa
     {
         #region Member variables
 
-        public event Action<string> DataChanged;
         private readonly MainForm _mainForm;
         private bool _insertMode = false;
         private bool _changingPassword = false;
@@ -100,8 +99,7 @@ namespace Tobasa
 
         private void InsertUpdateDataLogin(string username, string password, DateTime expired, bool active)
         {
-
-            if (_mainForm.TcpClient != null && _mainForm.TcpClient.Connected)
+            if (_mainForm.TcpClient != null)
             {
                 string messageT;
                 string commandType;
@@ -226,10 +224,6 @@ namespace Tobasa
                 newPasswordHash = Util.GetPasswordHash(newClearPass, newuserName);
 
                 InsertUpdateDataLogin(newuserName, newPasswordHash, dtExpired.Value, chkActive.Checked);
-
-                // TODO: Remove DataChanged event, since MainForm now update 
-                // relevant grid in its HandleMessage method
-                //DataChanged?.Invoke(Tbl.logins);
 
                 this.Close();
             }

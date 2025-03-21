@@ -8,5 +8,12 @@ ConnectionStringPassword   : ad7415644add93d6e719d2b593da6e6e
 Untuk SQLite
 -----------------------------------------------------------------
 Provider: SQLITE
-Connection String          :  "Data Source=..\Database\antri.db3;Version=3;"
+Connection String          :  "Data Source=.\Database\antri.db3;Version=3;"
 ConnectionStringPassword   :
+
+
+Untuk MySQL Server
+-----------------------------------------------------------------
+Provider: MYSQL
+Connection String          :  "Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;"
+ConnectionStringPassword   : ad7415644add93d6e719d2b593da6e6e

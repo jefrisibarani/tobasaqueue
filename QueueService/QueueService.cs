@@ -1,7 +1,7 @@
 #region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -151,17 +151,9 @@ namespace Tobasa
 
         public void Run()
         {
-            if (Environment.UserInteractive)
-            {
-                Console.WriteLine("-------------------------------------------------------------------------------");
-                Console.WriteLine("\nStarting QueueServer...");
-                Console.WriteLine("From " + Util.ProcessPath);
-            }
-
-            Logger.LogFile = "c:\\tmp\\QueueServer.log";
-            Logger.Log("-------------------------------------------------------------------------------");
-            Logger.Log("Starting QueueServer...");
-            Logger.Log("From " + Util.ProcessPath);
+            QueueServer.Log("-------------------------------------------------------------------------------");
+            QueueServer.Log("Starting Tobasa QueueServer...");
+            QueueServer.Log("From " + Util.ProcessPath);
 
             _server = new QueueServer();
             _server.Start();

@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,15 +33,18 @@ namespace Tobasa
 
         private delegate void NetSessionDataReceivedCb(DataReceivedEventArgs arg);
         private delegate void TCPClientNotifiedCb(NotifyEventArgs arg);
+        private delegate void TCPClientClosedCb(TCPClient e);
         private delegate void LogServerMessageCb(string text);
 
         private Tobasa.Properties.Settings _settings = Tobasa.Properties.Settings.Default;
         private TCPClient _client = null;
         public event MessageReceived MessageReceived;
+
         public TCPClient TcpClient
         {
             get => _client;
         }
+
         Dictionary<string, TableProp> _tableProps = new Dictionary<string, TableProp>()
         {
             [Tbl.runningtexts] = new TableProp(Tbl.runningtexts),
@@ -74,7 +77,7 @@ namespace Tobasa
 
         private void OnLoggedOn()
         {
-            if (_client != null && _client.Connected)
+            if (_client != null)
             {
                 RequestTableFromServer(Tbl.runningtexts);
                 RequestTableFromServer(Tbl.posts);
@@ -310,9 +313,12 @@ namespace Tobasa
                     if (notifyTyp == "ERROR")
                         MessageBox.Show(notifyMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     else
-                    { }  // WARNING, INFO
+                    {
+                        // WARNING, INFO
+                        MessageBox.Show(notifyMsg, notifyTyp, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
 
-                    LogServerMessage(string.Format("[{0}] {1}", notifyTyp,notifyMsg));
+                    LogServerMessage(string.Format("[{0}] {1}", notifyTyp, notifyMsg));
                 }
                 else
                 { }
@@ -356,7 +362,7 @@ namespace Tobasa
 
         private void DeleteTableFromServer(string tablename, string param, string param1="")
         {
-            if (_client != null && _client.Connected)
+            if (_client != null)
             {
                 string message = Msg.SysDelTable.Text +
                                  Msg.Separator + "REQ" +
@@ -401,50 +407,62 @@ namespace Tobasa
             }
         }
 
-        public void StartClient()
+        private void TCPClientConnected(TCPClient client)
         {
-            _client = null;
-
-            string dispServerHost = _settings.QueueServerHost;
-            int dispServerPort    = _settings.QueueServerPort;
-            string stationName    = _settings.StationName;
-            string stationPost    = _settings.StationPost;
-            string userName       = _settings.QueueUserName;
-            string password       = _settings.QueuePassword;
-
-            _client = new TCPClient(dispServerHost, dispServerPort);
-            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
-
-            _client.Start();
-
-            if (_client.Connected)
+            if (client.Connected)
             {
-                _client.Session.DataReceived += new DataReceived(NetSessionDataReceived);
-
-                string salt = _settings.SecuritySalt;
-                string clearPwd = Util.DecryptPassword(password, salt);
-                string passwordHash = Util.GetPasswordHash(clearPwd, userName);
+                string clearPwd = Util.DecryptPassword(_settings.QueuePassword, _settings.SecuritySalt);
+                string passwordHash = Util.GetPasswordHash(clearPwd, _settings.QueueUserName);
 
                 // SYS|LOGIN|REQ|[Module!Post!Station!Username!Password]
                 string message =
                     Msg.SysLogin.Text +
                     Msg.Separator + "REQ" +
                     Msg.Separator + "ADMIN" +
-                    Msg.CompDelimiter + stationPost +
-                    Msg.CompDelimiter + stationName +
-                    Msg.CompDelimiter + userName +
+                    Msg.CompDelimiter + _settings.StationPost +
+                    Msg.CompDelimiter + _settings.StationName +
+                    Msg.CompDelimiter + _settings.QueueUserName +
                     Msg.CompDelimiter + passwordHash;
 
-                _client.Send(message);
+                client.Send(message);
             }
+        }
+
+        private void TCPClientClosed(TCPClient client)
+        {
+            if (this.InvokeRequired)
+            {
+                TCPClientClosedCb dlg = new TCPClientClosedCb(TCPClientClosed);
+                this.Invoke(dlg, new object[] { client });
+            }
+            else
+            {
+                lblStatus.Text = "Not Connected to Server";
+            }
+        }
+
+        public void StartClient()
+        {
+            _client = null;
+            _client = new TCPClient(_settings.QueueServerHost, _settings.QueueServerPort);
+            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
+            _client.OnDataReceived += new DataReceived(NetSessionDataReceived);
+            _client.OnConnected += new ConnectionConnected(TCPClientConnected);
+
+            _client.Start();
         }
 
         private void CloseConnection()
         {
-            if (_client.Connected)
-            {
+            if (_client != null)
                 _client.Stop();
-            }
+        }
+
+        private void RestartClient()
+        {
+            Logger.Log("QueueAdmin", "Restarting TCPClient");
+            CloseConnection();
+            StartClient();
         }
 
         #endregion
@@ -456,7 +474,7 @@ namespace Tobasa
          */
         private void OnSendXXXData(object sender, EventArgs e)
         {
-            if (_client.Connected)
+            if (_client != null)
             {
                 if (chkSend1024.Checked)
                     SendData(1024);
@@ -476,7 +494,7 @@ namespace Tobasa
          */
         private void OnSendData(object sender, EventArgs e)
         {
-            if (_client.Connected)
+            if (_client != null)
             {
                 string message = cbCmd.Text;
                 _client.Send(message);
@@ -490,7 +508,7 @@ namespace Tobasa
          */
         private void SendData(int length)
         {
-            if (!_client.Connected)
+            if (_client == null)
                 return;
 
             int byteLength = length;
@@ -603,14 +621,20 @@ namespace Tobasa
 
                 DataGridViewColumn column = null;
                 column = gridView.Columns[0];
-                    column.Width = 114;
+                    column.Width = 60;
                     column.HeaderText = "Post";
                 column = gridView.Columns[1];
-                    column.Width = 114;
+                    column.Width = 60;
                     column.HeaderText = "Prefix";
                 column = gridView.Columns[2];
-                    column.Width = 300;
+                    column.Width = 230;
                     column.HeaderText = "Remark";
+                column = gridView.Columns[3];
+                    column.Width = 70;
+                    column.HeaderText = "Quota 0";
+                column = gridView.Columns[4];
+                    column.Width = 70;
+                    column.HeaderText = "Quota 1";
 
             }
             catch (Exception e)
@@ -701,35 +725,30 @@ namespace Tobasa
         private void AddDataIPAccess()
         {
             FormIPAccess form = new FormIPAccess(this);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
         private void AddDataStation()
         {
             FormStation form = new FormStation(this);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
         private void AddDataPost()
         {
             FormPost form = new FormPost(this);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
         private void AddDataLogin()
         {
             FormLogin form = new FormLogin(this);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
         private void AddDataRunningText()
         {
             FormRunText form = new FormRunText(this);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
@@ -923,7 +942,6 @@ namespace Tobasa
             };
 
             FormIPAccess form = new FormIPAccess(this, record);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
@@ -949,7 +967,6 @@ namespace Tobasa
             };
 
             FormStation form = new FormStation(this, record);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
@@ -961,6 +978,8 @@ namespace Tobasa
             string postname = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[0].Value);
             string prefix   = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[1].Value);
             string remark   = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[2].Value);
+            string quota0   = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[3].Value);
+            string quota1   = Convert.ToString(gridPosts.Rows[e.RowIndex].Cells[4].Value);
 
             if (postname == "")
                 return;
@@ -969,11 +988,12 @@ namespace Tobasa
             {
                 { "postname", postname.Trim() },
                 { "remark",   remark.Trim() },
-                { "prefix",   prefix.Trim() }
+                { "prefix",   prefix.Trim() },
+                { "quota0",   quota0.Trim() },
+                { "quota1",   quota1.Trim() }
             };
 
             FormPost form = new FormPost(this, data);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
@@ -999,7 +1019,6 @@ namespace Tobasa
             };
 
             FormLogin form = new FormLogin(this, data);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 
@@ -1027,7 +1046,6 @@ namespace Tobasa
             };
 
             FormRunText form = new FormRunText(this, data);
-            form.DataChanged += new Action<string>(OnSubformDataChanged);
             form.ShowDialog();
         }
 

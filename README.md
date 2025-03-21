@@ -82,4 +82,4 @@ c:\Windows\Microsoft.NET\Framework\v4.0.30319\installutil QueueService.exe
 * https://dotnet.microsoft.com/download/dotnet-framework/net48
 
 
-##### Copyright (C) 2021 Jefri Sibarani
+##### Copyright (C) 2025 Jefri Sibarani

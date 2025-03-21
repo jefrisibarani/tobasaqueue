@@ -3,115 +3,175 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Net;
 
 namespace Tobasa
 {
+
+    public class Tbl
+    {
+        public const string runningtexts  = "queue_runningtexts";
+        public const string ipaccesslists = "queue_ipaccesslists";
+        public const string stations      = "queue_stations";
+        public const string posts         = "queue_posts";
+        public const string logins        = "queue_logins";
+        public const string jobs          = "queue_jobs";
+        public const string sequences     = "queue_sequences";
+        public const string v_sequences   = "v_queue_sequences";
+    }
+
     public class QueueRepository
     {
         #region Login stuffs
-        public static bool CanLogin(string staName, string staPost, out string reasonOut)
+
+        public static bool CheckIpAddress(IPAddress addr, out string reasonOut)
         {
-            bool canLogin = false;
-            string reason = "QueueServer is not connected to database";
-
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
             {
-                string sql = "SELECT canlogin FROM stations WHERE name = ? AND post = ?";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-                        Database.Me.AddParameter(cmd, "name", staName, DbType.String);
-                        Database.Me.AddParameter(cmd, "post", staPost, DbType.String);
-
-                        var res = cmd.ExecuteScalar();
-                        if (res != null)
-                        {
-                            canLogin = Convert.ToBoolean(res);
-                            if (canLogin)
-                                reason = "SUCCESS";
-                            else
-                                reason = "Station is not allowed to login to server";
-                        }
-                        else
-                            reason = "Station is not registered in database";
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new AppException("CanLogin: " + e.Message);
-                }
+                reasonOut = "QueueServer is not connected to database";
+                return false;
             }
 
-            reasonOut = reason;
+            try
+            {
+                string reason = "";
+                bool canaccess = false;
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    string strIp    = addr.ToString();
+                    string sql      = $"SELECT allowed FROM {Tbl.ipaccesslists} WHERE ipaddress = ?";
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "ipaddress", strIp, DbType.String);
 
-            return canLogin;
+                    var res = cmd.ExecuteScalar();
+                    if (res != null)
+                    {
+                        canaccess = Convert.ToBoolean(res);
+                        if (canaccess)
+                            reason = "SUCCESS";
+                        else
+                            reason = "forbidden";
+                    }
+                    else
+                        reason = "access list not found";
+                }
+
+                reasonOut = reason;
+                return canaccess;
+            }
+            catch (Exception e)
+            {
+                throw new AppException("CheckIpAddress: " + e.Message);
+            }
+        }
+
+        public static bool CanLogin(string staName, string staPost, out string reasonOut)
+        {
+            if (! Database.Me.Connected)
+            {
+                reasonOut = "QueueServer is not connected to database"; ;
+                return false;
+            }
+            
+            try
+            {
+                string reason = "";
+                bool canLogin = false;
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    string sql = $"SELECT canlogin FROM {Tbl.stations} WHERE name = ? AND post = ?";
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "name", staName, DbType.String);
+                    Database.Me.AddParameter(cmd, "post", staPost, DbType.String);
+
+                    var res = cmd.ExecuteScalar();
+                    if (res != null)
+                    {
+                        canLogin = Convert.ToBoolean(res);
+                        if (canLogin)
+                            reason = "SUCCESS";
+                        else
+                            reason = "Station is not allowed to login to server";
+                    }
+                    else
+                        reason = "Station is not registered in database";
+                }
+
+                reasonOut = reason;
+                return canLogin;
+            }
+            catch (Exception e)
+            {
+                throw new AppException("CanLogin: " + e.Message);
+            }
         }
 
         public static bool Login(string userName, string password, out string reasonOut)
         {
-            bool ok = false;
-            string reason = "QueueServer is not connected to database";
-
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
             {
-                string sql = "SELECT username, password, expired, active FROM logins WHERE username = ?";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-                        Database.Me.AddParameter(cmd, "username", userName, DbType.String);
-
-                        using (DbDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                reader.Read();
-
-                                string user      = reader.GetString(0).Trim();
-                                string pwd       = reader.GetString(1).Trim();
-                                DateTime expired = reader.GetDateTime(2);
-                                bool active      = reader.GetBoolean(3);
-
-                                if (!active)
-                                {
-                                    reason = "Inactive user";
-                                    ok = false;
-                                }
-                                else if (DateTime.Now > expired)
-                                {
-                                    reason = "User expired";
-                                    ok = false;
-                                }
-                                else if (pwd != password)
-                                {
-                                    reason = "Wrong password";
-                                    ok = false;
-                                }
-                                else if (pwd == password)
-                                {
-                                    reason = "Succesfully Logged in";
-                                    ok = true;
-                                }
-                            }
-                            else
-                                reason = "User is not registered in database";
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new AppException("Login: " + e.Message);
-                }
+                reasonOut = "QueueServer is not connected to database";
+                return false;
             }
 
-            reasonOut = reason;
+            try
+            {
+                bool ok = false;
+                string reason = "";
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    string sql = $"SELECT username, password, expired, active FROM {Tbl.logins} WHERE username = ?";
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "username", userName, DbType.String);
 
-            return ok;
+                    using (DbDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+
+                            string user = reader.GetString(0).Trim();
+                            string pwd = reader.GetString(1).Trim();
+                            DateTime expired = reader.GetDateTime(2);
+                            bool active = Convert.ToBoolean(reader.GetInt32(3));
+
+                            if (!active)
+                            {
+                                reason = "Inactive user";
+                                ok = false;
+                            }
+                            else if (DateTime.Now > expired)
+                            {
+                                reason = "User expired";
+                                ok = false;
+                            }
+                            else if (pwd != password)
+                            {
+                                reason = "Wrong password";
+                                ok = false;
+                            }
+                            else if (pwd == password)
+                            {
+                                reason = "Succesfully Logged in";
+                                ok = true;
+                            }
+                        }
+                        else {
+                            reason = "User is not registered in database";
+                        }
+
+                        reasonOut = reason;
+                        return ok;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new AppException("Login: " + e.Message);
+            }
         }
 
         #endregion
@@ -130,27 +190,27 @@ namespace Tobasa
                 bool success = false;
                 int affected = -1;
 
-                if (tableName == "runningtexts")
+                if (tableName == Tbl.runningtexts)
                 {
                     success = InsertUpdateRunningText(paramDict, out affected);
                     return Tuple.Create(success, affected);
                 }
-                else if (tableName == "ipaccesslists")
+                else if (tableName == Tbl.ipaccesslists)
                 {
                     success = InsertUpdateAccessList(paramDict, out affected);
                     return Tuple.Create(success, affected);
                 }
-                else if (tableName == "stations")
+                else if (tableName == Tbl.stations)
                 {
                     success = InsertUpdateStation(paramDict, out affected);
                     return Tuple.Create(success, affected);
                 }
-                else if (tableName == "posts")
+                else if (tableName == Tbl.posts)
                 {
                     success = InsertUpdatePost(paramDict, out affected);
                     return Tuple.Create(success, affected);
                 }
-                else if (tableName == "logins")
+                else if (tableName == Tbl.logins)
                 {
                     success = InsertUpdateLogin(paramDict, out affected);
                     return Tuple.Create(success, affected);
@@ -181,9 +241,9 @@ namespace Tobasa
                 {
                     string sql = "";
                     if (insertData)
-                        sql = "INSERT INTO runningtexts (station_name, sticky, active, running_text) VALUES (?,?,?,?)";
+                        sql = $"INSERT INTO {Tbl.runningtexts} (station_name, sticky, active, running_text) VALUES (?,?,?,?)";
                     else
-                        sql = "UPDATE runningtexts SET station_name = ? , sticky = ? , active = ?, running_text = ? WHERE id = ?";
+                        sql = $"UPDATE {Tbl.runningtexts} SET station_name = ? , sticky = ? , active = ?, running_text = ? WHERE id = ?";
 
                     Database.Me.OpenConnection();
                     using (DbCommand cmd = Database.Me.Connection.CreateCommand())
@@ -255,9 +315,9 @@ namespace Tobasa
                 {
                     string sql = "";
                     if (insertData)
-                        sql = "INSERT INTO ipaccesslists (ipaddress,allowed,keterangan) VALUES (?,?,?)";
+                        sql = $"INSERT INTO {Tbl.ipaccesslists} (ipaddress,allowed,keterangan) VALUES (?,?,?)";
                     else
-                        sql = "UPDATE ipaccesslists SET ipaddress = ? , allowed = ? , keterangan = ? WHERE ipaddress = ?";
+                        sql = $"UPDATE {Tbl.ipaccesslists} SET ipaddress = ? , allowed = ? , keterangan = ? WHERE ipaddress = ?";
 
                     Database.Me.OpenConnection();
                     using (DbCommand cmd = Database.Me.Connection.CreateCommand())
@@ -323,9 +383,9 @@ namespace Tobasa
                 {
                     string sql = "";
                     if (insertData)
-                        sql = "INSERT INTO stations (name, post, canlogin, keterangan) VALUES (?,?,?,?)";
+                        sql = $"INSERT INTO {Tbl.stations} (name, post, canlogin, keterangan) VALUES (?,?,?,?)";
                     else
-                        sql = "UPDATE stations SET name = ?, post = ?, canlogin = ?, keterangan = ? WHERE name = ? AND post=? ";
+                        sql = $"UPDATE {Tbl.stations} SET name = ?, post = ?, canlogin = ?, keterangan = ? WHERE name = ? AND post=? ";
 
                     Database.Me.OpenConnection();
                     using (DbCommand cmd = Database.Me.Connection.CreateCommand())
@@ -381,9 +441,9 @@ namespace Tobasa
                 {
                     string sql = "";
                     if (insertData)
-                        sql = "INSERT INTO posts (name, numberprefix, keterangan) VALUES (?,?,?)";
+                        sql = $"INSERT INTO {Tbl.posts} (name, numberprefix, keterangan, quota0, quota1) VALUES (?,?,?,?,?)";
                     else
-                        sql = "UPDATE posts SET name = ? , numberprefix = ?, keterangan = ?  WHERE name = ?";
+                        sql = $"UPDATE {Tbl.posts} SET name = ? , numberprefix = ?, keterangan = ? , quota0 = ?, quota1 = ? WHERE name = ?";
 
                     Database.Me.OpenConnection();
                     using (DbCommand cmd = Database.Me.Connection.CreateCommand())
@@ -406,6 +466,18 @@ namespace Tobasa
                         param.ParameterName = "keterangan";
                         param.Value = post.Keterangan;
                         param.DbType = System.Data.DbType.String;
+                        cmd.Parameters.Add(param);
+
+                        param = cmd.CreateParameter();
+                        param.ParameterName = "quota0";
+                        param.Value = post.Quota0;
+                        param.DbType = System.Data.DbType.Int32;
+                        cmd.Parameters.Add(param);
+
+                        param = cmd.CreateParameter();
+                        param.ParameterName = "quota1";
+                        param.Value = post.Quota1;
+                        param.DbType = System.Data.DbType.Int32;
                         cmd.Parameters.Add(param);
 
                         if (!insertData)
@@ -464,16 +536,16 @@ namespace Tobasa
                     if (command == "INSERT")
                     {
                         //newPasswordHash = Util.GetPasswordHash(newClearPass, newuserName);
-                        sql = "INSERT INTO logins (username, password, expired, active) VALUES (?,?,?,?)";
+                        sql = $"INSERT INTO {Tbl.logins} (username, password, expired, active) VALUES (?,?,?,?)";
                     }
                     else if(command == "UPDATE_PASSWORD")
                     {
                         //newPasswordHash = Util.GetPasswordHash(newClearPass, newuserName);
-                        sql = "UPDATE logins SET username = ? , password = ? , expired = ?, active = ? WHERE username = ?";
+                        sql = $"UPDATE {Tbl.logins} SET username = ? , password = ? , expired = ?, active = ? WHERE username = ?";
                     }
                     else 
                     {
-                        sql = "UPDATE logins SET expired = ?, active = ? WHERE username = ?";
+                        sql = $"UPDATE {Tbl.logins} SET expired = ?, active = ? WHERE username = ?";
                     }
 
                     Database.Me.OpenConnection();
@@ -596,27 +668,27 @@ namespace Tobasa
                 bool success = false;
                 int affected = -1;
 
-                if (tableName == "runningtexts")
+                if (tableName == Tbl.runningtexts)
                 {
                     success = DeleteRunningText(param0, out affected);
                     return Tuple.Create(success, affected);
                 }
-                else if (tableName == "ipaccesslists")
+                else if (tableName == Tbl.ipaccesslists)
                 {
                     success = DeleteAccessList(param0, out affected);
                     return Tuple.Create(success, affected);
                 }
-                else if (tableName == "stations")
+                else if (tableName == Tbl.stations)
                 {
                     success = DeleteStation(param0, param1, out affected);
                     return Tuple.Create(success, affected);
                 }
-                else if (tableName == "posts")
+                else if (tableName == Tbl.posts)
                 {
                     success = DeletePost(param0, out affected);
                     return Tuple.Create(success, affected);
                 }
-                else if (tableName == "logins")
+                else if (tableName == Tbl.logins)
                 {
                     success = DeleteLogin(param0, out affected);
                     return Tuple.Create(success, affected);
@@ -636,158 +708,158 @@ namespace Tobasa
 
         public static bool DeleteRunningText(string id, out int affected)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
             {
-                try
-                {
-                    string sql = "DELETE FROM runningtexts WHERE id = ?";
-
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-
-                        DbParameter param = cmd.CreateParameter();
-                        param.ParameterName = "id";
-                        param.Value = id;
-                        param.DbType = System.Data.DbType.Int32;
-                        cmd.Parameters.Add(param);
-
-                        affected = cmd.ExecuteNonQuery();
-                        return affected > 0;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("DeleteRunningText: " + ex.Message);
-                }
+                affected = -1;
+                return false;
             }
 
-            affected = -1;
-            return false;
+            try
+            {
+                string sql = $"DELETE FROM {Tbl.runningtexts} WHERE id = ?";
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    cmd.CommandText = sql;
+
+                    DbParameter param = cmd.CreateParameter();
+                    param.ParameterName = "id";
+                    param.Value = id;
+                    param.DbType = System.Data.DbType.Int32;
+                    cmd.Parameters.Add(param);
+
+                    affected = cmd.ExecuteNonQuery();
+                    return affected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("DeleteRunningText: " + ex.Message);
+            }
         }
 
         public static bool DeleteAccessList(string ipaddress, out int affected)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
             {
-                try
-                {
-                    string sql = "DELETE FROM ipaccesslists WHERE ipaddress = ?";
-
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-
-                        DbParameter param = cmd.CreateParameter();
-                        param.ParameterName = "ipaddress";
-                        param.Value = ipaddress.Trim();
-                        param.DbType = System.Data.DbType.String;
-                        cmd.Parameters.Add(param);
-
-                        affected = cmd.ExecuteNonQuery();
-                        return affected > 0;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("DeleteAccessList: " + ex.Message);
-                }
+                affected = -1;
+                return false;
             }
 
-            affected = -1;
-            return false;
+            try
+            {
+                string sql = $"DELETE FROM {Tbl.ipaccesslists} WHERE ipaddress = ?";
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    cmd.CommandText = sql;
+
+                    DbParameter param = cmd.CreateParameter();
+                    param.ParameterName = "ipaddress";
+                    param.Value = ipaddress.Trim();
+                    param.DbType = System.Data.DbType.String;
+                    cmd.Parameters.Add(param);
+
+                    affected = cmd.ExecuteNonQuery();
+                    return affected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("DeleteAccessList: " + ex.Message);
+            }
         }
 
         public static bool DeleteStation(string staName, string staPost, out int affected)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
             {
-                try
-                {
-                    string sql = "DELETE FROM stations WHERE name = ? AND post = ?";
-
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-                        Database.Me.AddParameter(cmd, "name", staName, DbType.String);
-                        Database.Me.AddParameter(cmd, "post", staPost, DbType.String);
-
-                        affected = cmd.ExecuteNonQuery();
-                        return affected > 0;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("DeleteStation: " + ex.Message);
-                }
+                affected = -1;
+                return false;
             }
 
-            affected = -1;
-            return false;
+            try
+            {
+                string sql = $"DELETE FROM {Tbl.stations} WHERE name = ? AND post = ?";
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "name", staName, DbType.String);
+                    Database.Me.AddParameter(cmd, "post", staPost, DbType.String);
+
+                    affected = cmd.ExecuteNonQuery();
+                    return affected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("DeleteStation: " + ex.Message);
+            }
         }
 
         public static bool DeletePost(string postName, out int affected)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
             {
-                try
-                {
-                    string sql = "DELETE FROM posts WHERE name = ?";
-
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-
-                        DbParameter param = cmd.CreateParameter();
-                        param.ParameterName = "name";
-                        param.Value = postName.Trim();
-                        param.DbType = DbType.String;
-                        cmd.Parameters.Add(param);
-
-                        affected = cmd.ExecuteNonQuery();
-                        return affected > 0;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("DeletePost: " + ex.Message);
-                }
+                affected = -1;
+                return false;
             }
 
-            affected = -1;
-            return false;
+            try
+            {
+                string sql = $"DELETE FROM {Tbl.posts} WHERE name = ?";
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    cmd.CommandText = sql;
+
+                    DbParameter param = cmd.CreateParameter();
+                    param.ParameterName = "name";
+                    param.Value = postName.Trim();
+                    param.DbType = DbType.String;
+                    cmd.Parameters.Add(param);
+
+                    affected = cmd.ExecuteNonQuery();
+                    return affected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("DeletePost: " + ex.Message);
+            }
         }
 
         public static bool DeleteLogin(string username, out int affected)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
             {
-                try
-                {
-                    string sql = "DELETE FROM logins WHERE username = ?";
-
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-                        Database.Me.AddParameter(cmd, "username", username.Trim(), DbType.String);
-
-                        affected = cmd.ExecuteNonQuery();
-                        return affected > 0;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("DeleteLogin: " + ex.Message);
-                }
+                affected = -1;
+                return false;
             }
 
-            affected = -1;
-            return false;
+            try
+            {
+                string sql = $"DELETE FROM {Tbl.logins} WHERE username = ?";
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "username", username.Trim(), DbType.String);
+
+                    affected = cmd.ExecuteNonQuery();
+                    return affected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("DeleteLogin: " + ex.Message);
+            }
         }
 
         #endregion
@@ -797,57 +869,58 @@ namespace Tobasa
 
         public static Dictionary<string, string> GetTable(Dictionary<string, string> parameter)
         {
+            if (! Database.Me.Connected)
+                return null;
+            
             try
             {
-                if (Database.Me.Connected)
-                {
-                    string tableName = parameter["tablename"];
-                    int offset = int.Parse(parameter["offset"]);
-                    int limit = int.Parse(parameter["limit"]);
+                string tableName = parameter["tablename"];
+                int offset = int.Parse(parameter["offset"]);
+                int limit = int.Parse(parameter["limit"]);
                     
-                    int rowCount = 0;
-                    string jsonTable = "";
+                int rowCount = 0;
+                string jsonTable = "";
 
 
-                    if (tableName == "runningtexts")
-                    {
-                        rowCount = GetTableRowCount(tableName);
-                        if (rowCount > 0)
-                            jsonTable = GetRunningText(offset, limit);
-                    }
-                    else if (tableName == "ipaccesslists")
-                    {
-                        rowCount = GetTableRowCount(tableName);
-                        if (rowCount > 0)
-                            jsonTable = GetAccessList(offset, limit);
-                    }
-                    else if (tableName == "stations")
-                    {
-                        rowCount = GetTableRowCount(tableName);
-                        if (rowCount > 0)
-                            jsonTable = GetStation(offset, limit);
-                    }
-                    else if (tableName == "posts")
-                    {
-                        rowCount = GetTableRowCount(tableName);
-                        if (rowCount > 0)
-                            jsonTable = GetPost(offset, limit);
-                    }
-                    else if (tableName == "logins")
-                    {
-                        rowCount = GetTableRowCount(tableName);
-                        if (rowCount > 0)
-                            jsonTable = GetLogin(offset, limit);
-                    }
-                    else
-                        throw new Exception("Invalid table name: " + tableName);
-
-                    return new Dictionary<string, string>()
-                    {
-                        ["totalrow"] = rowCount.ToString(),
-                        ["jsontable"] = jsonTable
-                    };
+                if (tableName == Tbl.runningtexts)
+                {
+                    rowCount = GetTableRowCount(tableName);
+                    if (rowCount > 0)
+                        jsonTable = GetRunningText(offset, limit);
                 }
+                else if (tableName == Tbl.ipaccesslists)
+                {
+                    rowCount = GetTableRowCount(tableName);
+                    if (rowCount > 0)
+                        jsonTable = GetAccessList(offset, limit);
+                }
+                else if (tableName == Tbl.stations)
+                {
+                    rowCount = GetTableRowCount(tableName);
+                    if (rowCount > 0)
+                        jsonTable = GetStation(offset, limit);
+                }
+                else if (tableName == Tbl.posts)
+                {
+                    rowCount = GetTableRowCount(tableName);
+                    if (rowCount > 0)
+                        jsonTable = GetPost(offset, limit);
+                }
+                else if (tableName == Tbl.logins)
+                {
+                    rowCount = GetTableRowCount(tableName);
+                    if (rowCount > 0)
+                        jsonTable = GetLogin(offset, limit);
+                }
+                else
+                    throw new Exception("Invalid table name: " + tableName);
+
+                return new Dictionary<string, string>()
+                {
+                    ["totalrow"] = rowCount.ToString(),
+                    ["jsontable"] = jsonTable
+                };
+
             }
             catch (AppException ex)
             {
@@ -857,143 +930,131 @@ namespace Tobasa
             {
                 throw new AppException("GetTable: " + ex.Message);
             }
-
-            return null;
         }
 
         public static string GetRunningText(int offset = 0, int limit = 0)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return "";
+
+            try
             {
-                try
-                {
-                    string sql = string.Format("SELECT id, station_name, sticky, active, running_text from runningtexts ORDER by id");
-                    sql += Database.Me.GetOffsetLimit(offset, limit);
+                string sql = $"SELECT id, station_name, sticky, active, running_text from {Tbl.runningtexts} ORDER by id";
+                sql += Database.Me.GetOffsetLimit(offset, limit);
 
-                    Database.Me.OpenConnection();
+                Database.Me.OpenConnection();
 
-                    DataTable dataTable = Database.Me.CreateDataTable(sql);
-                    string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
-                    if (jsonDataTable == "[]")
-                        jsonDataTable = "";
+                DataTable dataTable = Database.Me.CreateDataTable(sql);
+                string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
+                if (jsonDataTable == "[]")
+                    jsonDataTable = "";
 
-                    return jsonDataTable;
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetRunningText: " + ex.Message);
-                }
+                return jsonDataTable;
             }
-
-            return "";
+            catch (Exception ex)
+            {
+                throw new AppException("GetRunningText: " + ex.Message);
+            }
         }
 
         public static string GetAccessList(int offset = 0, int limit = 0)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return "";
+
+            try
             {
-                try
-                {
-                    string sql = string.Format("SELECT ipaddress,allowed,keterangan FROM ipaccesslists ORDER BY ipaddress");
-                    sql += Database.Me.GetOffsetLimit(offset, limit);
+                string sql = $"SELECT ipaddress,allowed,keterangan FROM {Tbl.ipaccesslists} ORDER BY ipaddress";
+                sql += Database.Me.GetOffsetLimit(offset, limit);
 
-                    Database.Me.OpenConnection();
+                Database.Me.OpenConnection();
 
-                    DataTable dataTable = Database.Me.CreateDataTable(sql);
-                    string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
-                    if (jsonDataTable == "[]")
-                        jsonDataTable = "";
+                DataTable dataTable = Database.Me.CreateDataTable(sql);
+                string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
+                if (jsonDataTable == "[]")
+                    jsonDataTable = "";
 
-                    return jsonDataTable;
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetAccessList: " + ex.Message);
-                }
+                return jsonDataTable;
             }
-
-            return "";
+            catch (Exception ex)
+            {
+                throw new AppException("GetAccessList: " + ex.Message);
+            }
         }
 
         public static string GetStation(int offset = 0, int limit = 0)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return "";
+
+            try
             {
-                try
-                {
-                    string sql = string.Format("SELECT name, post, canlogin, keterangan FROM stations ORDER BY name");
-                    sql += Database.Me.GetOffsetLimit(offset, limit);
+                string sql = $"SELECT name, post, canlogin, keterangan FROM {Tbl.stations} ORDER BY name";
+                sql += Database.Me.GetOffsetLimit(offset, limit);
 
-                    Database.Me.OpenConnection();
+                Database.Me.OpenConnection();
 
-                    DataTable dataTable = Database.Me.CreateDataTable(sql);
-                    string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
-                    if (jsonDataTable == "[]")
-                        jsonDataTable = "";
+                DataTable dataTable = Database.Me.CreateDataTable(sql);
+                string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
+                if (jsonDataTable == "[]")
+                    jsonDataTable = "";
 
-                    return jsonDataTable;
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetStation: " + ex.Message);
-                }
+                return jsonDataTable;
             }
-
-            return "";
+            catch (Exception ex)
+            {
+                throw new AppException("GetStation: " + ex.Message);
+            }
         }
 
         public static string GetPost(int offset = 0, int limit = 0)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return "";
+
+            try
             {
-                try
-                {
-                    string sql = string.Format("SELECT name, numberprefix, keterangan FROM posts ORDER BY name");
-                    sql += Database.Me.GetOffsetLimit(offset, limit);
+                string sql = $"SELECT name, numberprefix, keterangan, quota0, quota1 FROM {Tbl.posts} ORDER BY name";
+                sql += Database.Me.GetOffsetLimit(offset, limit);
 
-                    Database.Me.OpenConnection();
+                Database.Me.OpenConnection();
 
-                    DataTable dataTable = Database.Me.CreateDataTable(sql);
-                    string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
-                    if (jsonDataTable == "[]")
-                        jsonDataTable = "";
+                DataTable dataTable = Database.Me.CreateDataTable(sql);
+                string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
+                if (jsonDataTable == "[]")
+                    jsonDataTable = "";
 
-                    return jsonDataTable;
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetPost: " + ex.Message);
-                }
+                return jsonDataTable;
             }
-
-            return "";
+            catch (Exception ex)
+            {
+                throw new AppException("GetPost: " + ex.Message);
+            }
         }
 
         public static string GetLogin(int offset = 0, int limit = 0)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return "";
+
+            try
             {
-                try
-                {
-                    string sql = string.Format("SELECT username, password, expired, active FROM logins ORDER BY username");
-                    sql += Database.Me.GetOffsetLimit(offset, limit);
+                string sql = $"SELECT username, password, expired, active FROM {Tbl.logins} ORDER BY username";
+                sql += Database.Me.GetOffsetLimit(offset, limit);
 
-                    Database.Me.OpenConnection();
+                Database.Me.OpenConnection();
 
-                    DataTable dataTable = Database.Me.CreateDataTable(sql);
-                    string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
-                    if (jsonDataTable == "[]")
-                        jsonDataTable = "";
+                DataTable dataTable = Database.Me.CreateDataTable(sql);
+                string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
+                if (jsonDataTable == "[]")
+                    jsonDataTable = "";
 
-                    return jsonDataTable;
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetLogin: " + ex.Message);
-                }
+                return jsonDataTable;
             }
-
-            return "";
+            catch (Exception ex)
+            {
+                throw new AppException("GetLogin: " + ex.Message);
+            }
         }
 
         #endregion
@@ -1026,59 +1087,47 @@ namespace Tobasa
 
         public static bool UpdateJob(string status, string jobid, string jobno)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return false;
+
+            try
             {
-                try
+                string sql;
+
+                if (status == "PROCESS") {
+                    sql = $@"UPDATE {Tbl.jobs} SET status = 'PROCESS', calltime = {GetSqlDateTimeString()} WHERE id = ?";
+                }
+                else if (status == "FINISHED") {
+                    sql = $@"UPDATE {Tbl.jobs} SET status = 'FINISHED', call2time = {GetSqlDateTimeString()} WHERE id = ?";
+                }
+                else if (status == "CLOSED") {
+                    sql = $@"UPDATE {Tbl.jobs} SET status = 'CLOSED', endtime = {GetSqlDateTimeString()} WHERE id = ?";
+                }
+                else
+                    throw new Exception("Invalid job status");
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    string sql;
+                    cmd.CommandText = sql;
 
-                    if (status == "PROCESS")
+                    Int32 jobid_ = 0;
+
+                    if (Int32.TryParse(jobid, out jobid_))
                     {
-                        if (Database.Me.ProviderType == ProviderType.SQLITE)
-                            sql = @"UPDATE jobs SET status = 'PROCESS', calltime = strftime('%Y-%m-%d %H:%M:%f','now', 'localtime') WHERE id = ?";
-                        else
-                            sql = @"UPDATE jobs SET status = 'PROCESS', calltime = getdate() WHERE id = ?";
-                    }
-                    else if (status == "FINISHED")
-                    {
-                        if (Database.Me.ProviderType == ProviderType.SQLITE)
-                            sql = @"UPDATE jobs SET status = 'FINISHED', call2time = strftime('%Y-%m-%d %H:%M:%f','now', 'localtime') WHERE id = ?";
-                        else
-                            sql = @"UPDATE jobs SET status = 'FINISHED', call2time = getdate() WHERE id = ?";
-                    }
-                    else if (status == "CLOSED")
-                    {
-                        if (Database.Me.ProviderType == ProviderType.SQLITE)
-                            sql = @"UPDATE jobs SET status = 'CLOSED', endtime = strftime('%Y-%m-%d %H:%M:%f','now', 'localtime') WHERE id = ?";
-                        else
-                            sql = @"UPDATE jobs SET status = 'CLOSED', endtime = getdate() WHERE id = ?";
-                    }
-                    else
-                        throw new Exception("Invalid job status");
+                        Database.Me.AddParameter(cmd, "id", jobid, DbType.Int32);
 
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-
-                        Int32 jobid_ = 0;
-
-                        if (Int32.TryParse(jobid, out jobid_))
-                        {
-                            Database.Me.AddParameter(cmd, "id", jobid, DbType.Int32);
-
-                            int recordAffected = cmd.ExecuteNonQuery();
-                            return recordAffected > 0;
-                        }
+                        int recordAffected = cmd.ExecuteNonQuery();
+                        return recordAffected > 0;
                     }
                 }
-                catch (Exception ex)
-                {
-                    throw new AppException("UpdateJob: " + ex.Message);
-                }
+                
+                return false;
             }
-
-            return false;
+            catch (Exception ex)
+            {
+                throw new AppException("UpdateJob: " + ex.Message);
+            }
         }
 
         public static string GetJob(Dictionary<string, string> parameter)
@@ -1107,106 +1156,103 @@ namespace Tobasa
 
         public static string GetJob(string post, string status, int offset = 0, int limit = 0)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return "";
+
+            try
             {
-                try
-                {
-                    string sql;
-                    if (Database.Me.ProviderType == ProviderType.SQLITE)
-                    {
-                        sql = string.Format(@"SELECT id, number, status, station, post, source, date, starttime, calltime, call2time, endtime FROM jobs
-                                  WHERE status = '{0}'  AND date = date('now','localtime')
-                                  AND post = ? ORDER BY starttime ASC", status);
-                    }
-                    else
-                    {
-                        sql = string.Format(@"SELECT id, number, status, station, post, source, date, starttime, calltime, call2time, endtime FROM jobs
-                                  WHERE status = '{0}'  AND date = CAST(getdate() AS date)
-                                  AND post = ? ORDER BY starttime ASC", status);
-                    }
+                string sql;
+                sql = $@"SELECT id, number, status, station, post, source, date, starttime, calltime, call2time, endtime FROM {Tbl.jobs}
+                            WHERE status = '{status}'  AND date = {GetSqlDateString()}
+                            AND post = ? ORDER BY starttime ASC";
 
-                    Database.Me.OpenConnection();
-                    DbDataAdapter sda = Database.Me.CreateDataAdapter(sql);
-                    Database.Me.AddParameter(sda.SelectCommand, "post", post, DbType.String);
+                Database.Me.OpenConnection();
+                DbDataAdapter sda = Database.Me.CreateDataAdapter(sql);
+                Database.Me.AddParameter(sda.SelectCommand, "post", post, DbType.String);
 
-                    DataTable dataTable = new DataTable();
-                    sda.Fill(dataTable);
+                DataTable dataTable = new DataTable();
+                sda.Fill(dataTable);
 
-                    string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
-                    if (jsonDataTable == "[]")
-                        jsonDataTable = "";
+                string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
+                if (jsonDataTable == "[]")
+                    jsonDataTable = "";
 
-                    return jsonDataTable;
-                }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetJob: " + ex.Message);
-                }
+                return jsonDataTable;
             }
-
-            return "";
+            catch (Exception ex)
+            {
+                throw new AppException("GetJob: " + ex.Message);
+            }
         }
 
 
-        /** Get finished job/number is Comma Separated Values
+        /** Get finished job/number in Comma Separated Values for all Post
             Returns csv
         */
         public static string GetFinishedJobInCsvList(string post, int limit = 10)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return "";
+
+            try
             {
-                try
+                Database.Me.OpenConnection();
+
+                // update display
+                string sql1;
+                string postFilter = "";
+
+                if (!string.IsNullOrWhiteSpace(post))
+                    postFilter = "AND post = ?";
+
+                if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
                 {
-                    Database.Me.OpenConnection();
-
-                    // update display
-                    string sql1;
-                    if (Database.Me.ProviderType == ProviderType.SQLITE)
-                    {
-                        sql1 = string.Format(@"SELECT id, number, posts.numberprefix FROM jobs
-                                    JOIN posts ON posts.name = jobs.post
-                                    WHERE status = 'FINISHED'  AND date = date('now','localtime')
-                                    AND post = ? ORDER BY call2time ASC LIMIT {0}", limit);
-                    }
-                    else
-                    {
-                        sql1 = string.Format(@"SELECT TOP {0} id,number, posts.numberprefix FROM jobs
-                                    JOIN posts ON posts.name = jobs.post
-                                    WHERE status = 'FINISHED'  AND date = CAST(getdate() AS date)
-                                    AND post = ? ORDER BY call2time ASC", limit);
-                    }
-
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql1;
-                        Database.Me.AddParameter(cmd, "post", post, DbType.String);
-                        DbDataReader reader = cmd.ExecuteReader();
-
-                        int idx = 0;
-                        string csvList = "";
-
-                        while (reader.Read())
-                        {
-                            string _number = reader.GetValue(1).ToString().Trim();
-                            string _prefix = reader.GetValue(2).ToString().Trim();
-                            if (csvList.Length > 0)
-                                csvList += ",";
-
-                            csvList += _prefix + _number;
-                            idx++;
-                        }
-                        reader.Close();
-
-                        return csvList;
-                    }
+                    sql1 = $@"SELECT TOP {limit} id,number, {Tbl.posts}.numberprefix FROM {Tbl.jobs}
+                                JOIN {Tbl.posts} ON {Tbl.posts}.name = {Tbl.jobs}.post
+                                WHERE status = 'FINISHED' AND date = {GetSqlDateString()} {postFilter} 
+                                ORDER BY call2time DESC";
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw new AppException("GetFinishedJobInCsvList: " + ex.Message);
+                    sql1 = $@"SELECT id, number, {Tbl.posts}.numberprefix FROM {Tbl.jobs}
+                                JOIN {Tbl.posts} ON {Tbl.posts}.name = {Tbl.jobs}.post
+                                WHERE status = 'FINISHED' AND date = {GetSqlDateString()} {postFilter} 
+                                ORDER BY call2time DESC LIMIT {limit}";
+                }
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    cmd.CommandText = sql1;
+                    if (!string.IsNullOrWhiteSpace(post))
+                    {
+                        Database.Me.AddParameter(cmd, "post", post, DbType.String);
+                    }
+                        
+                    DbDataReader reader = cmd.ExecuteReader();
+
+                    int idx = 0;
+                    string csvList = "";
+
+                    while (reader.Read())
+                    {
+                        string _number = reader.GetValue(1).ToString().Trim();
+                        string _prefix = reader.GetValue(2).ToString().Trim();
+                        if (csvList.Length > 0)
+                            csvList += ",";
+
+                        csvList += _prefix + _number;
+                        idx++;
+                    }
+                    reader.Close();
+
+                    return csvList;
                 }
             }
-            return "";
+            catch (Exception ex)
+            {
+                throw new AppException("GetFinishedJobInCsvList: " + ex.Message);
+            }
         }
 
         #endregion
@@ -1219,45 +1265,43 @@ namespace Tobasa
         */
         public static bool DeleteProcessedNumberFromQueue(int number, string station, string post)
         {
+            if (! Database.Me.Connected)
+                return false;
+
             try
             {
-                if (Database.Me.Connected)
+                string sqlDelete = "";
+                int affectedRows = 0;
+
+                if (number == (Properties.Settings.Default.MaxQueueNumber - 1))
                 {
-                    string sqlDelete = "";
-                    int affectedRows = 0;
+                    // max_number-1 reached, delete all processed number for this post
+                    sqlDelete = $"DELETE FROM {Tbl.sequences} WHERE status = 'PROCESS' AND number < ? AND post = ?";
 
-                    if (number == (Properties.Settings.Default.MaxQueueNumber - 1))
+                    using (DbCommand cmdDelete = Database.Me.Connection.CreateCommand())
                     {
-                        // max_number-1 reached, delete all processed number for this post
-                        sqlDelete = @"DELETE FROM sequences WHERE status = 'PROCESS' AND number < ? AND post = ?";
-
-                        using (DbCommand cmdDelete = Database.Me.Connection.CreateCommand())
-                        {
-                            cmdDelete.CommandText = sqlDelete;
-                            int maxNumber = Properties.Settings.Default.MaxQueueNumber;
-                            Database.Me.AddParameter(cmdDelete, "number", maxNumber, DbType.Int32);
-                            Database.Me.AddParameter(cmdDelete, "post",   station,   DbType.String);
+                        cmdDelete.CommandText = sqlDelete;
+                        int maxNumber = Properties.Settings.Default.MaxQueueNumber;
+                        Database.Me.AddParameter(cmdDelete, "number", maxNumber, DbType.Int32);
+                        Database.Me.AddParameter(cmdDelete, "post",   station,   DbType.String);
                             
-                            affectedRows = cmdDelete.ExecuteNonQuery();
-                            
-                            return affectedRows > 0;
-                        }
+                        affectedRows = cmdDelete.ExecuteNonQuery();
+                        return affectedRows > 0;
                     }
-                    else
+                }
+                else
+                {
+                    // delete only processed numbers from specific station
+                    sqlDelete = $"DELETE FROM {Tbl.sequences} WHERE status = 'PROCESS' AND number < ? AND post = ? AND station = ?";
+                    using (DbCommand cmdDelete = Database.Me.Connection.CreateCommand())
                     {
-                        // delete only processed numbers from specific station
-                        sqlDelete = @"DELETE FROM sequences WHERE status = 'PROCESS' AND number < ? AND post = ? AND station = ?";
-                        using (DbCommand cmdDelete = Database.Me.Connection.CreateCommand())
-                        {
-                            cmdDelete.CommandText = sqlDelete;
-                            Database.Me.AddParameter(cmdDelete, "number",  number,  DbType.Int32);
-                            Database.Me.AddParameter(cmdDelete, "post",    post,    DbType.String);
-                            Database.Me.AddParameter(cmdDelete, "station", station, DbType.String);
+                        cmdDelete.CommandText = sqlDelete;
+                        Database.Me.AddParameter(cmdDelete, "number",  number,  DbType.Int32);
+                        Database.Me.AddParameter(cmdDelete, "post",    post,    DbType.String);
+                        Database.Me.AddParameter(cmdDelete, "station", station, DbType.String);
                             
-                            affectedRows = cmdDelete.ExecuteNonQuery();
-                            
-                            return affectedRows > 0;
-                        }
+                        affectedRows = cmdDelete.ExecuteNonQuery();
+                        return affectedRows > 0;
                     }
                 }
             }
@@ -1269,101 +1313,111 @@ namespace Tobasa
             {
                 throw new AppException("DeleteProcessedNumberFromQueue: " + ex.Message);
             }
-
-            return false;
         }
 
         /** Get next waiting number and post summary
-            Return Dictionary<string, string> with Keys: id, number, numberLeft, postPrefix.
+            Return Dictionary<string, string> with Keys: id, number, numberLeft, postPrefix, postId, station.
             Default data are id="", number ="", numberLeft="0", postPrefix always set with correct value.
 
             On error empty null
         */
         public static Dictionary<string, string> GetWaitingNumberAndPostSummary(Dictionary<string, string> parameter)
         {
+            if (! Database.Me.Connected)
+                return null;
+
             try
             {
+                Database.Me.OpenConnection();
                 // Get next smallest waiting queue number.
                 // Update Display to display the number
-                if (Database.Me.Connected)
+
+                string post    = parameter["post"];
+                string station = parameter["station"]; // ID caller yang memanggil
+                string postNumberPrefix = GetPostNumberPrefix(post);
+
+
+                int id = 0;
+                int number = 0;
+                object starttime = null;
+                int numberLeft = 0;
+                string postId = "";
+                string stationId = station;
+
+                using (DbCommand cmdSelect = Database.Me.Connection.CreateCommand())
                 {
-                    string post    = parameter["post"];
-                    string station = parameter["station"];
-                    string sql = @"SELECT id, number, status, station, post, source, starttime, endtime, numberleft, numbermax FROM v_sequences WHERE post = ?";
+                    string sql = $@"SELECT id, number, status, station, post, source, starttime, 
+                                endtime, numberleft, numbermax FROM {Tbl.v_sequences} WHERE post = ?";
 
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmdSelect = Database.Me.Connection.CreateCommand())
+                    cmdSelect.CommandText = sql;
+                    Database.Me.AddParameter(cmdSelect, "post", post, DbType.String);
+
+                    using (DbDataReader reader = cmdSelect.ExecuteReader())
                     {
-                        cmdSelect.CommandText = sql;
-                        Database.Me.AddParameter(cmdSelect, "post", post, DbType.String);
-
-                        using (DbDataReader reader = cmdSelect.ExecuteReader())
+                        if (reader.HasRows)
                         {
-                            string postNumberPrefix = GetPostNumberPrefix(post);
+                            reader.Read();
 
-                            if (reader.HasRows)
+                            id         = reader.IsDBNull(0) ? 0  : reader.GetInt32(0);
+                            number     = reader.IsDBNull(1) ? 0  : reader.GetInt32(1);
+                            starttime  = reader.IsDBNull(6) ? 0  : reader.GetValue(6);
+                            numberLeft = reader.IsDBNull(8) ? 0  : reader.GetInt32(8);
+                            postId     = reader.IsDBNull(4) ? "" : reader.GetString(4);
+
+                            if (!reader.IsDBNull(3)) 
                             {
-                                int affectedRows = 0;
-
-                                reader.Read();
-
-                                int id           = reader.GetInt32(0);
-                                int number       = reader.GetInt32(1);
-                                object starttime = reader.GetValue(6);
-                                int numberLeft   = reader.GetInt32(8);
-
-                                // Set number status as PROCESS
-                                string sqlUpdate;
-                                if (Database.Me.ProviderType == ProviderType.SQLITE)
-                                {
-                                    sqlUpdate = $@"UPDATE sequences SET status = 'PROCESS', station = ?, calltime = strftime('%Y-%m-%d %H:%M:%f','now', 'localtime')
-                                                    WHERE id = ? AND number = ? AND post = ?";
-                                }
-                                else
-                                {
-                                    sqlUpdate = $@"UPDATE sequences SET status = 'PROCESS', station = ?, calltime = getdate()
-                                                    WHERE id = ? AND number = ? AND post = ?";
-                                }
-
-                                using (DbCommand cmdInsert = Database.Me.Connection.CreateCommand())
-                                {
-                                    cmdInsert.CommandText = sqlUpdate;
-
-                                    Database.Me.AddParameter(cmdInsert, "station",  station, DbType.String);
-                                    Database.Me.AddParameter(cmdInsert, "id",       id,      DbType.Int32);
-                                    Database.Me.AddParameter(cmdInsert, "number",   number,  DbType.Int32);
-                                    Database.Me.AddParameter(cmdInsert, "post",     post,    DbType.String);
-
-                                    affectedRows = cmdInsert.ExecuteNonQuery();
-                                }
-
-                                if (affectedRows > 0)
-                                {
-                                    int queueLeft = numberLeft;
-                                    queueLeft     = queueLeft - 1;
-
-                                    return new Dictionary<string, string>()
-                                    {
-                                        ["id"]          = id.ToString(),
-                                        ["number"]      = number.ToString(),
-                                        ["numberLeft"]  = queueLeft.ToString(),
-                                        ["postPrefix"]  = postNumberPrefix,
-                                    };
-                                }
-                            }
-                            else
-                            {
-                                return new Dictionary<string, string>()
-                                {
-                                    ["id"]          = "",
-                                    ["number"]      = "",
-                                    ["numberLeft"]  = "0",
-                                    ["postPrefix"]  = postNumberPrefix
-                                };
+                                // should never reached here
+                                // station should alway null, because this is a waiting queue number
+                                stationId = reader.GetString(3);
                             }
                         }
                     }
                 }
+
+
+                // Set number status as PROCESS
+                int affectedRows = 0;
+                using (DbCommand cmdInsert = Database.Me.Connection.CreateCommand())
+                {
+                    string sqlUpdate;
+                    sqlUpdate = $@"UPDATE {Tbl.sequences} SET status = 'PROCESS', station = ?, 
+                                        calltime = {GetSqlDateTimeString()} WHERE id = ? AND number = ? AND post = ?";
+
+                    cmdInsert.CommandText = sqlUpdate;
+
+                    Database.Me.AddParameter(cmdInsert, "station", station, DbType.String);
+                    Database.Me.AddParameter(cmdInsert, "id",      id,      DbType.Int32);
+                    Database.Me.AddParameter(cmdInsert, "number",  number,  DbType.Int32);
+                    Database.Me.AddParameter(cmdInsert, "post",    post,    DbType.String);
+
+                    affectedRows = cmdInsert.ExecuteNonQuery();
+                }
+
+                if (affectedRows > 0)
+                {
+                    int queueLeft = numberLeft;
+                    queueLeft = queueLeft - 1;
+
+                    return new Dictionary<string, string>()
+                    {
+                        ["id"]          = id.ToString(),
+                        ["number"]      = number.ToString(),
+                        ["numberLeft"]  = queueLeft.ToString(),
+                        ["postPrefix"]  = postNumberPrefix,
+                        ["postId"]      = postId.ToString(),
+                        ["station"]     = stationId.ToString()
+                    };
+                }
+
+                return new Dictionary<string, string>()
+                {
+                    ["id"]          = "",
+                    ["number"]      = "",
+                    ["numberLeft"]  = "0",
+                    ["postPrefix"]  = postNumberPrefix,
+                    ["postId"]      = post,
+                    ["station"]     = station
+                };
             }
             catch (AppException ex)
             {
@@ -1373,12 +1427,10 @@ namespace Tobasa
             {
                 throw new AppException("GetNextWaitingNumber: " + ex.Message);
             }
-
-            return null;
         }
 
         /** Get last proccessed number and post summary
-            Return Dictionary<string,string> with Keys: id, number, numberLeft, postPrefix.
+            Return Dictionary<string,string> with Keys: id, number, numberLeft, postPrefix, postId, station.
             Default data are id="", number ="", numberLeft="0", postPrefix always set with correct value.
 
             On error returns null
@@ -1390,7 +1442,7 @@ namespace Tobasa
                 string post   = parameter["post"];
                 Dictionary<string, string> result1 = GetLastProcessedNumberAndPostSummary(post);
                 
-                if(result1 != null && result1.ContainsKey("number"))
+                if (result1 != null && result1.ContainsKey("number"))
                 {
                     string lastProcessedNumber = result1["number"];
                     if( ! string.IsNullOrWhiteSpace(lastProcessedNumber))
@@ -1420,159 +1472,135 @@ namespace Tobasa
         }
 
         /** Get last proccessed number and post summary
-            Return Dictionary<string,string> with Keys: id, number, numberLeft, postPrefix.
+            Return Dictionary<string,string> with Keys: id, number, numberLeft, postPrefix, postId, station.
             Default data are id="", number ="", numberLeft="0", postPrefix always set with correct value.
 
             On error returns null
         */
         public static Dictionary<string, string> GetLastProcessedNumberAndPostSummary(string post)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return null;
+
+            try
             {
-                try
+                string postNumberPrefix = GetPostNumberPrefix(post);
+
+                string sqlFirst = $@"
+                    SELECT id,number,status,station,post,source,starttime,endtime
+                        , ( SELECT COUNT(number) FROM {Tbl.sequences} WHERE status = 'WAITING' AND post = ? AND date = {GetSqlDateString()} ) AS numberleft
+                        , ( SELECT MAX(number)   FROM {Tbl.sequences} WHERE status = 'WAITING' AND post = ? AND date = {GetSqlDateString()} ) AS numbermax
+                        FROM {Tbl.sequences}
+                        WHERE status = 'PROCESS' AND post = ? AND date = {GetSqlDateString()}
+                        AND id = (SELECT MAX(id) FROM {Tbl.sequences} WHERE status = 'PROCESS' AND post = ? AND date = {GetSqlDateString()} )
+                    ";
+
+                Database.Me.OpenConnection();
+
+                using (DbCommand cmdSelect = Database.Me.Connection.CreateCommand())
                 {
-                    string sqlFirst;
+                    cmdSelect.CommandText = sqlFirst;
+                    Database.Me.AddParameter(cmdSelect, "par1", post, DbType.String);
+                    Database.Me.AddParameter(cmdSelect, "par2", post, DbType.String);
+                    Database.Me.AddParameter(cmdSelect, "par3", post, DbType.String);
+                    Database.Me.AddParameter(cmdSelect, "par4", post, DbType.String);
 
-                    if (Database.Me.ProviderType == ProviderType.SQLITE)
+                    using (DbDataReader reader = cmdSelect.ExecuteReader())
                     {
-                        sqlFirst = @"
-                        SELECT id,number,status,station,post,source,starttime,endtime
-                            ,( SELECT COUNT(number) FROM sequences WHERE status = 'WAITING' AND post = ? AND date = date('now','localtime') ) AS numberleft
-                            ,( SELECT MAX(number)   FROM sequences WHERE status = 'WAITING' AND post = ? AND date = date('now','localtime') ) AS numbermax
-                            FROM sequences 
-                            WHERE status = 'PROCESS' AND post = ? AND date = date('now','localtime')
-                            AND id = (SELECT MAX(id) FROM sequences WHERE status = 'PROCESS' AND post = ? AND date = date('now','localtime') )
-                        ";
-                    }
-                    else
-                    {
-                        sqlFirst = @"
-                        SELECT id,number,status,station,post,source,starttime,endtime
-                            ,( SELECT COUNT(number) FROM sequences WHERE status = 'WAITING' AND post = ? AND date = CAST(getdate() AS date) ) AS numberleft
-                            ,( SELECT MAX(number)   FROM sequences WHERE status = 'WAITING' AND post = ? AND date = CAST(getdate() AS date) ) AS numbermax
-                            FROM sequences 
-                            WHERE status = 'PROCESS' AND post = ? AND date = CAST(getdate() AS date)
-                            AND id = (SELECT MAX(id) FROM sequences WHERE status = 'PROCESS' AND post = ? AND date = CAST(getdate() AS date) )
-                        ";
-                    }
-
-                    Database.Me.OpenConnection();
-
-                    using (DbCommand cmdSelect = Database.Me.Connection.CreateCommand())
-                    {
-                        cmdSelect.CommandText = sqlFirst;
-
-                        Database.Me.AddParameter(cmdSelect, "par1", post, DbType.String);
-                        Database.Me.AddParameter(cmdSelect, "par2", post, DbType.String);
-                        Database.Me.AddParameter(cmdSelect, "par3", post, DbType.String);
-                        Database.Me.AddParameter(cmdSelect, "par4", post, DbType.String);
-
-                        using (DbDataReader reader = cmdSelect.ExecuteReader())
+                        if (reader.HasRows)
                         {
-                            Dictionary<string, string> result = null;
-                            string postNumberPrefix = GetPostNumberPrefix(post);
+                            reader.Read();
 
-                            if (reader.HasRows)
+                            var id          = reader.GetValue(0);
+                            var number      = reader.GetValue(1);
+                            var numberLeft  = reader.GetValue(8);
+                            var postId      = reader.GetValue(4);
+                            var station     = reader.GetValue(3);
+
+                            var result = new Dictionary<string, string>()
                             {
-                                reader.Read();
-
-                                var id          = reader.GetValue(0);
-                                var number      = reader.GetValue(1);
-                                var numberLeft  = reader.GetValue(8);
-
-                                result = new Dictionary<string, string>()
-                                {
-                                    ["id"]         = id.ToString(),
-                                    ["number"]     = number.ToString(),
-                                    ["numberLeft"] = numberLeft.ToString(),
-                                    ["postPrefix"] = postNumberPrefix
-                                };
-                            }
-                            else
-                            {
-                                result = new Dictionary<string, string>()
-                                {
-                                    ["id"]         = "",
-                                    ["number"]     = "",
-                                    ["numberLeft"] = "0",
-                                    ["postPrefix"] = postNumberPrefix
-                                };
-                            }
+                                ["id"]         = id.ToString(),
+                                ["number"]     = number.ToString(),
+                                ["numberLeft"] = numberLeft.ToString(),
+                                ["postPrefix"] = postNumberPrefix,
+                                ["postId"]     = postId.ToString(),
+                                ["station"]    = station.ToString()
+                            };
                             return result;
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetLastProcessedNumberAndPostSummary: " + ex.Message);
-                }
-            }
 
-            return null;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("GetLastProcessedNumberAndPostSummary: " + ex.Message);
+            }
         }
 
         /** Get next waiting number and post summary
-            Return Dictionary<string,string> with Keys: id, number, numberLeft, postPrefix.
+            Return Dictionary<string,string> with Keys: id, number, numberLeft, postPrefix, postId, station.
             Default data are id="", number ="", numberLeft="0", postPrefix always set with correct value.
 
             On error returns null
         */
         public static Dictionary<string,string> GetWaitingNumberAndPostSummary(string post)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return null;
+
+            try
             {
-                try
+                string postNumberPrefix = GetPostNumberPrefix(post);
+
+                using (DbCommand cmdSelect = Database.Me.Connection.CreateCommand())
                 {
-                    using (DbCommand cmdSelect = Database.Me.Connection.CreateCommand())
-                    {
-                        string sqlSecond = @"SELECT id, number, status, station, post, source, starttime, endtime, numberleft, numbermax FROM v_sequences WHERE post = ?";
+                    string sqlSecond = $@"SELECT id, number, status, station, post, source, starttime, 
+                                            endtime, numberleft, numbermax FROM {Tbl.v_sequences} WHERE post = ?";
                         
-                        cmdSelect.CommandText = sqlSecond;
-
-                        Database.Me.AddParameter(cmdSelect, "post", post, DbType.String);
-
-                        using (DbDataReader reader = cmdSelect.ExecuteReader())
+                    cmdSelect.CommandText = sqlSecond;
+                    Database.Me.AddParameter(cmdSelect, "post", post, DbType.String);
+                    using (DbDataReader reader = cmdSelect.ExecuteReader())
+                    {
+                        if (reader.HasRows)
                         {
-                            Dictionary<string, string> result = null;
-                            string postNumberPrefix = GetPostNumberPrefix(post);
+                            reader.Read();
 
-                            if (reader.HasRows)
+                            var id         = reader.GetValue(0);
+                            var number     = reader.GetValue(1);
+                            var numberLeft = reader.GetValue(8);
+                            var postId     = reader.GetValue(4);
+                            var station    = reader.GetValue(3);
+
+                            var result = new Dictionary<string, string>()
                             {
-                                reader.Read();
-
-                                var id         = reader.GetValue(0);
-                                var number     = reader.GetValue(1);
-                                var numberLeft = reader.GetValue(8);
-
-                                result = new Dictionary<string, string>()
-                                {
-                                    ["id"]         = id.ToString(),
-                                    ["number"]     = number.ToString(),
-                                    ["numberLeft"] = numberLeft.ToString(),
-                                    ["postPrefix"] = postNumberPrefix
-                                };
-                            }
-                            else
-                            {
-                                result = new Dictionary<string, string>()
-                                {
-                                    ["id"]         = "",
-                                    ["number"]     = "",
-                                    ["numberLeft"] = "0",
-                                    ["postPrefix"] = postNumberPrefix
-                                };
-                            }
+                                ["id"]         = id.ToString(),
+                                ["number"]     = number.ToString(),
+                                ["numberLeft"] = numberLeft.ToString(),
+                                ["postPrefix"] = postNumberPrefix,
+                                ["postId"]     = postId.ToString(),
+                                ["station"]    = station.ToString()
+                            };
                             return result;
                         }
                     }
                 }
-                catch (Exception ex)
+
+                return new Dictionary<string, string>()
                 {
-                    throw new AppException("GetWaitingNumberAndPostSummary: " + ex.Message);
-                }
+                    ["id"]          = "",
+                    ["number"]      = "",
+                    ["numberLeft"]  = "",
+                    ["postPrefix"]  = postNumberPrefix,
+                    ["postId"]      = "" ,
+                    ["station"]     = ""
+                };
             }
-            
-            return null;
+            catch (Exception ex)
+            {
+                throw new AppException("GetWaitingNumberAndPostSummary: " + ex.Message);
+            }
         }
 
         #endregion
@@ -1609,126 +1637,136 @@ namespace Tobasa
         */
         public static Dictionary<string, string> CreateNewNumber(string station, string post)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return null;
+
+            try
             {
-                try
+                Database.Me.OpenConnection();
+
+                // Get Post data
+                Dto.Post postData = GetPost(post);
+                if (postData == null)
                 {
-                    Database.Me.OpenConnection();
-                    string sql;
-                    if (Database.Me.ProviderType == ProviderType.SQLITE)
+                    throw new AppException($"Invalid post {post} data");
+                }
+
+                // Get Post Prefix number
+                //string postNumberPrefix = GetPostNumberPrefix(post);
+                string postNumberPrefix = postData.NumberPrefix;
+
+
+                int newNumberInt = 0;
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    string sql = $@"SELECT number+1 from {Tbl.sequences} WHERE post = ? AND date = {GetSqlDateString()} 
+                        AND id = (SELECT MAX(id) from {Tbl.sequences} WHERE post = ? AND date = {GetSqlDateString()} )";
+
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "post1", post, DbType.String);
+                    Database.Me.AddParameter(cmd, "post2", post, DbType.String);
+                    var res = cmd.ExecuteScalar();
+                    if (res != null) 
                     {
-                        sql = $@"SELECT number+1 from sequences WHERE post = ? AND date = date('now','localtime') 
-                             AND id = (SELECT MAX(id) from sequences WHERE post = ? AND date = date('now','localtime') )";
+                        string newNumberStr = res.ToString();
+                        if (int.TryParse(newNumberStr, out newNumberInt))
+                        {
+                            //throw new AppException($"Invalid new number data for post {post}");
+                        }
+                    }
+                }
+
+
+                int newNumber    = 0;
+                string startTime = "";
+                int sequenceId   = 0;
+
+                using (DbCommand cmdInsert = Database.Me.Connection.CreateCommand())
+                {
+                    string insertSQL;
+                    if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
+                    {
+                        insertSQL = $@"INSERT INTO {Tbl.sequences} (number,post,source) 
+                                    OUTPUT INSERTED.number,INSERTED.starttime,INSERTED.id VALUES (?, ?, ?)";
                     }
                     else
                     {
-                        sql = $@"SELECT number+1 from sequences WHERE post = ? AND date = CAST(getdate() AS date) 
-                             AND id = (SELECT MAX(id) from sequences WHERE post = ? AND date = CAST(getdate() AS date) )";
+                        insertSQL = $@"INSERT INTO {Tbl.sequences} (number,post,source) VALUES (?, ?, ?);
+                                    SELECT number, starttime, id FROM {Tbl.sequences} ORDER BY id DESC LIMIT 1;";
                     }
+                    cmdInsert.CommandText = insertSQL;
 
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                    if (newNumberInt > 0)
                     {
-                        cmd.CommandText = sql;
-                        Database.Me.AddParameter(cmd, "post1", post, DbType.String);
-                        Database.Me.AddParameter(cmd, "post2", post, DbType.String);
-
-                        var res = cmd.ExecuteScalar();
-                        string newNumberStr = "";
-                        if (res != null)
-                            newNumberStr = res.ToString();
-
-                        // Get Post Prefix number
-                        string postNumberPrefix = GetPostNumberPrefix(post);
-
-                        string insertSQL;
-                        if (Database.Me.ProviderType == ProviderType.SQLITE)
+                        //if (newNumberInt == Properties.Settings.Default.MaxQueueNumber)
+                        if (newNumberInt > postData.Quota0)
                         {
-                            insertSQL = @"INSERT INTO sequences (number,post,source) VALUES (?, ?, ?);
-                                          SELECT number, starttime, id FROM sequences ORDER BY id DESC LIMIT 1;";
+                            // max queue number for the post reached, reset back to 1
+                            Database.Me.AddParameter(cmdInsert, "number", 1, DbType.Int32);
                         }
                         else
+                            Database.Me.AddParameter(cmdInsert, "number", newNumberInt, DbType.Int32);
+                    }
+                    else
+                    {
+                        // Create initial number "1" if table has no number
+                        Database.Me.AddParameter(cmdInsert, "number", 1, DbType.Int32);
+                    }
+
+                    Database.Me.AddParameter(cmdInsert, "post",   post,    DbType.String);
+                    Database.Me.AddParameter(cmdInsert, "source", station, DbType.String);
+
+                    using (DbDataReader reader = cmdInsert.ExecuteReader())
+                    {
+                        if (reader.HasRows)
                         {
-                            insertSQL = @"INSERT INTO sequences (number,post,source) 
-                                          OUTPUT INSERTED.number,INSERTED.starttime,INSERTED.id VALUES (?, ?, ?)";
-                        }
-
-                        using (DbCommand cmdInsert = Database.Me.Connection.CreateCommand())
-                        {
-                            cmdInsert.CommandText = insertSQL;
-                            if (int.TryParse(newNumberStr, out int newNumberInt))
-                            {
-                                if (newNumberInt == Properties.Settings.Default.MaxQueueNumber)
-                                {
-                                    // max queue number reached, reset back to 1
-                                    Database.Me.AddParameter(cmdInsert, "number", 1, DbType.Int32);
-                                }
-                                else
-                                    Database.Me.AddParameter(cmdInsert, "number", newNumberInt, DbType.Int32);
-                            }
-                            else
-                            {
-                                // Create initial number "1" if table has no number
-                                Database.Me.AddParameter(cmdInsert, "number", 1, DbType.Int32);
-                            }
-
-                            Database.Me.AddParameter(cmdInsert, "post",   post,    DbType.String);
-                            Database.Me.AddParameter(cmdInsert, "source", station, DbType.String);
-
-
-                            object newNumber = null;
-                            object startTime = null;
-                            int jobId = 0;
-                            using (DbDataReader reader = cmdInsert.ExecuteReader())
-                            {
-                                if (reader.HasRows)
-                                {
-                                    reader.Read();
-
-                                    newNumber = reader.GetValue(0);
-                                    startTime = reader.GetValue(1);
-                                    jobId     = reader.GetInt32(2);
-
-                                    if (newNumber != null && startTime != null && jobId > 0)
-                                    {
-                                        // Copy data to jobs table
-                                        string insertJobSQL = "INSERT INTO jobs SELECT * FROM sequences WHERE id = ?";
-                                        using (DbCommand cmdInsertJob = Database.Me.Connection.CreateCommand())
-                                        {
-                                            cmdInsertJob.CommandText = insertJobSQL;
-                                            Database.Me.AddParameter(cmdInsertJob, "id", jobId, DbType.Int32);
-
-                                            cmdInsertJob.ExecuteNonQuery();
-                                        }
-
-                                        Dictionary<string, string> result = new Dictionary<string, string>()
-                                        {
-                                            ["postprefix"]  = postNumberPrefix,
-                                            ["number"]      = newNumber.ToString(),
-                                            ["post"]        = post,
-                                            ["timestamp"]   = ((DateTime)startTime).ToString("dd MMMM yyyy - HH:mm")
-                                        };
-                                        return result;
-                                    }
-                                }
-
-                                return new Dictionary<string, string>()
-                                {
-                                    ["postprefix"] = "",
-                                    ["number"]     = "",
-                                    ["post"]       = "",
-                                    ["timestamp"]  = ""
-                                };
-                            }
+                            reader.Read();
+                            newNumber  = reader.IsDBNull(0) ? 0  : reader.GetInt32(0);
+                            startTime  = reader.IsDBNull(1) ? "" : reader.GetDateTime(1).ToString("dd MMMM yyyy, HH:mm");
+                            sequenceId = reader.IsDBNull(2) ? 0  : reader.GetInt32(2);
                         }
                     }
                 }
-                catch (Exception ex)
+
+                if (newNumber > 0 && sequenceId > 0 && !string.IsNullOrWhiteSpace(startTime))
                 {
-                    throw new AppException("CreateNewNumber: " + ex.Message);
+                    // Copy data to jobs table
+                    // ----------------------------
+                    string insertJobSQL = $"INSERT INTO {Tbl.jobs} SELECT * FROM {Tbl.sequences} WHERE id = ?";
+                        
+                    using (DbCommand cmdInsertJob = Database.Me.Connection.CreateCommand())
+                    {
+                        cmdInsertJob.CommandText = insertJobSQL;
+                        Database.Me.AddParameter(cmdInsertJob, "id", sequenceId, DbType.Int32);
+                        var rc = cmdInsertJob.ExecuteNonQuery();
+                        if (rc > 0) { } // sukses
+                    }
+
+                    Dictionary<string, string> result = new Dictionary<string, string>()
+                    {
+                        ["postprefix"] = postNumberPrefix,
+                        ["number"]     = newNumber.ToString(),
+                        ["post"]       = post,
+                        ["timestamp"]  = startTime
+                    };
+
+                    return result;
+                }
+                else 
+                { 
+                    return new Dictionary<string, string>()
+                    {
+                        ["postprefix"]  = postNumberPrefix,
+                        ["number"]      = "",
+                        ["post"]        = post,
+                        ["timestamp"]   = ""
+                    };
                 }
             }
-            
-            return null;
+            catch (Exception ex)
+            {
+                throw new AppException("CreateNewNumber: " + ex.Message);
+            }
         }
 
         #endregion
@@ -1761,38 +1799,36 @@ namespace Tobasa
 
         public static List<string> GetStationRunningText(string station, string post)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return null;
+
+            try
             {
-                try
+                string sql = $@"SELECT station_name, sticky, active, running_text FROM {Tbl.runningtexts} WHERE active=1 AND station_name=?";
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    string sql = @"SELECT station_name, sticky, active, running_text FROM runningtexts WHERE active=1 AND station_name=?";
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "station_name", station, DbType.String);
 
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                    using (DbDataReader reader = cmd.ExecuteReader())
                     {
-                        cmd.CommandText = sql;
-                        Database.Me.AddParameter(cmd, "station_name", station, DbType.String);
-
-                        using (DbDataReader reader = cmd.ExecuteReader())
+                        List<string> runningTexts = new List<string>();
+                        while (reader.Read())
                         {
-                            List<string> runningTexts = new List<string>();
-                            while (reader.Read())
-                            {
-                                string text = reader.GetString(3).Trim();
-                                runningTexts.Add(text);
-                            }
-
-                            return runningTexts;
+                            string text = reader.GetString(3).Trim();
+                            runningTexts.Add(text);
                         }
+
+                        return runningTexts;
                     }
                 }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetStationRunningText: " + ex.Message);
-                }
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                throw new AppException("GetStationRunningText: " + ex.Message);
+            }
         }
 
         #endregion
@@ -1802,31 +1838,31 @@ namespace Tobasa
 
         public static List<string> GetList(Dictionary<string, string> parameter)
         {
+            if (! Database.Me.Connected)
+                return null;
+
             try
             {
-                if (Database.Me.Connected)
+                string sql = "";
+                string name = parameter["name"];
+
+                if (name == Tbl.posts)
+                    sql = $"SELECT name FROM {Tbl.posts}";
+                else
+                    return null;
+
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    string sql = "";
-                    string name = parameter["name"];
-
-                    if (name == "posts")
-                        sql = "SELECT name FROM posts";
-                    else
-                        return null;
-
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                    cmd.CommandText = sql;
+                    using (DbDataReader reader = cmd.ExecuteReader())
                     {
-                        cmd.CommandText = sql;
-                        using (DbDataReader reader = cmd.ExecuteReader())
+                        List<string> list = new List<string>();
+                        while (reader.Read())
                         {
-                            List<string> list = new List<string>();
-                            while (reader.Read())
-                            {
-                                list.Add(reader.GetString(0).Trim());
-                            }
-                            return list;
+                            list.Add(reader.GetString(0).Trim());
                         }
+                        return list;
                     }
                 }
             }
@@ -1838,7 +1874,6 @@ namespace Tobasa
             {
                 throw new AppException("GetList: " + ex.Message);
             }
-            return null;
         }
 
 
@@ -1847,35 +1882,75 @@ namespace Tobasa
         */
         public static string GetPostNumberPrefix(string post)
         {
-            if (Database.Me.Connected)
+            if (! Database.Me.Connected)
+                return "**";
+            
+            try
             {
-                string sql = "SELECT numberprefix FROM posts WHERE name = ?";
-
-                try
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-                        Database.Me.AddParameter(cmd, "name", post, DbType.String);
+                    string sql = $"SELECT numberprefix FROM {Tbl.posts} WHERE name = ?";
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "name", post, DbType.String);
 
-                        var res = cmd.ExecuteScalar();
-                        if (res != null && res.ToString().Length > 0)
+                    var res = cmd.ExecuteScalar();
+                    if (res != null && res.ToString().Length > 0)
+                    {
+                        string prefix = res.ToString();
+                        prefix = prefix.Trim();
+                        return prefix;
+                    }
+                }
+
+                return "";
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("GetPostNumberPrefix: " + ex.Message);
+            }
+        }
+
+        public static Dto.Post GetPost(string postName)
+        {
+            if (!Database.Me.Connected)
+                return null;
+
+            try
+            {
+                Database.Me.OpenConnection();
+                using (DbCommand cmd = Database.Me.Connection.CreateCommand())
+                {
+                    string sql = $"SELECT name, keterangan, numberprefix, quota0, quota1 FROM {Tbl.posts} WHERE name = ?";
+                    cmd.CommandText = sql;
+                    Database.Me.AddParameter(cmd, "name", postName, DbType.String);
+                    using (DbDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows )
                         {
-                            string prefix = res.ToString();
-                            prefix = prefix.Trim();
-                            return prefix;
+                            reader.Read();
+
+                            Dto.Post post   = new Dto.Post();
+
+                            post.Name         = reader.GetString(0).Trim();
+                            post.Keterangan   = reader.GetString(1).Trim();
+                            post.NumberPrefix = reader.GetString(2).Trim();
+                            post.Quota0       = reader.GetInt32(3);
+                            post.Quota1       = reader.GetInt32(4);
+
+                            return post;
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    throw new AppException("GetPostNumberPrefix: " + ex.Message);
-                }
-            }
 
-            return "**";
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("GetPostNumberPrefix: " + ex.Message);
+            }
         }
+
 
         public static int GetTableRowCount(string tablename)
         {
@@ -1884,6 +1959,30 @@ namespace Tobasa
                 return Convert.ToInt32(totalRow);
             
             return 0;
+        }
+
+        public static string GetSqlDateString()
+        {
+            if (Database.Me.ProviderType == DatabaseProviderType.SQLITE)
+                return "date('now','localtime')";
+            else if (Database.Me.ProviderType == DatabaseProviderType.MYSQL)
+                return "CURDATE()";
+            else if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
+                return "CAST(getdate() AS date)";
+            else
+                return "CAST(getdate() AS date)";
+        }
+
+        public static string GetSqlDateTimeString()
+        {
+            if (Database.Me.ProviderType == DatabaseProviderType.SQLITE)
+                return "strftime('%Y-%m-%d %H:%M:%f','now', 'localtime')";
+            else if (Database.Me.ProviderType == DatabaseProviderType.MYSQL)
+               return "CURDATE()";
+            else if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
+                return "getdate()";
+            else
+                return "getdate()";
         }
 
         #endregion

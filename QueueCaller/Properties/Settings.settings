@@ -14,7 +14,7 @@
     <Setting Name="StationPost" Type="System.String" Scope="User">
       <Value Profile="(Default)">POST0</Value>
     </Setting>
-    <Setting Name="SecuritySalt" Type="System.String" Scope="User">
+    <Setting Name="SecuritySalt" Type="System.String" Scope="Application">
       <Value Profile="(Default)">C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39</Value>
     </Setting>
     <Setting Name="QueueUserName" Type="System.String" Scope="User">
@@ -23,7 +23,7 @@
     <Setting Name="QueuePassword" Type="System.String" Scope="User">
       <Value Profile="(Default)">e4ee0e54215f5e3dd7683923abe1dac8</Value>
     </Setting>
-    <Setting Name="UIPostList" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="UIPostList" Type="System.Collections.Specialized.StringCollection" Scope="Application">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;POST0|Apotik&lt;/string&gt;

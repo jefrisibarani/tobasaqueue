@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,10 +55,7 @@ namespace Tobasa
 
         ~QueueServer()
         {
-            if (Environment.UserInteractive)
-                Console.WriteLine("\nServer stopped...");
-
-            Logger.Log("[QueueServer] Server stopped");
+            Log("Server stopped");
             Dispose(false);
         }
 
@@ -116,36 +113,6 @@ namespace Tobasa
             return null;
         }
 
-        private bool CheckIpAddress(IPAddress addr)
-        {
-            if (Database.Me.Connected)
-            {
-                string strIp = addr.ToString();
-
-                string sql = "SELECT allowed FROM ipaccesslists WHERE ipaddress = ?";
-                try
-                {
-                    Database.Me.OpenConnection();
-                    using (DbCommand cmd = Database.Me.Connection.CreateCommand())
-                    {
-                        cmd.CommandText = sql;
-                        Database.Me.AddParameter(cmd, "ipaddress", strIp, DbType.String);
-
-                        var res = cmd.ExecuteScalar();
-                        if (res != null)
-                        {
-                            return Convert.ToBoolean(res);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("QueueServer", e);
-                }
-            }
-            return false;
-        }
-
         #endregion
 
         #region TCPServer and Database event handlers
@@ -170,12 +137,13 @@ namespace Tobasa
             }
 
             string clientCount = clients.Count.ToString();
-            Logger.Log("[QueueServer] Client ID: " + id + " closed, RemoteInfo: " + remoteInfo + ", Client left: " + clientCount);
+            Log("Client ID: " + id + " closed, RemoteInfo: " + remoteInfo + ", Client left: " + clientCount);
         }
 
         private void TCPServer_IncomingConnection(IPEndPoint ep, out bool allow)
         {
             bool allowed = false;
+            string reason = "";
 
             IPAddress lochost;
             IPAddress.TryParse("127.0.0.1", out lochost);
@@ -188,20 +156,20 @@ namespace Tobasa
             else
             {
                 if (Properties.Settings.Default.FilterClientIPAddress)
-                    allowed = CheckIpAddress(ep.Address);
+                    allowed = QueueRepository.CheckIpAddress(ep.Address, out reason);
                 else
                     allowed = true;
             }
  
             if (allowed)
             {
-                Logger.Log("[QueueServer] Allow connection from " + ep.Address.ToString());
+                Log("Allow connection from " + ep.Address.ToString());
                 allow = allowed;
             }
             else
             {
                 allow = false;
-                Logger.Log("[QueueServer] Reject connection from " + ep.Address.ToString());
+                Log($"Reject connection from {ep.Address.ToString()} :  {reason}" );
             }
         }
 
@@ -217,15 +185,12 @@ namespace Tobasa
             }
 
             string clientCount = clients.Count.ToString();
-            Logger.Log("[QueueServer] Client ID: " + id + " accepted, RemoteInfo: " + remoteInfo + ",  Total Client: " + clientCount);
+            Log("Client ID: " + id + " accepted, RemoteInfo: " + remoteInfo + ",  Total Client: " + clientCount);
         }
 
         private void TCPServer_ServerStarted(TCPServer srv)
         {
-            if (Environment.UserInteractive)
-                Console.WriteLine("\nServer started...");
-
-            Logger.Log("[QueueServer] Server started");
+            Log("Tobasa Queue Server started");
         }
 
         private void TCPServer_DataReceived(DataReceivedEventArgs arg)
@@ -244,15 +209,64 @@ namespace Tobasa
 
         public void Start()
         {
-            string conString = Database.Me.GetConnectionString(
-                Properties.Settings.Default.ConnectionString,
-                Properties.Settings.Default.SecuritySalt,
-                Properties.Settings.Default.ConnectionStringPassword
-                );
-            Database.Me.SetProvider(Properties.Settings.Default.ProviderType);
-            Database.Me.Connect(conString);
+            string conString = "";
+            var setting = Properties.Settings.Default;
 
-            int tcpListenPort = Properties.Settings.Default.ListenPort;
+            Database.Me.SetProvider(setting.ProviderType);
+            if (Database.Me.ProviderType == DatabaseProviderType.SQLITE)
+            {
+                conString = Database.Me.GetConnectionString(
+                                setting.ConnectionString_SQLITE,
+                                setting.SecuritySalt,
+                                setting.ConnectionStringPassword );
+            }
+            else if (Database.Me.ProviderType == DatabaseProviderType.MYSQL)
+            {
+                conString = Database.Me.GetConnectionString(
+                                setting.ConnectionString_MYSQL,
+                                setting.SecuritySalt,
+                                setting.ConnectionStringPassword);
+            }
+            else if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
+            {
+                conString = Database.Me.GetConnectionString(
+                                setting.ConnectionString_MSSQL,
+                                setting.SecuritySalt,
+                                setting.ConnectionStringPassword);
+            }
+            else if (Database.Me.ProviderType == DatabaseProviderType.PGSQL)
+            {
+                // TODO_JEFRI: Work on PostgreSQL Database
+                /*
+                conString = Database.Me.GetConnectionString(
+                                setting.ConnectionString_PGSQL,
+                                setting.SecuritySalt,
+                                setting.ConnectionStringPassword);
+                */
+                Log("Tobasa Queue Server could not be started due to unsupported database provider");
+                return;
+            }
+            else
+            {
+                Log("Tobasa Queue Server could not be started due to unsupported database provider");
+                return;
+            }
+
+
+            if (!Database.Me.Connect(conString)) 
+            {
+                return;
+            }
+
+            string msgDbInfo = Database.Me.DatabaseProviderTypeString() + " Database Version " + Database.Me.Connection.ServerVersion;
+            Log("Connected to " + msgDbInfo);
+
+            bool dbOk = DBMigration.InitializeDatabase();
+            if (!dbOk) {
+                return;
+            }
+
+            int tcpListenPort = setting.ListenPort;
             tcpsrv = new TCPServer(tcpListenPort);
             tcpsrv.Notified           += new Action<NotifyEventArgs>(TCPServer_Notified);
             tcpsrv.DataReceived       += new DataReceived(TCPServer_DataReceived);
@@ -261,12 +275,8 @@ namespace Tobasa
             tcpsrv.IncomingConnection += new IncomingConnection(TCPServer_IncomingConnection);
             tcpsrv.ServerStarted      += new ServerStarted(TCPServer_ServerStarted);
 
-            if (!tcpsrv.Start())
-            {
-                if (Environment.UserInteractive)
-                    Console.WriteLine("\nCould not start Tobasa Queue Server");
-
-                Logger.Log("[QueueServer] Could not start Tobasa Queue Server");
+            if (!tcpsrv.Start()) {
+                Log("Could not start Tobasa Queue Server");
             }
         }
 
@@ -278,16 +288,13 @@ namespace Tobasa
             tcpsrv.Stop();
             tcpsrv.Close();
 
-            if (Database.Me.Connected)
-            {
-                if (Database.Me.Disconnect())
-                    Logger.Log("[QueueServer] Database disconnected...");
-                else
-                    Logger.Log("[QueueServer] Could not close connection to database");
+            if (Database.Me.Connected) {
+                Log("Could not close connection to database");
             }
+
             stopped = true;
         }
-        
+
         #endregion
 
         #region Message handlers
@@ -308,7 +315,13 @@ namespace Tobasa
                 else
                 {
                     // Reject not logged in client!
-                    client.Session.Send("You have to login first");
+                    // SYS|NOTIFY|[Type!Message]
+                    string msg =
+                        Msg.SysNotify.Text +
+                        Msg.Separator + "ERROR" +
+                        Msg.CompDelimiter + "Not logged in";
+
+                    client.Session.Send(msg);
                     //client.Close();
                 }
 
@@ -336,8 +349,16 @@ namespace Tobasa
             {
                 displayHandler.OnMessage(arg, client);
             }
-            else
-                client.Session.Send("I don't understand");
+            else 
+            {
+                // SYS|NOTIFY|[Type!Message]
+                string msg =
+                    Msg.SysNotify.Text +
+                    Msg.Separator + "ERROR" +
+                    Msg.CompDelimiter + "Invalid message";
+
+                client.Session.Send(msg);
+            }
         }
 
         private void HandleLogin(DataReceivedEventArgs arg, Client client)
@@ -346,7 +367,7 @@ namespace Tobasa
             try
             {
                 Message qmessage = new Message(arg);
-                Logger.Log("[QueueServer] Processing " + qmessage.MessageType.String + " from " + arg.RemoteInfo);
+                Log("Processing " + qmessage.MessageType.String + " from " + arg.RemoteInfo);
 
                 string module   = qmessage.PayloadValues["module"];
                 string post     = qmessage.PayloadValues["post"];
@@ -374,7 +395,7 @@ namespace Tobasa
                     {
                         client.LoggedIn = true;
 
-                        Logger.Log("[QueueServer] Logged on : " + module + " - " + client.Name + " - " + client.Post + " from: " + client.RemoteInfo);
+                        Log("Logged on : " + module + " - " + client.Name + " - " + client.Post + " from: " + client.RemoteInfo);
 
                         // SYS|LOGIN|RES|[Result!Data]
                         string message =
@@ -410,7 +431,7 @@ namespace Tobasa
 
             if (exp != null)
             {
-                Logger.Log("QueueServer", exp);
+                Log(exp.Message);
             }
         }
 
@@ -438,5 +459,15 @@ namespace Tobasa
         
         #endregion
 
+    
+        public static void Log(string message)
+        {
+            string datetimeIfo = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") + " : ";
+
+            if (Environment.UserInteractive)
+                Console.WriteLine(datetimeIfo + message);
+
+            Logger.Log("[QueueServer] " + message);
+        }
     }
 }

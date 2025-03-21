@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -190,8 +190,7 @@ namespace Tobasa
                 sock.Bind(localEndPoint);
                 sock.Listen(10);
 
-                if (ServerStarted != null)
-                    ServerStarted(this);
+                ServerStarted?.Invoke(this);
 
                 while (shuttingDown == false)
                 {
@@ -298,8 +297,8 @@ namespace Tobasa
 
                     // bind session event handler 
                     ses.Notified += new Action<NotifyEventArgs>(NetSession_Notified);
-                    ses.ConnectionClosed += new ConnectionClosed(NetSession_Closed);
-                    ses.DataReceived += new DataReceived(NetSession_DataReceived);
+                    ses.OnSocketClosed += new SocketClosed(NetSession_Closed);
+                    ses.OnDataReceived += new DataReceived(NetSession_DataReceived);
 
                     ses.BeginReceive();
                     

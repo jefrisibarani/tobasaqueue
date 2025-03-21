@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -26,15 +26,22 @@ using System.Text;
 
 namespace Tobasa
 {
+    public delegate void ConnectionConnected(TCPClient client);
+    public delegate void ConnectionClosed(TCPClient client);
     public class TCPClient : Notifier
     {
         #region Member variables
 
-        NetSession ses = null;
-        private string mServer;
-        private int mPort;
-        private string response;
-        public static int sessionId = 100;
+        public event DataReceived OnDataReceived;
+        public event ConnectionConnected OnConnected;
+        public event ConnectionClosed OnClosed;
+
+        private static int _sessionId = 100;
+        private NetSession _sesion = null;
+        private string _server;
+        private int _port;
+        private string _response;
+        private int _sendRetry = 1;
 
         #endregion
 
@@ -42,32 +49,47 @@ namespace Tobasa
 
         public TCPClient(string server, int port)
         {
-            mServer = server;
-            mPort = port;
+            _server = server;
+            _port = port;
         }
 
         #endregion
 
         public string Response
         {
-            get { return response; }
+            get { return _response; }
         }
 
         public void Send(string text)
         {
             if (Connected)
-                ses.Send(text);
+            {
+                _sesion.Send(text);
+            }
+            else // auto reconnect
+            {
+                for (int i = 0; i< _sendRetry; i++)
+                {
+                    Stop();
+                    Start();
+                    if (Connected)
+                    {
+                        OnNotifyLog("TCPClient", "Retry send message #" + i.ToString());
+                        _sesion.Send(text);
+                    }
+                }
+            }
         }
 
         public NetSession Session
         {
-            get { return (ses != null) ? ses : null; }
+            get { return (_sesion != null) ? _sesion : null; }
         }
 
         private int NewSessionId()
         {
-            sessionId++;
-            return sessionId;
+            _sessionId++;
+            return _sessionId;
         }
 
         public bool Connected
@@ -79,8 +101,8 @@ namespace Tobasa
         {
             if (Connected)
             {
-                ses.Close();
-                ses = null;
+                _sesion.Close();
+                _sesion = null;
             }
         }
 
@@ -88,17 +110,22 @@ namespace Tobasa
         {
             if (!Connected)
             {
-                Socket sock = GetSocket(mServer, mPort);
+                Socket sock = GetSocket(_server, _port);
 
-                if (sock != null)
+                if (sock != null && sock.Connected)
                 {
-                    ses = new NetSession(sock)
+                    _sesion = new NetSession(sock)
                     {
                         Id = NewSessionId()
                     };
-                    ses.DataReceived += new DataReceived(NetSession_DataReceived);
-                    ses.Notified += new Action<NotifyEventArgs>(NetSession_Notified);
-                    ses.BeginReceive();
+
+                    _sesion.OnDataReceived += new DataReceived(NetSession_DataReceived);
+                    _sesion.Notified += new Action<NotifyEventArgs>(NetSession_Notified);
+                    _sesion.OnSocketClosed += new SocketClosed(NetSession_Closed);
+
+                    _sesion.BeginReceive();
+
+                    OnConnected?.Invoke(this);
                 }
             }
         }
@@ -162,6 +189,11 @@ namespace Tobasa
             return null;
         }
 
+        private void NetSession_Closed(NetSession ses)
+        {
+            OnClosed?.Invoke(this);
+        }
+
         private void NetSession_Notified(NotifyEventArgs arg)
         {
             OnNotify(arg);
@@ -169,12 +201,8 @@ namespace Tobasa
 
         private void NetSession_DataReceived(DataReceivedEventArgs arg)
         {
-            string stringMessage = Encoding.UTF8.GetString(arg.Data);
-            if (stringMessage != null)
-            {
-                response = stringMessage;
-                return;
-            }
+            //string stringMessage = Encoding.UTF8.GetString(arg.Data);
+            OnDataReceived?.Invoke(arg);
         }
 
     }

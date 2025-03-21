@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -615,7 +615,7 @@ namespace Tobasa
             this.tabProcessing.Location = new System.Drawing.Point(4, 22);
             this.tabProcessing.Name = "tabProcessing";
             this.tabProcessing.Padding = new System.Windows.Forms.Padding(3);
-            this.tabProcessing.Size = new System.Drawing.Size(553, 332);
+            this.tabProcessing.Size = new System.Drawing.Size(671, 423);
             this.tabProcessing.TabIndex = 1;
             this.tabProcessing.Text = "Processing";
             // 
@@ -627,7 +627,7 @@ namespace Tobasa
             this.label14.ForeColor = System.Drawing.Color.MediumBlue;
             this.label14.Location = new System.Drawing.Point(6, 305);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(208, 16);
+            this.label14.Size = new System.Drawing.Size(207, 16);
             this.label14.TabIndex = 7;
             this.label14.Text = "Double click on a row to set status";
             // 
@@ -696,7 +696,7 @@ namespace Tobasa
             this.tabFinished.Location = new System.Drawing.Point(4, 22);
             this.tabFinished.Name = "tabFinished";
             this.tabFinished.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFinished.Size = new System.Drawing.Size(553, 332);
+            this.tabFinished.Size = new System.Drawing.Size(671, 423);
             this.tabFinished.TabIndex = 2;
             this.tabFinished.Text = "Completed";
             this.tabFinished.UseVisualStyleBackColor = true;
@@ -709,7 +709,7 @@ namespace Tobasa
             this.label13.ForeColor = System.Drawing.Color.MediumBlue;
             this.label13.Location = new System.Drawing.Point(6, 305);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(249, 16);
+            this.label13.Size = new System.Drawing.Size(248, 16);
             this.label13.TabIndex = 6;
             this.label13.Text = "Double click on a row to close the Queue";
             // 
@@ -768,7 +768,7 @@ namespace Tobasa
             this.tabOptions.Location = new System.Drawing.Point(4, 22);
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOptions.Size = new System.Drawing.Size(553, 332);
+            this.tabOptions.Size = new System.Drawing.Size(671, 423);
             this.tabOptions.TabIndex = 3;
             this.tabOptions.Text = "Options";
             this.tabOptions.UseVisualStyleBackColor = true;

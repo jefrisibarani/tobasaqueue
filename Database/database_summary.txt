@@ -1,0 +1,22 @@
+SQLITE
+--------------------------------------------------------------
+SELECT
+  ( SELECT count(name) FROM sqlite_master WHERE type='table' AND name LIKE 'queue_%' ) AS total_table
+, ( SELECT COUNT(name) FROM sqlite_master WHERE type='view' AND name LIKE 'v_queue_%' ) AS total_view
+, ( SELECT COUNT(name) FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'queue_sequences' AND name = 'tr_queue_update_jobs' ) AS total_trigger
+
+
+MYSQL
+--------------------------------------------------------------
+SELECT
+  ( SELECT COUNT(table_name) FROM information_schema.tables WHERE TABLE_TYPE = 'BASE TABLE' AND table_schema = 'antri' AND table_name LIKE 'queue_%') AS total_table
+, ( SELECT COUNT(table_name) FROM information_schema.tables WHERE TABLE_TYPE = 'VIEW' AND table_schema = 'antri' AND table_name LIKE 'v_queue_%') AS total_view
+, ( SELECT COUNT(TRIGGER_NAME) FROM information_schema.TRIGGERS WHERE EVENT_OBJECT_TABLE = 'queue_sequences' AND TRIGGER_SCHEMA = 'antri'  AND TRIGGER_NAME = 'tr_queue_update_jobs' ) AS total_trigger
+
+
+SQLSERVER
+--------------------------------------------------------------
+SELECT
+  ( SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND table_catalog = 'antri' AND TABLE_NAME LIKE 'queue_%' ) AS total_table
+, ( SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'VIEW' AND table_catalog = 'antri' AND TABLE_NAME LIKE 'v_queue_%' ) AS total_view
+, ( SELECT COUNT(name) FROM sys.triggers WHERE parent_id = OBJECT_ID('queue_sequences') AND name = 'tr_queue_update_jobs' ) AS total_trigger

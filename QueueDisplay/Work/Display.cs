@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,12 +25,16 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace Tobasa
 {
     public partial class Display : Form
     {
         #region Member variables/class
+        private const string TEXT_LOKET = "LOKET";
+        private const string TEXT_NOMOR = "NOMOR";
+        private const string TEXT_COUNTER = "COUNTER";
 
         private delegate void AddRunningTextCallback(string text);
         private delegate void ResetRunningTextTextCallback();
@@ -182,15 +186,9 @@ namespace Tobasa
 
         #region QueueServer message handlers
 
-        public void ProcessDisplayCallNumber(Message qmessage)
+        private bool ContinueProcessDisplayPost(string post)
         {
-            string prefix       = qmessage.PayloadValues["prefix"];
-            string number       = qmessage.PayloadValues["number"];
-            string station      = qmessage.PayloadValues["caller"];
-            string post         = qmessage.PayloadValues["post"];
-            string queueLeft    = qmessage.PayloadValues["left"];
-
-            // If relevant panel/div is hidden, stop.
+            // If matching panel/div is hidden, stop.
             string post0Name = Properties.Settings.Default.Post0Post;
             string post1Name = Properties.Settings.Default.Post1Post;
             string post2Name = Properties.Settings.Default.Post2Post;
@@ -205,23 +203,35 @@ namespace Tobasa
             // main left posts visible?
             if ((post.Equals(post0Name) || post.Equals(post1Name) || post.Equals(post2Name) || post.Equals(post3Name) || post.Equals(post4Name))
                 && !leftDiv.Visible)
-                    return;
-                    
+                return false;
+
             // main right posts visible?
             if ((post.Equals(post5Name) || post.Equals(post6Name) || post.Equals(post7Name) || post.Equals(post8Name) || post.Equals(post9Name))
                     && !rightDiv.Visible)
-                    return;
+                return false;
 
             // right/left div,  two bottom posts visible?
             if (post.Equals(post3Name) && !Properties.Settings.Default.Post3Visible)
-                return;
+                return false;
             else if (post.Equals(post4Name) && !Properties.Settings.Default.Post4Visible)
-                return;
+                return false;
             else if (post.Equals(post8Name) && !Properties.Settings.Default.Post8Visible)
-                return;
+                return false;
             else if (post.Equals(post9Name) && !Properties.Settings.Default.Post9Visible)
-                return;
-            else
+                return false;
+
+            return true;
+        }
+
+        public void ProcessDisplayCallNumber(Message qmessage)
+        {
+            string prefix       = qmessage.PayloadValues["prefix"];
+            string number       = qmessage.PayloadValues["number"];
+            string station      = qmessage.PayloadValues["caller"];
+            string post         = qmessage.PayloadValues["post"];
+            string queueLeft    = qmessage.PayloadValues["left"];
+
+            if (ContinueProcessDisplayPost(post))
             {
                 bool recall = false;
                 if (qmessage.MessageType == Msg.DisplayCall)
@@ -235,7 +245,7 @@ namespace Tobasa
 
         public void ProcessDisplayCallNumber(string prefix, string number, string queueCount, string station, string post, bool recall = false)
         {
-            string _id = station.Substring(station.IndexOf('#') + 1);
+            string stationId = station.Substring(station.IndexOf('#') + 1);
 
             string post0Name = Properties.Settings.Default.Post0Post;
             string post1Name = Properties.Settings.Default.Post1Post;
@@ -276,13 +286,13 @@ namespace Tobasa
                 if (!recall) lblPost0JumAnVal.Text = queueCount;
                 
                 lblPost0No.Text = prefix + number;
-                lblPost0CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost0CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost0.Start();
                 swPost0.Start();
 
-                topTextPost0 = String.Format("{0} : Nomor {1} di {2} {3}  ", post0RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost0 = String.Format("{0} : Nomor {1} di {2} {3}  ", post0RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post0PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post0Caption;
@@ -292,13 +302,13 @@ namespace Tobasa
                 if (!recall) lblPost1JumAnVal.Text = queueCount;
 
                 lblPost1No.Text = prefix + number;
-                lblPost1CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost1CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost1.Start();
                 swPost1.Start();
 
-                topTextPost1 = String.Format("{0} : Nomor {1} di {2} {3}  ", post1RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost1 = String.Format("{0} : Nomor {1} di {2} {3}  ", post1RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post1PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post1Caption;
@@ -308,13 +318,13 @@ namespace Tobasa
                 if (!recall) lblPost2JumAnVal.Text = queueCount;
 
                 lblPost2No.Text = prefix + number;
-                lblPost2CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost2CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost2.Start();
                 swPost2.Start();
 
-                topTextPost2 = String.Format("{0} : Nomor {1} di {2} {3}  ", post2RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost2 = String.Format("{0} : Nomor {1} di {2} {3}  ", post2RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post2PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post2Caption;
@@ -324,13 +334,13 @@ namespace Tobasa
                 if (!recall) lblPost3JumAnVal.Text = queueCount;
 
                 lblPost3No.Text = prefix + number;
-                lblPost3CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost3CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost3.Start();
                 swPost3.Start();
 
-                topTextPost3 = String.Format("{0} : Nomor {1} di {2} {3}  ", post3RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost3 = String.Format("{0} : Nomor {1} di {2} {3}  ", post3RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post3PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post3Caption;
@@ -340,13 +350,13 @@ namespace Tobasa
                 if (!recall) lblPost4JumAnVal.Text = queueCount;
 
                 lblPost4No.Text = prefix + number;
-                lblPost4CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost4CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost4.Start();
                 swPost4.Start();
 
-                topTextPost4 = String.Format("{0} : Nomor {1} di {2} {3}  ", post4RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost4 = String.Format("{0} : Nomor {1} di {2} {3}  ", post4RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post4PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post4Caption;
@@ -356,13 +366,13 @@ namespace Tobasa
                 if (!recall) lblPost5JumAnVal.Text = queueCount;
 
                 lblPost5No.Text = prefix + number;
-                lblPost5CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost5CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost5.Start();
                 swPost5.Start();
 
-                topTextPost5 = String.Format("{0} : Nomor {1} di {2} {3}  ", post5RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost5 = String.Format("{0} : Nomor {1} di {2} {3}  ", post5RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post5PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post5Caption;
@@ -372,13 +382,13 @@ namespace Tobasa
                 if (!recall) lblPost6JumAnVal.Text = queueCount;
 
                 lblPost6No.Text = prefix + number;
-                lblPost6CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost6CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost6.Start();
                 swPost6.Start();
 
-                topTextPost6 = String.Format("{0} : Nomor {1} di {2} {3}  ", post6RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost6 = String.Format("{0} : Nomor {1} di {2} {3}  ", post6RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post6PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post6Caption;
@@ -388,13 +398,13 @@ namespace Tobasa
                 if (!recall) lblPost7JumAnVal.Text = queueCount;
 
                 lblPost7No.Text = prefix + number;
-                lblPost7CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost7CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost7.Start();
                 swPost7.Start();
 
-                topTextPost7 = String.Format("{0} : Nomor {1} di {2} {3}  ", post7RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost7 = String.Format("{0} : Nomor {1} di {2} {3}  ", post7RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post7PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post7Caption;
@@ -404,13 +414,13 @@ namespace Tobasa
                 if (!recall) lblPost8JumAnVal.Text = queueCount;
 
                 lblPost8No.Text = prefix + number;
-                lblPost8CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost8CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost8.Start();
                 swPost8.Start();
 
-                topTextPost8 = String.Format("{0} : Nomor {1} di {2} {3}  ", post8RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost8 = String.Format("{0} : Nomor {1} di {2} {3}  ", post8RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post8PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post8Caption;
@@ -420,13 +430,13 @@ namespace Tobasa
                 if (!recall) lblPost9JumAnVal.Text = queueCount;
 
                 lblPost9No.Text = prefix + number;
-                lblPost9CounterNo.Text = GetStationIdAsChar(_id);
+                lblPost9CounterNo.Text = GetStationIdAsChar(stationId);
 
                 // animate label
                 timerPost9.Start();
                 swPost9.Start();
 
-                topTextPost9 = String.Format("{0} : Nomor {1} di {2} {3}  ", post9RunText, prefix + number, textCounterOrLabel, _id);
+                topTextPost9 = String.Format("{0} : Nomor {1} di {2} {3}  ", post9RunText, prefix + number, textCounterOrLabel, stationId);
 
                 playAudio = Properties.Settings.Default.Post9PlayAudio;
                 postMainCaption = Properties.Settings.Default.Post9Caption;
@@ -436,19 +446,19 @@ namespace Tobasa
             if (post == Properties.Settings.Default.StationPost || Properties.Settings.Default.UpdateNumberFromOtherPost)
             {
                 lblPostNumber.Text = prefix + number;
-                lblPostCounter.Text = " " + textCounterOrLabel + " " + GetStationIdAsChar(_id);
+                lblPostCounter.Text = " " + textCounterOrLabel + " " + GetStationIdAsChar(stationId);
 
                 if (Tobasa.Properties.Settings.Default.MainPostCounterText.Length > 0)
-                    lblPostCounter.Text = Tobasa.Properties.Settings.Default.MainPostCounterText + " " + GetStationIdAsChar(_id);
+                    lblPostCounter.Text = Tobasa.Properties.Settings.Default.MainPostCounterText + " " + GetStationIdAsChar(stationId);
 
                 lblPostNameCaption.Text = postMainCaption;
             }
 
             // Only play audio if source post equal this display post
             if (post == Properties.Settings.Default.StationPost)
-                PlayAudio(prefix, number, _id);
+                PlayAudio(prefix, number, stationId);
             else if (playAudio)
-                PlayAudio(prefix, number, _id);
+                PlayAudio(prefix, number, stationId);
         }
 
         public void ProcessDisplayShowMessage(Message qmessage)
@@ -490,7 +500,7 @@ namespace Tobasa
                 return;
             else
             {
-                string _id = station.Substring(station.IndexOf('#') + 1);
+                string stationId = station.Substring(station.IndexOf('#') + 1);
 
                 if (post.Equals(post0Name))
                     midTextPost0 = post0RunText + " : " + message;
@@ -570,6 +580,136 @@ namespace Tobasa
             }
         }
 
+        public void ProcessDisplayGetPostInfo(Message qmessage)
+        {
+            string post       = qmessage.PayloadValues["postid"];
+
+            if (!ContinueProcessDisplayPost(post))
+            {
+                return;
+            }
+
+            string prefix     = qmessage.PayloadValues["postprefix"];
+            string number     = qmessage.PayloadValues["number"];
+            string numberleft = qmessage.PayloadValues["numberleft"];
+            string station    = qmessage.PayloadValues["station"];
+            string stationId ="";
+            
+            if (!string.IsNullOrWhiteSpace(station) && station.IndexOf('#')>=0)
+            {
+                stationId = station.Substring(station.IndexOf('#') + 1);
+                stationId = GetStationIdAsChar(stationId);
+            }
+
+            string queueNo = "";
+            if (!string.IsNullOrWhiteSpace(number))
+            {
+                queueNo = prefix + number;
+            }
+
+            string post0Name = Properties.Settings.Default.Post0Post;
+            string post1Name = Properties.Settings.Default.Post1Post;
+            string post2Name = Properties.Settings.Default.Post2Post;
+            string post3Name = Properties.Settings.Default.Post3Post;
+            string post4Name = Properties.Settings.Default.Post4Post;
+            string post5Name = Properties.Settings.Default.Post5Post;
+            string post6Name = Properties.Settings.Default.Post6Post;
+            string post7Name = Properties.Settings.Default.Post7Post;
+            string post8Name = Properties.Settings.Default.Post8Post;
+            string post9Name = Properties.Settings.Default.Post9Post;
+            
+            string postMainCaption = "";
+
+            // Loket or Counter
+            string textCounterOrLabel;
+            if (Properties.Settings.Default.AudioUseLoket)
+                textCounterOrLabel = "Loket";
+            else
+                textCounterOrLabel = "Counter";
+
+            if (post == post0Name)
+            {
+                lblPost0JumAnVal.Text = numberleft;
+                lblPost0No.Text = queueNo;
+                lblPost0CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post0Caption;
+            }
+            else if (post == post1Name)
+            {
+                lblPost1JumAnVal.Text = numberleft;
+                lblPost1No.Text = queueNo;
+                lblPost1CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post1Caption;
+            }
+            else if (post == post2Name)
+            {
+                lblPost2JumAnVal.Text = numberleft;
+                lblPost2No.Text = queueNo;
+                lblPost2CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post2Caption;
+            }
+            else if (post == post3Name)
+            {
+                lblPost3JumAnVal.Text = numberleft;
+                lblPost3No.Text = queueNo;
+                lblPost3CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post3Caption;
+            }
+            else if (post == post4Name)
+            {
+                lblPost4JumAnVal.Text = numberleft;
+                lblPost4No.Text = queueNo;
+                lblPost4CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post4Caption;
+            }
+            else if (post == post5Name)
+            {
+                lblPost5JumAnVal.Text = numberleft;
+                lblPost5No.Text = queueNo;
+                lblPost5CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post5Caption;
+            }
+            else if (post == post6Name)
+            {
+                lblPost6JumAnVal.Text = numberleft;
+                lblPost6No.Text = queueNo;
+                lblPost6CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post6Caption;
+            }
+            else if (post == post7Name)
+            {
+                lblPost7JumAnVal.Text = numberleft;
+                lblPost7No.Text = queueNo;
+                lblPost7CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post7Caption;
+            }
+            else if (post == post8Name)
+            {
+                lblPost8JumAnVal.Text = numberleft;
+                lblPost8No.Text = queueNo;
+                lblPost8CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post8Caption;
+            }
+            else if (post == post9Name)
+            {
+                lblPost9JumAnVal.Text = numberleft;
+                lblPost9No.Text = queueNo;
+                lblPost9CounterNo.Text = stationId;
+                postMainCaption = Properties.Settings.Default.Post9Caption;
+            }
+
+            // Main Post Current number display
+            if (post == Properties.Settings.Default.StationPost || Properties.Settings.Default.UpdateNumberFromOtherPost)
+            {
+                lblPostNumber.Text = queueNo;
+                lblPostCounter.Text = " " + textCounterOrLabel + " " + stationId;
+
+                if (Tobasa.Properties.Settings.Default.MainPostCounterText.Length > 0)
+                    lblPostCounter.Text = Tobasa.Properties.Settings.Default.MainPostCounterText + " " + stationId;
+
+                lblPostNameCaption.Text = postMainCaption;
+            }
+        }
         #endregion
 
         #region Audible information stuffs
@@ -639,6 +779,8 @@ namespace Tobasa
             StartTimers();
 
             startUpCompleted = true;
+
+            UpdateColor();
         }
 
         #endregion
@@ -1423,13 +1565,37 @@ namespace Tobasa
         {
             if (Tobasa.Properties.Settings.Default.AudioUseLoket)
             {
-                lblCounterLeft.Text = "Loket";
-                lblCounterRight.Text = "Loket";
+                lblCounterLeft.Text = TEXT_LOKET;
+                lblCounterRight.Text = TEXT_LOKET;
+                lblPostCounter.Text = TEXT_LOKET;
+
+                // unknown bug, in win 7 32 bit, we need to swap label position
+                if (Tobasa.Properties.Settings.Default.SwapCounterNoumberLabelPosition)
+                {
+                    lblNomorLeft.Text = TEXT_LOKET;
+                    lblNomorRight.Text = TEXT_LOKET;
+                }
             }
             else
             {
-                lblCounterLeft.Text = "Counter";
-                lblCounterRight.Text = "Counter";
+                lblCounterLeft.Text = TEXT_COUNTER;
+                lblCounterRight.Text = TEXT_COUNTER;
+                lblPostCounter.Text = TEXT_COUNTER;
+
+                if (Tobasa.Properties.Settings.Default.SwapCounterNoumberLabelPosition)
+                {
+                    lblNomorLeft.Text = TEXT_COUNTER;
+                    lblNomorRight.Text = TEXT_COUNTER;
+                }
+            }
+
+            lblNomorLeft.Text = TEXT_NOMOR;
+            lblNomorRight.Text = TEXT_NOMOR;
+
+            if (Tobasa.Properties.Settings.Default.SwapCounterNoumberLabelPosition)
+            {
+                lblCounterLeft.Text = TEXT_NOMOR;
+                lblCounterRight.Text = TEXT_NOMOR;
             }
         }
 
@@ -1550,6 +1716,380 @@ namespace Tobasa
         }
         
         #endregion
+    
+        public void UpdateColor()
+        {
+            var baseDarkBackColor100 = System.Drawing.ColorTranslator.FromHtml("#005185");
+            var baseDarkBackColor90  = System.Drawing.ColorTranslator.FromHtml("#0c5d93");
+            var baseDarkBackColor80  = System.Drawing.ColorTranslator.FromHtml("#196a9e");
+            var baseDarkBackColor70  = System.Drawing.ColorTranslator.FromHtml("#2576ab");
+            var baseBottomColor      = System.Drawing.ColorTranslator.FromHtml("#b0eeac");
+
+            var baseBackgroundColor     = baseDarkBackColor100;
+            var baseTextDarkColor       = baseDarkBackColor100;
+            var basetTextLightColor     = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var baseTextBrandLogoColor  = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var baseInfoTextBackColor   = baseDarkBackColor90;
+            var basePostTextColor       = System.Drawing.ColorTranslator.FromHtml("#555555");
+
+            #region CENTER TOP DIV COLORS
+            var centerTopPanelBackColor     = baseBackgroundColor;
+            var textInfoDatetimeColor       = basetTextLightColor;
+            var textInfoStrip0Color         = basetTextLightColor;
+            var textInfoStrip1Color         = basetTextLightColor; 
+            var textInfoDatetimeBackColor   = baseInfoTextBackColor;
+            var textInfoStrip0BackColor     = baseDarkBackColor80;
+            var textInfoStrip1BackColor     = baseDarkBackColor70;
+
+            var centerMainInfoBoxBackColor          = System.Drawing.ColorTranslator.FromHtml("#fff4e1");
+            var centerMainInfoBoxCaptionBackColor   = System.Drawing.ColorTranslator.FromHtml("#ffd68f");
+            var textJobFinishedBackColor            = centerMainInfoBoxBackColor;
+            var textJobFinishedColor                = baseTextDarkColor;
+            var labelFinisBackOddRowColor           = textJobFinishedBackColor;
+            var labelFinishEvenRowBackColor         = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var displayOwnPostBackColor             = centerMainInfoBoxBackColor;
+            var displayOwnPostColor                 = baseTextDarkColor;
+            #endregion
+
+            #region LEFT AND RIGHT TOP LABEL COLORS
+            var leftRightDivBackColor           = baseBackgroundColor;
+            var leftRigthTopQueueNoColor        = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var leftRigthTopQueueNoBackColor    = baseBackgroundColor;
+            var leftRigthTopCounterColor        = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var leftRightTopCounterBackColor    = baseBackgroundColor;
+            #endregion
+
+            #region POST BOX COLORS
+            // COLOR FOR POST INFORMATION
+            // --------------------------------------------------------------
+            // Post Panel
+            var postPanelBackColor = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            // Post Name Caption
+            var postCaptionColor = baseTextDarkColor;
+            var postCaptionBackColor = System.Drawing.ColorTranslator.FromHtml("#9ccff0");
+            // Queue Number
+            var postQueueNoColor = basePostTextColor;
+            var postQueueNoBackColor = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            // Counter/loket Number
+            var postCounterNoColor = basePostTextColor;
+            var postCounterNoBackColor = System.Drawing.ColorTranslator.FromHtml("#d9f0ff");
+            // Total Queue Label
+            var postTotalQueueLabelColor = basePostTextColor;
+            var postTotalQueueLabelBackColor = System.Drawing.ColorTranslator.FromHtml("#f3ffec"); //e4ffd3 e4f4ff
+            // Total Queue Value
+            var postTotalQueueValueColor = basePostTextColor;
+            var postTotalQueueValueBackColor = System.Drawing.ColorTranslator.FromHtml("#f3ffec");
+            #endregion
+
+            #region BOTOM DIV RUNNING TEXT COLOR 
+            var bottomDivBackColor = baseBottomColor;
+            var bottomDivForeColor = baseTextDarkColor;
+            #endregion
+
+            #region MAIN BRANDING/LOGO BOX
+            this.centerBrandDiv.BackColor = centerTopPanelBackColor;
+            this.centerBrandDiv.BackgroundImage = null;
+            this.centerBrandLogoDiv.BackColor = centerTopPanelBackColor;
+            this.centerBrandLogoDiv.BackgroundImage = null;
+            this.centerBrandLogoLabelDiv.BackColor = centerTopPanelBackColor;
+            this.lblBranding.ForeColor = baseTextBrandLogoColor;
+            this.lblBranding.BackColor = centerTopPanelBackColor;
+            this.pictureBoxLogo.BackColor = centerTopPanelBackColor;
+            #endregion
+
+            #region DATE INFO STRIP 
+            this.centerDateTimeDiv.BackgroundImage = null;
+            this.centerDateTimeDiv.BackColor = textInfoDatetimeBackColor;
+            this.lblDate.ForeColor = textInfoDatetimeColor;
+            this.lblDate.BackColor = textInfoDatetimeBackColor;
+            #endregion
+
+            #region TOP INFO STRIP 0
+            this.centerInfoStrip0Div.BackgroundImage = null;
+            this.centerInfoStrip0Div.BackColor = textInfoStrip0BackColor;
+            this.lblTopText0.ForeColor = textInfoStrip0Color;
+            this.lblTopText0.BackColor = textInfoStrip0BackColor;
+            #endregion
+
+            #region TOP INFO STRIP 1
+            this.centerInfoStrip1Div.BackgroundImage = null;
+            this.centerInfoStrip1Div.BackColor = textInfoStrip1BackColor;
+            this.lblTopText1.ForeColor = textInfoStrip1Color;
+            this.lblTopText1.BackColor = textInfoStrip1BackColor;
+            #endregion
+
+            #region DIV WRAPPER FOR FINISHED JOB AND MAIN POST 
+            this.centerMiddleDiv.BackColor = centerMainInfoBoxBackColor;
+            this.centerMiddleDiv.BackgroundImage = null;
+            #endregion
+
+            #region FINISHED QUEUE INFO BOX
+            this.tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(2);
+
+            this.pnlAntrianFinished.BackColor = textJobFinishedBackColor;
+            this.tableLayoutPanel1.BackColor = textJobFinishedBackColor;
+            this.lblQueueNumberFinished.ForeColor = textJobFinishedColor;
+            this.lblQueueNumberFinished.BackColor = centerMainInfoBoxCaptionBackColor;
+            this.tableLayoutPanel2.BackColor = textJobFinishedBackColor;
+            this.tableLayoutPanel2.BackgroundImage = null;
+            this.lblFin0.BackColor = labelFinishEvenRowBackColor;
+            this.lblFin1.BackColor = labelFinisBackOddRowColor;
+            this.lblFin2.BackColor = labelFinishEvenRowBackColor;
+            this.lblFin3.BackColor = labelFinisBackOddRowColor;
+            this.lblFin4.BackColor = labelFinishEvenRowBackColor;
+            this.lblFin5.BackColor = labelFinishEvenRowBackColor;
+            this.lblFin6.BackColor = labelFinisBackOddRowColor;
+            this.lblFin7.BackColor = labelFinishEvenRowBackColor;
+            this.lblFin8.BackColor = labelFinisBackOddRowColor;
+            this.lblFin9.BackColor = labelFinishEvenRowBackColor;
+
+            this.lblFin0.Image= null;
+            this.lblFin0.ForeColor = baseTextDarkColor;
+            this.lblFin1.Image = null;
+            this.lblFin1.ForeColor = baseTextDarkColor;
+            this.lblFin2.Image = null;
+            this.lblFin2.ForeColor = baseTextDarkColor;
+            this.lblFin3.Image = null;
+            this.lblFin3.ForeColor = baseTextDarkColor;
+            this.lblFin4.Image = null;
+            this.lblFin4.ForeColor = baseTextDarkColor;
+            this.lblFin5.Image = null;
+            this.lblFin5.ForeColor = baseTextDarkColor;
+            this.lblFin6.Image = null;
+            this.lblFin6.ForeColor = baseTextDarkColor;
+            this.lblFin7.Image = null;
+            this.lblFin7.ForeColor = baseTextDarkColor;
+            this.lblFin8.Image = null;
+            this.lblFin8.ForeColor = baseTextDarkColor;
+            this.lblFin9.Image = null;
+            this.lblFin9.ForeColor = baseTextDarkColor;
+            #endregion
+
+            #region DISPLAY CENTER MAIN POST INFO
+            // Panel Post khusus display
+            this.pnlOwnPostStat.BackColor = displayOwnPostBackColor;
+            this.tableLayoutPanel6.BackColor = displayOwnPostBackColor;
+            this.lblPostNameCaption.ForeColor = displayOwnPostColor;
+            this.lblPostNameCaption.BackColor = centerMainInfoBoxCaptionBackColor;
+            this.tableLayoutPanel3.BackColor = displayOwnPostBackColor;
+            this.lblPostCounter.BackColor = displayOwnPostBackColor;
+            this.lblPostCounter.ForeColor = displayOwnPostColor;
+            this.lblPostNumber.BackColor = displayOwnPostBackColor;
+            this.lblPostNumber.ForeColor = displayOwnPostColor;
+            #endregion
+
+            #region LEFT AND RIGHT TOP LABEL
+            // Form Backgrond Color 
+            this.BackColor = baseBackgroundColor;
+            // Left and Right Main DIV
+            this.leftDivPost.BackColor = leftRightDivBackColor;
+            this.rightDivPost.BackColor = leftRightDivBackColor;
+            // Top Label Div Queue and Counter 
+            this.leftDivNmrCtr.BackgroundImage = null;
+            this.leftDivNmrCtr.ForeColor = leftRigthTopQueueNoColor;
+            this.leftDivNmrCtr.BackColor = leftRigthTopQueueNoBackColor;
+            this.rightDivNmrCtr.BackgroundImage = null;
+            this.rightDivNmrCtr.ForeColor = leftRigthTopCounterColor;
+            this.rightDivNmrCtr.BackColor = leftRightTopCounterBackColor;
+            // Top Label Counter Number
+            this.lblCounterLeft.ForeColor = leftRigthTopCounterColor;
+            this.lblCounterRight.ForeColor = leftRigthTopCounterColor;
+            // Top Label Queue Number
+            this.lblNomorLeft.ForeColor = leftRigthTopCounterColor;
+            this.lblNomorRight.ForeColor = leftRigthTopCounterColor;
+            #endregion
+
+            #region POST0 - POST9 Box
+
+            // --------------------------------------------------------------
+            // POST 0
+            // --------------------------------------------------------------
+            this.pnlPost0.BackgroundImage = null;
+            this.pnlPost0.BackColor = postPanelBackColor;
+            this.lblPost0Caption.Image = null;
+            this.lblPost0Caption.ForeColor = postCaptionColor;
+            this.lblPost0Caption.BackColor = postCaptionBackColor;
+            this.lblPost0No.ForeColor = postQueueNoColor;
+            this.lblPost0No.BackColor = postQueueNoBackColor;
+            this.lblPost0CounterNo.Image = null;
+            this.lblPost0CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost0CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost0JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost0JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost0JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost0JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 1
+            // --------------------------------------------------------------
+            this.pnlPost1.BackgroundImage = null;
+            this.pnlPost1.BackColor = postPanelBackColor;
+            this.lblPost1Caption.Image = null;
+            this.lblPost1Caption.ForeColor = postCaptionColor;
+            this.lblPost1Caption.BackColor = postCaptionBackColor;
+            this.lblPost1No.ForeColor = postQueueNoColor;
+            this.lblPost1No.BackColor = postQueueNoBackColor;
+            this.lblPost1CounterNo.Image = null;
+            this.lblPost1CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost1CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost1JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost1JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost1JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost1JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 2
+            // --------------------------------------------------------------
+            this.pnlPost2.BackgroundImage = null;
+            this.pnlPost2.BackColor = postPanelBackColor;
+            this.lblPost2Caption.Image = null;
+            this.lblPost2Caption.ForeColor = postCaptionColor;
+            this.lblPost2Caption.BackColor = postCaptionBackColor;
+            this.lblPost2No.ForeColor = postQueueNoColor;
+            this.lblPost2No.BackColor = postQueueNoBackColor;
+            this.lblPost2CounterNo.Image = null;
+            this.lblPost2CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost2CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost2JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost2JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost2JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost2JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 3
+            // --------------------------------------------------------------
+            this.pnlPost3.BackgroundImage = null;
+            this.pnlPost3.BackColor = postPanelBackColor;
+            this.lblPost3Caption.Image = null;
+            this.lblPost3Caption.ForeColor = postCaptionColor;
+            this.lblPost3Caption.BackColor = postCaptionBackColor;
+            this.lblPost3No.ForeColor = postQueueNoColor;
+            this.lblPost3No.BackColor = postQueueNoBackColor;
+            this.lblPost3CounterNo.Image = null;
+            this.lblPost3CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost3CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost3JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost3JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost3JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost3JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 4
+            // --------------------------------------------------------------
+            this.pnlPost4.BackgroundImage = null;
+            this.pnlPost4.BackColor = postPanelBackColor;
+            this.lblPost4Caption.Image = null;
+            this.lblPost4Caption.ForeColor = postCaptionColor;
+            this.lblPost4Caption.BackColor = postCaptionBackColor;
+            this.lblPost4No.ForeColor = postQueueNoColor;
+            this.lblPost4No.BackColor = postQueueNoBackColor;
+            this.lblPost4CounterNo.Image = null;
+            this.lblPost4CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost4CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost4JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost4JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost4JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost4JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 5
+            // --------------------------------------------------------------
+            this.pnlPost5.BackgroundImage = null;
+            this.pnlPost5.BackColor = postPanelBackColor;
+            this.lblPost5Caption.Image = null;
+            this.lblPost5Caption.ForeColor = postCaptionColor;
+            this.lblPost5Caption.BackColor = postCaptionBackColor;
+            this.lblPost5No.ForeColor = postQueueNoColor;
+            this.lblPost5No.BackColor = postQueueNoBackColor;
+            this.lblPost5CounterNo.Image = null;
+            this.lblPost5CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost5CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost5JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost5JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost5JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost5JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 6
+            // --------------------------------------------------------------
+            this.pnlPost6.BackgroundImage = null;
+            this.pnlPost6.BackColor = postPanelBackColor;
+            this.lblPost6Caption.Image = null;
+            this.lblPost6Caption.ForeColor = postCaptionColor;
+            this.lblPost6Caption.BackColor = postCaptionBackColor;
+            this.lblPost6No.ForeColor = postQueueNoColor;
+            this.lblPost6No.BackColor = postQueueNoBackColor;
+            this.lblPost6CounterNo.Image = null;
+            this.lblPost6CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost6CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost6JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost6JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost6JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost6JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 7
+            // --------------------------------------------------------------
+            this.pnlPost7.BackgroundImage = null;
+            this.pnlPost7.BackColor = postPanelBackColor;
+            this.lblPost7Caption.Image = null;
+            this.lblPost7Caption.ForeColor = postCaptionColor;
+            this.lblPost7Caption.BackColor = postCaptionBackColor;
+            this.lblPost7No.ForeColor = postQueueNoColor;
+            this.lblPost7No.BackColor = postQueueNoBackColor;
+            this.lblPost7CounterNo.Image = null;
+            this.lblPost7CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost7CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost7JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost7JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost7JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost7JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 8
+            // --------------------------------------------------------------
+            this.pnlPost8.BackgroundImage = null;
+            this.pnlPost8.BackColor = postPanelBackColor;
+            this.lblPost8Caption.Image = null;
+            this.lblPost8Caption.ForeColor = postCaptionColor;
+            this.lblPost8Caption.BackColor = postCaptionBackColor;
+            this.lblPost8No.ForeColor = postQueueNoColor;
+            this.lblPost8No.BackColor = postQueueNoBackColor;
+            this.lblPost8CounterNo.Image = null;
+            this.lblPost8CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost8CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost8JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost8JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost8JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost8JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            // --------------------------------------------------------------
+            // POST 9
+            // --------------------------------------------------------------
+            this.pnlPost9.BackgroundImage = null;
+            this.pnlPost9.BackColor = postPanelBackColor;
+            this.lblPost9Caption.Image = null;
+            this.lblPost9Caption.ForeColor = postCaptionColor;
+            this.lblPost9Caption.BackColor = postCaptionBackColor;
+            this.lblPost9No.ForeColor = postQueueNoColor;
+            this.lblPost9No.BackColor = postQueueNoBackColor;
+            this.lblPost9CounterNo.Image = null;
+            this.lblPost9CounterNo.ForeColor = postCounterNoColor;
+            this.lblPost9CounterNo.BackColor = postCounterNoBackColor;
+            this.lblPost9JumAn.ForeColor = postTotalQueueLabelColor;
+            this.lblPost9JumAn.BackColor = postTotalQueueLabelBackColor;
+            this.lblPost9JumAnVal.ForeColor = postTotalQueueValueColor;
+            this.lblPost9JumAnVal.BackColor = postTotalQueueValueBackColor;
+
+            #endregion
+
+            #region BOTTOM RUNNING TEXT DIV
+            this.bottomDiv.BackColor = bottomDivBackColor;
+            this.bottomDiv.BackgroundImage = null;
+            this.runningTextBottom.ForeColor = bottomDivForeColor;
+            #endregion
+        }
     }
 }
+
 

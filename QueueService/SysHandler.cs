@@ -62,7 +62,6 @@ namespace Tobasa
                     handler.Process();
                 }
 
-
                 // Handle SysDelTable
                 if (qmessage.MessageType == Msg.SysDelTable && qmessage.Direction == MessageDirection.REQUEST)
                 {
@@ -157,7 +156,10 @@ namespace Tobasa
                                 string jobNo = qmessage.PayloadValues["jobno"];
 
                                 ShowMessageJobFinishedOnDisplay(jobNo, client.Name, client.Post);
-                                UpdateJobsStatusOnDisplay(client.Name, client.Post);
+
+                                // get data from all post 
+                                UpdateJobsStatusOnDisplay(client.Name, "");
+                                //UpdateJobsStatusOnDisplay(client.Name, client.Post);
                             }
                             
                         }
@@ -267,7 +269,8 @@ namespace Tobasa
         }
 
         // Send message to Queue display, to update displayed finished job/antrian
-        private void UpdateJobsStatusOnDisplay(string stationName, string stationPost)
+        // if stationPost empty, get all posts
+        private void UpdateJobsStatusOnDisplay(string stationName, string stationPost="")
         {
             string csvList = QueueRepository.GetFinishedJobInCsvList(stationPost);
 

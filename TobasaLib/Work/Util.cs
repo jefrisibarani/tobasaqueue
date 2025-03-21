@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -221,87 +221,87 @@ namespace Tobasa
         }
 
 
-		/** Check User Configuration Setting File.
+        /** Check User Configuration Setting File.
             Fungsi ini dijalankan pertama kali oleh aplikasi untuk memeriksa apakah file konfigurasi
             user setting dalam kondisi corrupt atau OK.
             Bila file konfigurasi dalam kondisi OK, fungsi ini akan membuat backup
             yang akan digunakan pada waktu file konfigurasi corrupt
         */
-		public static void CheckUserConfigurationFile()
-		{
-			try
-			{
-				Configuration con = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-				string confOri = con.FilePath;
-				string confBak = confOri + ".backup";
+        public static void CheckUserConfigurationFile()
+        {
+            try
+            {
+                Configuration con = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+                string confOri = con.FilePath;
+                string confBak = confOri + ".backup";
 
-				try
-				{
-					if (File.Exists(confOri))
-					{
-						// Configuration file exxists and valid, backup!
-						File.Copy(confOri, confBak, true);
-					}
-				}
-				catch (DirectoryNotFoundException e)
-				{
-					// First time run, no configuration file exists
-					return;
-				}
-				catch (Exception e)
-				{
-					MessageBox.Show(e.ToString(), "Error");
-				}
+                try
+                {
+                    if (File.Exists(confOri))
+                    {
+                        // Configuration file exxists and valid, backup!
+                        File.Copy(confOri, confBak, true);
+                    }
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    // First time run, no configuration file exists
+                    return;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString(), "Error");
+                }
 
-			}
-			catch (ConfigurationErrorsException e)
-			{
-				string fileOri = e.Filename;
-				string fileBak = fileOri + ".backup";
-				string pesan;
+            }
+            catch (ConfigurationErrorsException e)
+            {
+                string fileOri = e.Filename;
+                string fileBak = fileOri + ".backup";
+                string pesan;
 
-				if (File.Exists(fileBak))
-				{
-					pesan = "File konfigurasi USER SETTINGS sepertinya rusak. \n\n" +
-								fileOri + "\n\n" +
-								"Ini bisa terjadi bila sebelumnya komputer crash. \n\n" +
-								"Untuk melanjutkan, TobasaQueue akan me-restore " +
-								"file konfigurasi USER SETTINGS dari backup yang tersedia\n\n" +
-								"Click Yes untuk me-restore file atau\n" +
-								"Click No untuk memperbaiki secara manual \n\n";
-				}
-				else
-				{
-					pesan = "File konfigurasi USER SETTINGS sepertinya rusak. \n\n" +
-								fileOri + "\n\n" +
-								"Ini bisa terjadi bila sebelumnya komputer crash. \n" +
-								"Untuk melanjutkan, TobasaQueue harus me-reset file konfigurasi USER SETTINGS \n\n" +
-								"Click Yes untuk me-reset USER SETTINGS atau\n" +
-								"Click No untuk memperbaiki secara manual \n\n";
-				}
+                if (File.Exists(fileBak))
+                {
+                    pesan = "File konfigurasi USER SETTINGS sepertinya rusak. \n\n" +
+                                fileOri + "\n\n" +
+                                "Ini bisa terjadi bila sebelumnya komputer crash. \n\n" +
+                                "Untuk melanjutkan, TobasaQueue akan me-restore " +
+                                "file konfigurasi USER SETTINGS dari backup yang tersedia\n\n" +
+                                "Click Yes untuk me-restore file atau\n" +
+                                "Click No untuk memperbaiki secara manual \n\n";
+                }
+                else
+                {
+                    pesan = "File konfigurasi USER SETTINGS sepertinya rusak. \n\n" +
+                                fileOri + "\n\n" +
+                                "Ini bisa terjadi bila sebelumnya komputer crash. \n" +
+                                "Untuk melanjutkan, TobasaQueue harus me-reset file konfigurasi USER SETTINGS \n\n" +
+                                "Click Yes untuk me-reset USER SETTINGS atau\n" +
+                                "Click No untuk memperbaiki secara manual \n\n";
+                }
 
-				if (MessageBox.Show(pesan, "File user settings corrupt",
-									MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
-				{
-					// Check for existing backup. Restore if exists
-					if (File.Exists(fileBak))
-					{
-						try
-						{
-							File.Copy(fileBak, fileOri, true);
-						}
-						catch (Exception ex)
-						{
-							MessageBox.Show(ex.ToString(), "Error");
-						}
-					}
-					else
-						File.Delete(fileOri);
-				}
-				else
-					Process.GetCurrentProcess().Kill();
-			}
-		}
+                if (MessageBox.Show(pesan, "File user settings corrupt",
+                                    MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+                {
+                    // Check for existing backup. Restore if exists
+                    if (File.Exists(fileBak))
+                    {
+                        try
+                        {
+                            File.Copy(fileBak, fileOri, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString(), "Error");
+                        }
+                    }
+                    else
+                        File.Delete(fileOri);
+                }
+                else
+                    Process.GetCurrentProcess().Kill();
+            }
+        }
 
         public static bool StrToBool(string value)
         {
@@ -326,7 +326,7 @@ namespace Tobasa
 
         public static void ShowConnectionError(IWin32Window owner)
         {
-            MessageBox.Show(owner,"Not connected with server\r\nPlease restart application", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(owner, "Not connected with server", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         #region unmanaged

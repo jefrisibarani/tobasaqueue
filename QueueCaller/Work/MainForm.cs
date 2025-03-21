@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ namespace Tobasa
 
         private delegate void NetSessionDataReceivedCb(DataReceivedEventArgs arg);
         private delegate void TCPClientNotifiedCb(NotifyEventArgs e);
+        private delegate void TCPClientClosedCb(TCPClient e);
 
         Properties.Settings _settings = Properties.Settings.Default;
         Dictionary<string, string> _postIdsDict;
@@ -147,21 +148,14 @@ namespace Tobasa
             }
         }
 
-        public void StartClient()
+        private void TCPClientConnected(TCPClient client)
         {
-            _client = null;
-            _client = new TCPClient(_settings.QueueServerHost, _settings.QueueServerPort);
-            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
-            
-            _client.Start();
-
-            if (_client.Connected)
+            if (client.Connected)
             {
-                _client.Session.DataReceived += new DataReceived(NetSessionDataReceived);
-
-                string clearPwd     = Util.DecryptPassword(_settings.QueuePassword, _settings.SecuritySalt);
+                string clearPwd = Util.DecryptPassword(_settings.QueuePassword, _settings.SecuritySalt);
                 string passwordHash = Util.GetPasswordHash(clearPwd, _settings.QueueUserName);
 
+                // Log in to the server
                 // SYS|LOGIN|REQ|[Module!Post!Station!Username!Password]
                 string message =
                     Msg.SysLogin.Text +
@@ -172,14 +166,46 @@ namespace Tobasa
                     Msg.CompDelimiter + _settings.QueueUserName +
                     Msg.CompDelimiter + passwordHash;
 
-                _client.Send(message);
+                client.Send(message);
             }
+        }
+
+        private void TCPClientClosed(TCPClient client)
+        {
+            if (this.InvokeRequired)
+            {
+                TCPClientClosedCb dlg = new TCPClientClosedCb(TCPClientClosed);
+                this.Invoke(dlg, new object[] { client });
+            }
+            else
+            {
+                lblStatus.Text = "Not Connected to Server";
+            }
+        }
+
+        public void StartClient()
+        {
+            _client = null;
+            _client = new TCPClient(_settings.QueueServerHost, _settings.QueueServerPort);
+            _client.Notified += new Action<NotifyEventArgs>(TCPClientNotified);
+            _client.OnDataReceived += new DataReceived(NetSessionDataReceived);
+            _client.OnConnected += new ConnectionConnected(TCPClientConnected);
+            _client.OnClosed += new ConnectionClosed(TCPClientClosed);
+
+            _client.Start();
         }
 
         private void CloseConnection()
         {
-            if (_client.Connected)
+            if (_client != null)
                 _client.Stop();
+        }
+
+        private void RestartClient()
+        {
+            Logger.Log("QueueCaller", "Restarting TCPClient");
+            CloseConnection();
+            StartClient();
         }
 
         #endregion
@@ -353,9 +379,10 @@ namespace Tobasa
                     if (notifyTyp == "ERROR")
                         MessageBox.Show(notifyMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     else
-                    { }  // WARNING, INFO
-
-                    //LogServerMessage(string.Format("[{0}] {1}", notifyTyp, notifyMsg));
+                    {
+                        // WARNING, INFO
+                        MessageBox.Show(notifyMsg, notifyTyp, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
                 else
                 {
@@ -370,7 +397,7 @@ namespace Tobasa
 
         private void RequestJobsFromServer(string post, string jobStatus, int offset = 0, int limit = 0)
         {
-            if (_client != null && _client.Connected)
+            if (_client != null)
             {
                 string message = Msg.SysGetJob.Text +
                                  Msg.Separator + "REQ" +
@@ -388,7 +415,7 @@ namespace Tobasa
 
         private void UpdateJobStatus(string jobStatus, string jobId, string jobNumber)
         {
-            if (_client != null && _client.Connected)
+            if (_client != null)
             {
                 string message = Msg.SysUpdateJob.Text +
                                  Msg.Separator + "REQ" +
@@ -399,11 +426,13 @@ namespace Tobasa
 
                 _client.Send(message);
             }
+            else
+                Util.ShowConnectionError(this);
         }
 
         private void GetQueuetInfo()
         {
-            if (_client.Connected)
+            if (_client != null)
             {
                 string message = Msg.CallerGetInfo.Text +
                                  Msg.Separator + "REQ" +
@@ -418,14 +447,13 @@ namespace Tobasa
 
         private void GetNextNumber()
         {
-            if (_client.Connected)
+            if (_client != null)
             {
                 string message = Msg.CallerGetNext.Text +
-                                 Msg.Separator + "REQ" +
-                                 Msg.Separator + "Identifier" +
-                                 Msg.Separator + _settings.StationPost +
-                                 Msg.CompDelimiter + _settings.StationName; 
-
+                             Msg.Separator + "REQ" +
+                             Msg.Separator + "Identifier" +
+                             Msg.Separator + _settings.StationPost +
+                             Msg.CompDelimiter + _settings.StationName;
                 _client.Send(message);
             }
             else
@@ -440,7 +468,7 @@ namespace Tobasa
                 return;
             }
 
-            if (_client.Connected)
+            if (_client != null)
             {
                 string message = Msg.CallerRecall.Text +
                                  Msg.Separator + "REQ" +
@@ -489,8 +517,7 @@ namespace Tobasa
             {
                 SaveSettings();
 
-                CloseConnection();
-                StartClient();
+                RestartClient();
 
                 lblStation.Text = _settings.StationName;
                 lblPost.Text = GetStationPostCaption(cbPost.Text);
@@ -594,8 +621,7 @@ namespace Tobasa
 
                 _settings.StationPost = postId;
 
-                CloseConnection();
-                StartClient();
+                RestartClient();
 
                 lblStation.Text = fullStationName;
                 lblPost.Text = GetStationPostCaption(postId);
@@ -755,7 +781,7 @@ namespace Tobasa
 
         private void OnRefresh(object sender, EventArgs e)
         {
-            if((Button)sender == btnRefresh)
+            if ((Button)sender == btnRefresh)
                 RequestJobsFromServer(_settings.StationPost,"PROCESS",0,0);
             else if ((Button)sender == btnRefreshFin)
                 RequestJobsFromServer(_settings.StationPost,"FINISHED",0,0);

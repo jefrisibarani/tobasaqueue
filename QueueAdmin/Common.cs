@@ -1,7 +1,7 @@
 #region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ namespace Tobasa
 
     public class Tbl
     {
-        public const string runningtexts = "runningtexts";
-        public const string ipaccesslists = "ipaccesslists";
-        public const string stations = "stations";
-        public const string posts = "posts";
-        public const string logins = "logins";
+        public const string runningtexts = "queue_runningtexts";
+        public const string ipaccesslists = "queue_ipaccesslists";
+        public const string stations = "queue_stations";
+        public const string posts = "queue_posts";
+        public const string logins = "queue_logins";
     }
 
     public class TableProp
@@ -191,7 +191,7 @@ namespace Tobasa
 
         public void RequestTableFromServer(MainForm form)
         {
-            if (form.TcpClient != null && form.TcpClient.Connected)
+            if (form.TcpClient != null)
             {
                 int Offset = _currentOffset;
                 int limit  = _pageSize;

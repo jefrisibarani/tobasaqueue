@@ -12,7 +12,7 @@ namespace Tobasa.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -479,63 +479,30 @@ namespace Tobasa.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ReceiveMessageFromOtherPost {
             get {
                 return ((bool)(this["ReceiveMessageFromOtherPost"]));
             }
-            set {
-                this["ReceiveMessageFromOtherPost"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("tobasaqueue")]
         public string QueueUserName {
             get {
                 return ((string)(this["QueueUserName"]));
             }
-            set {
-                this["QueueUserName"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("e4ee0e54215f5e3dd7683923abe1dac8")]
         public string QueuePassword {
             get {
                 return ((string)(this["QueuePassword"]));
-            }
-            set {
-                this["QueuePassword"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-  <string>POST0</string>
-  <string>POST1</string>
-  <string>POST2</string>
-  <string>POST3</string>
-  <string>POST4</string>
-  <string>POST5</string>
-  <string>POST6</string>
-  <string>POST7</string>
-  <string>POST8</string>
-  <string>POST9</string>
-</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection UIPostList {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["UIPostList"]));
-            }
-            set {
-                this["UIPostList"] = value;
             }
         }
         
@@ -659,15 +626,12 @@ namespace Tobasa.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C4BC3A3AC2D6D367A74580388B20BC069C96B048DFEAF5CCDC0CE1E25BF23F39")]
         public string SecuritySalt {
             get {
                 return ((string)(this["SecuritySalt"]));
-            }
-            set {
-                this["SecuritySalt"] = value;
             }
         }
         
@@ -755,15 +719,12 @@ namespace Tobasa.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UpdateNumberFromOtherPost {
             get {
                 return ((bool)(this["UpdateNumberFromOtherPost"]));
-            }
-            set {
-                this["UpdateNumberFromOtherPost"] = value;
             }
         }
         
@@ -815,15 +776,12 @@ namespace Tobasa.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool BasicQueueMode {
             get {
                 return ((bool)(this["BasicQueueMode"]));
-            }
-            set {
-                this["BasicQueueMode"] = value;
             }
         }
         
@@ -1268,6 +1226,39 @@ namespace Tobasa.Properties {
             }
             set {
                 this["ShowCenterMiddleDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SwapCounterNoumberLabelPosition {
+            get {
+                return ((bool)(this["SwapCounterNoumberLabelPosition"]));
+            }
+            set {
+                this["SwapCounterNoumberLabelPosition"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <string>POST0</string>
+  <string>POST1</string>
+  <string>POST2</string>
+  <string>POST3</string>
+  <string>POST4</string>
+  <string>POST5</string>
+  <string>POST6</string>
+  <string>POST7</string>
+  <string>POST8</string>
+  <string>POST9</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection UIPostList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["UIPostList"]));
             }
         }
     }

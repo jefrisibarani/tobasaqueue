@@ -95,6 +95,42 @@ namespace Tobasa
                     // Forward to Display
                     QueueServer.SendMessageToQueueDisplay(message, post);
                 }
+                // Handle DisplayGetInfo
+                else if (qmessage.MessageType == Msg.DisplayGetInfo && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    MessageHandler<Dictionary<string, string>> handler = new MessageHandler<Dictionary<string, string>>(qmessage)
+                    {
+                        ReceiveHandler = new Func<Dictionary<string, string>, Dictionary<string, string>>(QueueRepository.GetLastProcessedNumberAndPostSummary),
+                        ResponseHandler = (session, result) =>
+                        {
+                            // Send response to client
+                            if (result != null && result.Count == 6)
+                            {
+                                string postPrefix = result["postPrefix"];
+                                string numberS    = result["number"];
+                                string numberLeft = result["numberLeft"];
+                                string postId     = result["postId"];
+                                string station    = result["station"];
+
+                                // Send response to client(display)
+                                string messageC =
+                                    Msg.DisplayGetInfo.Text +
+                                    Msg.Separator + "RES" +
+                                    Msg.Separator + "Identifier" +
+                                    Msg.Separator + postId +
+                                    Msg.CompDelimiter + postPrefix +
+                                    Msg.CompDelimiter + numberS +
+                                    Msg.CompDelimiter + numberLeft +
+                                    Msg.CompDelimiter + station;
+
+
+                                session.Send(messageC);
+                            }
+                        }
+                    };
+
+                    handler.Process();
+                }
             }
             catch(AppException ex)
             {

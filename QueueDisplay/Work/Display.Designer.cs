@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -53,7 +53,6 @@ namespace Tobasa
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Display));
             this.mainDiv = new System.Windows.Forms.TableLayoutPanel();
             this.bottomDiv = new System.Windows.Forms.TableLayoutPanel();
-            this.runningTextBottom = new Tobasa.RuntextLabel();
             this.topDiv = new System.Windows.Forms.TableLayoutPanel();
             this.leftDiv = new System.Windows.Forms.TableLayoutPanel();
             this.leftDivPost = new System.Windows.Forms.TableLayoutPanel();
@@ -89,7 +88,7 @@ namespace Tobasa
             this.lblPost3CounterNo = new System.Windows.Forms.Label();
             this.leftDivNmrCtr = new System.Windows.Forms.TableLayoutPanel();
             this.lblCounterLeft = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblNomorLeft = new System.Windows.Forms.Label();
             this.centerDiv = new System.Windows.Forms.TableLayoutPanel();
             this.centerInfoStrip1Div = new System.Windows.Forms.TableLayoutPanel();
             this.lblTopText1 = new System.Windows.Forms.Label();
@@ -158,7 +157,7 @@ namespace Tobasa
             this.lblPost9CounterNo = new System.Windows.Forms.Label();
             this.rightDivNmrCtr = new System.Windows.Forms.TableLayoutPanel();
             this.lblCounterRight = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblNomorRight = new System.Windows.Forms.Label();
             this.timerPost0 = new System.Windows.Forms.Timer(this.components);
             this.timerPost1 = new System.Windows.Forms.Timer(this.components);
             this.timerPost2 = new System.Windows.Forms.Timer(this.components);
@@ -169,6 +168,7 @@ namespace Tobasa
             this.timerPost7 = new System.Windows.Forms.Timer(this.components);
             this.timerPost8 = new System.Windows.Forms.Timer(this.components);
             this.timerPost9 = new System.Windows.Forms.Timer(this.components);
+            this.runningTextBottom = new Tobasa.RuntextLabel();
             this.mainDiv.SuspendLayout();
             this.bottomDiv.SuspendLayout();
             this.topDiv.SuspendLayout();
@@ -234,8 +234,8 @@ namespace Tobasa
             this.bottomDiv.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.bottomDiv.Controls.Add(this.runningTextBottom, 0, 0);
             this.bottomDiv.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bottomDiv.Location = new System.Drawing.Point(3, 704);
-            this.bottomDiv.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.bottomDiv.Location = new System.Drawing.Point(0, 704);
+            this.bottomDiv.Margin = new System.Windows.Forms.Padding(0);
             this.bottomDiv.Name = "bottomDiv";
             this.bottomDiv.RowCount = 1;
             this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -244,22 +244,32 @@ namespace Tobasa
             this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.bottomDiv.Size = new System.Drawing.Size(1005, 38);
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.bottomDiv.Size = new System.Drawing.Size(1008, 38);
             this.bottomDiv.TabIndex = 0;
-            // 
-            // runningTextBottom
-            // 
-            this.runningTextBottom.AutoSize = true;
-            this.runningTextBottom.BackColor = System.Drawing.Color.Transparent;
-            this.runningTextBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.runningTextBottom.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.runningTextBottom.ForeColor = System.Drawing.Color.Gold;
-            this.runningTextBottom.Location = new System.Drawing.Point(3, 0);
-            this.runningTextBottom.Name = "runningTextBottom";
-            this.runningTextBottom.Size = new System.Drawing.Size(999, 38);
-            this.runningTextBottom.TabIndex = 0;
-            this.runningTextBottom.Text = "Aplikasi antrian Tobasa";
-            this.runningTextBottom.UseCompatibleTextRendering = true;
             // 
             // topDiv
             // 
@@ -290,12 +300,12 @@ namespace Tobasa
             this.leftDiv.Controls.Add(this.leftDivNmrCtr, 0, 0);
             this.leftDiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.leftDiv.Location = new System.Drawing.Point(0, 0);
-            this.leftDiv.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
+            this.leftDiv.Margin = new System.Windows.Forms.Padding(0);
             this.leftDiv.Name = "leftDiv";
             this.leftDiv.RowCount = 2;
             this.leftDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
             this.leftDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 95F));
-            this.leftDiv.Size = new System.Drawing.Size(252, 701);
+            this.leftDiv.Size = new System.Drawing.Size(252, 704);
             this.leftDiv.TabIndex = 2;
             // 
             // leftDivPost
@@ -310,8 +320,8 @@ namespace Tobasa
             this.leftDivPost.Controls.Add(this.pnlPost2, 0, 2);
             this.leftDivPost.Controls.Add(this.pnlPost3, 0, 3);
             this.leftDivPost.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftDivPost.Location = new System.Drawing.Point(3, 35);
-            this.leftDivPost.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.leftDivPost.Location = new System.Drawing.Point(0, 35);
+            this.leftDivPost.Margin = new System.Windows.Forms.Padding(0);
             this.leftDivPost.Name = "leftDivPost";
             this.leftDivPost.RowCount = 5;
             this.leftDivPost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
@@ -319,7 +329,7 @@ namespace Tobasa
             this.leftDivPost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.leftDivPost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.leftDivPost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.leftDivPost.Size = new System.Drawing.Size(246, 663);
+            this.leftDivPost.Size = new System.Drawing.Size(252, 669);
             this.leftDivPost.TabIndex = 0;
             // 
             // pnlPost4
@@ -336,14 +346,14 @@ namespace Tobasa
             this.pnlPost4.Controls.Add(this.lblPost4No, 0, 1);
             this.pnlPost4.Controls.Add(this.lblPost4CounterNo, 1, 1);
             this.pnlPost4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlPost4.Location = new System.Drawing.Point(0, 531);
-            this.pnlPost4.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.pnlPost4.Location = new System.Drawing.Point(0, 533);
+            this.pnlPost4.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost4.Name = "pnlPost4";
             this.pnlPost4.RowCount = 3;
             this.pnlPost4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost4.Size = new System.Drawing.Size(246, 129);
+            this.pnlPost4.Size = new System.Drawing.Size(252, 135);
             this.pnlPost4.TabIndex = 16;
             // 
             // lblPost4JumAn
@@ -352,10 +362,10 @@ namespace Tobasa
             this.lblPost4JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost4JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost4JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost4JumAn.Location = new System.Drawing.Point(0, 102);
+            this.lblPost4JumAn.Location = new System.Drawing.Point(0, 108);
             this.lblPost4JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost4JumAn.Name = "lblPost4JumAn";
-            this.lblPost4JumAn.Size = new System.Drawing.Size(159, 27);
+            this.lblPost4JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost4JumAn.TabIndex = 11;
             this.lblPost4JumAn.Text = "Jumlah Antrian";
             this.lblPost4JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -367,10 +377,10 @@ namespace Tobasa
             this.lblPost4JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost4JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost4JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost4JumAnVal.Location = new System.Drawing.Point(159, 102);
+            this.lblPost4JumAnVal.Location = new System.Drawing.Point(163, 108);
             this.lblPost4JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost4JumAnVal.Name = "lblPost4JumAnVal";
-            this.lblPost4JumAnVal.Size = new System.Drawing.Size(87, 27);
+            this.lblPost4JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost4JumAnVal.TabIndex = 10;
             this.lblPost4JumAnVal.Text = "0";
             this.lblPost4JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -388,7 +398,7 @@ namespace Tobasa
             this.lblPost4Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost4Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost4Caption.Name = "lblPost4Caption";
-            this.lblPost4Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost4Caption.Size = new System.Drawing.Size(252, 27);
             this.lblPost4Caption.TabIndex = 0;
             this.lblPost4Caption.Text = "POST#4";
             this.lblPost4Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -400,12 +410,12 @@ namespace Tobasa
             this.lblPost4No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost4No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost4No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost4No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost4No.Location = new System.Drawing.Point(0, 27);
             this.lblPost4No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost4No.Name = "lblPost4No";
             this.lblPost4No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost4No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost4No.Size = new System.Drawing.Size(159, 77);
+            this.lblPost4No.Size = new System.Drawing.Size(163, 81);
             this.lblPost4No.TabIndex = 2;
             this.lblPost4No.Text = "A000";
             this.lblPost4No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -420,12 +430,12 @@ namespace Tobasa
             this.lblPost4CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost4CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost4CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost4CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost4CounterNo.Location = new System.Drawing.Point(163, 27);
             this.lblPost4CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost4CounterNo.Name = "lblPost4CounterNo";
             this.lblPost4CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost4CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost4CounterNo.Size = new System.Drawing.Size(87, 77);
+            this.lblPost4CounterNo.Size = new System.Drawing.Size(89, 81);
             this.lblPost4CounterNo.TabIndex = 4;
             this.lblPost4CounterNo.Text = "0";
             this.lblPost4CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -446,14 +456,14 @@ namespace Tobasa
             this.pnlPost0.Controls.Add(this.lblPost0No, 0, 1);
             this.pnlPost0.Controls.Add(this.lblPost0CounterNo, 1, 1);
             this.pnlPost0.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlPost0.Location = new System.Drawing.Point(0, 3);
-            this.pnlPost0.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.pnlPost0.Location = new System.Drawing.Point(0, 1);
+            this.pnlPost0.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost0.Name = "pnlPost0";
             this.pnlPost0.RowCount = 3;
             this.pnlPost0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost0.Size = new System.Drawing.Size(246, 126);
+            this.pnlPost0.Size = new System.Drawing.Size(252, 131);
             this.pnlPost0.TabIndex = 15;
             // 
             // lblPost0JumAn
@@ -462,10 +472,10 @@ namespace Tobasa
             this.lblPost0JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost0JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost0JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost0JumAn.Location = new System.Drawing.Point(0, 100);
+            this.lblPost0JumAn.Location = new System.Drawing.Point(0, 104);
             this.lblPost0JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost0JumAn.Name = "lblPost0JumAn";
-            this.lblPost0JumAn.Size = new System.Drawing.Size(159, 26);
+            this.lblPost0JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost0JumAn.TabIndex = 6;
             this.lblPost0JumAn.Text = "Jumlah Antrian";
             this.lblPost0JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -477,10 +487,10 @@ namespace Tobasa
             this.lblPost0JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost0JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost0JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost0JumAnVal.Location = new System.Drawing.Point(159, 100);
+            this.lblPost0JumAnVal.Location = new System.Drawing.Point(163, 104);
             this.lblPost0JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost0JumAnVal.Name = "lblPost0JumAnVal";
-            this.lblPost0JumAnVal.Size = new System.Drawing.Size(87, 26);
+            this.lblPost0JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost0JumAnVal.TabIndex = 5;
             this.lblPost0JumAnVal.Text = "0";
             this.lblPost0JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -498,7 +508,7 @@ namespace Tobasa
             this.lblPost0Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost0Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost0Caption.Name = "lblPost0Caption";
-            this.lblPost0Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost0Caption.Size = new System.Drawing.Size(252, 26);
             this.lblPost0Caption.TabIndex = 0;
             this.lblPost0Caption.Text = "POST#0";
             this.lblPost0Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -510,12 +520,12 @@ namespace Tobasa
             this.lblPost0No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost0No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost0No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost0No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost0No.Location = new System.Drawing.Point(0, 26);
             this.lblPost0No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost0No.Name = "lblPost0No";
             this.lblPost0No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost0No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost0No.Size = new System.Drawing.Size(159, 75);
+            this.lblPost0No.Size = new System.Drawing.Size(163, 78);
             this.lblPost0No.TabIndex = 2;
             this.lblPost0No.Text = "A000";
             this.lblPost0No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -530,12 +540,12 @@ namespace Tobasa
             this.lblPost0CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost0CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost0CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost0CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost0CounterNo.Location = new System.Drawing.Point(163, 26);
             this.lblPost0CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost0CounterNo.Name = "lblPost0CounterNo";
             this.lblPost0CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost0CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost0CounterNo.Size = new System.Drawing.Size(87, 75);
+            this.lblPost0CounterNo.Size = new System.Drawing.Size(89, 78);
             this.lblPost0CounterNo.TabIndex = 4;
             this.lblPost0CounterNo.Text = "0";
             this.lblPost0CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -556,14 +566,14 @@ namespace Tobasa
             this.pnlPost1.Controls.Add(this.lblPost1No, 0, 1);
             this.pnlPost1.Controls.Add(this.lblPost1CounterNo, 1, 1);
             this.pnlPost1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlPost1.Location = new System.Drawing.Point(0, 135);
-            this.pnlPost1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.pnlPost1.Location = new System.Drawing.Point(0, 134);
+            this.pnlPost1.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost1.Name = "pnlPost1";
             this.pnlPost1.RowCount = 3;
             this.pnlPost1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost1.Size = new System.Drawing.Size(246, 126);
+            this.pnlPost1.Size = new System.Drawing.Size(252, 131);
             this.pnlPost1.TabIndex = 14;
             // 
             // lblPost1JumAn
@@ -572,10 +582,10 @@ namespace Tobasa
             this.lblPost1JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost1JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost1JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost1JumAn.Location = new System.Drawing.Point(0, 100);
+            this.lblPost1JumAn.Location = new System.Drawing.Point(0, 104);
             this.lblPost1JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost1JumAn.Name = "lblPost1JumAn";
-            this.lblPost1JumAn.Size = new System.Drawing.Size(159, 26);
+            this.lblPost1JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost1JumAn.TabIndex = 8;
             this.lblPost1JumAn.Text = "Jumlah Antrian";
             this.lblPost1JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -587,10 +597,10 @@ namespace Tobasa
             this.lblPost1JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost1JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost1JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost1JumAnVal.Location = new System.Drawing.Point(159, 100);
+            this.lblPost1JumAnVal.Location = new System.Drawing.Point(163, 104);
             this.lblPost1JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost1JumAnVal.Name = "lblPost1JumAnVal";
-            this.lblPost1JumAnVal.Size = new System.Drawing.Size(87, 26);
+            this.lblPost1JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost1JumAnVal.TabIndex = 7;
             this.lblPost1JumAnVal.Text = "0";
             this.lblPost1JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -608,7 +618,7 @@ namespace Tobasa
             this.lblPost1Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost1Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost1Caption.Name = "lblPost1Caption";
-            this.lblPost1Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost1Caption.Size = new System.Drawing.Size(252, 26);
             this.lblPost1Caption.TabIndex = 0;
             this.lblPost1Caption.Text = "POST#1";
             this.lblPost1Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -620,12 +630,12 @@ namespace Tobasa
             this.lblPost1No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost1No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost1No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost1No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost1No.Location = new System.Drawing.Point(0, 26);
             this.lblPost1No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost1No.Name = "lblPost1No";
             this.lblPost1No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost1No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost1No.Size = new System.Drawing.Size(159, 75);
+            this.lblPost1No.Size = new System.Drawing.Size(163, 78);
             this.lblPost1No.TabIndex = 2;
             this.lblPost1No.Text = "A000";
             this.lblPost1No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -640,12 +650,12 @@ namespace Tobasa
             this.lblPost1CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost1CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost1CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost1CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost1CounterNo.Location = new System.Drawing.Point(163, 26);
             this.lblPost1CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost1CounterNo.Name = "lblPost1CounterNo";
             this.lblPost1CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost1CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost1CounterNo.Size = new System.Drawing.Size(87, 75);
+            this.lblPost1CounterNo.Size = new System.Drawing.Size(89, 78);
             this.lblPost1CounterNo.TabIndex = 4;
             this.lblPost1CounterNo.Text = "0";
             this.lblPost1CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -667,13 +677,13 @@ namespace Tobasa
             this.pnlPost2.Controls.Add(this.lblPost2CounterNo, 1, 1);
             this.pnlPost2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlPost2.Location = new System.Drawing.Point(0, 267);
-            this.pnlPost2.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.pnlPost2.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost2.Name = "pnlPost2";
             this.pnlPost2.RowCount = 3;
             this.pnlPost2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost2.Size = new System.Drawing.Size(246, 126);
+            this.pnlPost2.Size = new System.Drawing.Size(252, 131);
             this.pnlPost2.TabIndex = 13;
             // 
             // lblPost2JumAn
@@ -682,10 +692,10 @@ namespace Tobasa
             this.lblPost2JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost2JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost2JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost2JumAn.Location = new System.Drawing.Point(0, 100);
+            this.lblPost2JumAn.Location = new System.Drawing.Point(0, 104);
             this.lblPost2JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost2JumAn.Name = "lblPost2JumAn";
-            this.lblPost2JumAn.Size = new System.Drawing.Size(159, 26);
+            this.lblPost2JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost2JumAn.TabIndex = 10;
             this.lblPost2JumAn.Text = "Jumlah Antrian";
             this.lblPost2JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -697,10 +707,10 @@ namespace Tobasa
             this.lblPost2JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost2JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost2JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost2JumAnVal.Location = new System.Drawing.Point(159, 100);
+            this.lblPost2JumAnVal.Location = new System.Drawing.Point(163, 104);
             this.lblPost2JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost2JumAnVal.Name = "lblPost2JumAnVal";
-            this.lblPost2JumAnVal.Size = new System.Drawing.Size(87, 26);
+            this.lblPost2JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost2JumAnVal.TabIndex = 9;
             this.lblPost2JumAnVal.Text = "0";
             this.lblPost2JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -718,7 +728,7 @@ namespace Tobasa
             this.lblPost2Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost2Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost2Caption.Name = "lblPost2Caption";
-            this.lblPost2Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost2Caption.Size = new System.Drawing.Size(252, 26);
             this.lblPost2Caption.TabIndex = 0;
             this.lblPost2Caption.Text = "POST#2";
             this.lblPost2Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -730,12 +740,12 @@ namespace Tobasa
             this.lblPost2No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost2No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost2No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost2No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost2No.Location = new System.Drawing.Point(0, 26);
             this.lblPost2No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost2No.Name = "lblPost2No";
             this.lblPost2No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost2No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost2No.Size = new System.Drawing.Size(159, 75);
+            this.lblPost2No.Size = new System.Drawing.Size(163, 78);
             this.lblPost2No.TabIndex = 2;
             this.lblPost2No.Text = "A000";
             this.lblPost2No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -750,12 +760,12 @@ namespace Tobasa
             this.lblPost2CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost2CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost2CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost2CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost2CounterNo.Location = new System.Drawing.Point(163, 26);
             this.lblPost2CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost2CounterNo.Name = "lblPost2CounterNo";
             this.lblPost2CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost2CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost2CounterNo.Size = new System.Drawing.Size(87, 75);
+            this.lblPost2CounterNo.Size = new System.Drawing.Size(89, 78);
             this.lblPost2CounterNo.TabIndex = 4;
             this.lblPost2CounterNo.Text = "0";
             this.lblPost2CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -776,14 +786,14 @@ namespace Tobasa
             this.pnlPost3.Controls.Add(this.lblPost3No, 0, 1);
             this.pnlPost3.Controls.Add(this.lblPost3CounterNo, 1, 1);
             this.pnlPost3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlPost3.Location = new System.Drawing.Point(0, 399);
-            this.pnlPost3.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this.pnlPost3.Location = new System.Drawing.Point(0, 400);
+            this.pnlPost3.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost3.Name = "pnlPost3";
             this.pnlPost3.RowCount = 3;
             this.pnlPost3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost3.Size = new System.Drawing.Size(246, 129);
+            this.pnlPost3.Size = new System.Drawing.Size(252, 131);
             this.pnlPost3.TabIndex = 12;
             // 
             // lblPost3JumAn
@@ -792,10 +802,10 @@ namespace Tobasa
             this.lblPost3JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost3JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost3JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost3JumAn.Location = new System.Drawing.Point(0, 102);
+            this.lblPost3JumAn.Location = new System.Drawing.Point(0, 104);
             this.lblPost3JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost3JumAn.Name = "lblPost3JumAn";
-            this.lblPost3JumAn.Size = new System.Drawing.Size(159, 27);
+            this.lblPost3JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost3JumAn.TabIndex = 11;
             this.lblPost3JumAn.Text = "Jumlah Antrian";
             this.lblPost3JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -807,10 +817,10 @@ namespace Tobasa
             this.lblPost3JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost3JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost3JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost3JumAnVal.Location = new System.Drawing.Point(159, 102);
+            this.lblPost3JumAnVal.Location = new System.Drawing.Point(163, 104);
             this.lblPost3JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost3JumAnVal.Name = "lblPost3JumAnVal";
-            this.lblPost3JumAnVal.Size = new System.Drawing.Size(87, 27);
+            this.lblPost3JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost3JumAnVal.TabIndex = 10;
             this.lblPost3JumAnVal.Text = "0";
             this.lblPost3JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -828,7 +838,7 @@ namespace Tobasa
             this.lblPost3Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost3Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost3Caption.Name = "lblPost3Caption";
-            this.lblPost3Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost3Caption.Size = new System.Drawing.Size(252, 26);
             this.lblPost3Caption.TabIndex = 0;
             this.lblPost3Caption.Text = "POST#3";
             this.lblPost3Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -840,12 +850,12 @@ namespace Tobasa
             this.lblPost3No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost3No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost3No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost3No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost3No.Location = new System.Drawing.Point(0, 26);
             this.lblPost3No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost3No.Name = "lblPost3No";
             this.lblPost3No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost3No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost3No.Size = new System.Drawing.Size(159, 77);
+            this.lblPost3No.Size = new System.Drawing.Size(163, 78);
             this.lblPost3No.TabIndex = 2;
             this.lblPost3No.Text = "A000";
             this.lblPost3No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -860,12 +870,12 @@ namespace Tobasa
             this.lblPost3CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost3CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost3CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost3CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost3CounterNo.Location = new System.Drawing.Point(163, 26);
             this.lblPost3CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost3CounterNo.Name = "lblPost3CounterNo";
             this.lblPost3CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost3CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost3CounterNo.Size = new System.Drawing.Size(87, 77);
+            this.lblPost3CounterNo.Size = new System.Drawing.Size(89, 78);
             this.lblPost3CounterNo.TabIndex = 4;
             this.lblPost3CounterNo.Text = "0";
             this.lblPost3CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -881,14 +891,14 @@ namespace Tobasa
             this.leftDivNmrCtr.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
             this.leftDivNmrCtr.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
             this.leftDivNmrCtr.Controls.Add(this.lblCounterLeft, 0, 0);
-            this.leftDivNmrCtr.Controls.Add(this.label1, 0, 0);
+            this.leftDivNmrCtr.Controls.Add(this.lblNomorLeft, 0, 0);
             this.leftDivNmrCtr.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftDivNmrCtr.Location = new System.Drawing.Point(3, 0);
-            this.leftDivNmrCtr.Margin = new System.Windows.Forms.Padding(3, 0, 3, 1);
+            this.leftDivNmrCtr.Location = new System.Drawing.Point(0, 0);
+            this.leftDivNmrCtr.Margin = new System.Windows.Forms.Padding(0);
             this.leftDivNmrCtr.Name = "leftDivNmrCtr";
             this.leftDivNmrCtr.RowCount = 1;
             this.leftDivNmrCtr.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.leftDivNmrCtr.Size = new System.Drawing.Size(246, 34);
+            this.leftDivNmrCtr.Size = new System.Drawing.Size(252, 35);
             this.leftDivNmrCtr.TabIndex = 2;
             // 
             // lblCounterLeft
@@ -898,28 +908,28 @@ namespace Tobasa
             this.lblCounterLeft.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCounterLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCounterLeft.ForeColor = System.Drawing.Color.Gold;
-            this.lblCounterLeft.Location = new System.Drawing.Point(159, 0);
+            this.lblCounterLeft.Location = new System.Drawing.Point(163, 0);
             this.lblCounterLeft.Margin = new System.Windows.Forms.Padding(0);
             this.lblCounterLeft.Name = "lblCounterLeft";
-            this.lblCounterLeft.Size = new System.Drawing.Size(87, 34);
+            this.lblCounterLeft.Size = new System.Drawing.Size(89, 35);
             this.lblCounterLeft.TabIndex = 7;
-            this.lblCounterLeft.Text = "Loket";
+            this.lblCounterLeft.Text = "LOKET";
             this.lblCounterLeft.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label1
+            // lblNomorLeft
             // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.Gold;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(159, 34);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Nomor";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblNomorLeft.AutoSize = true;
+            this.lblNomorLeft.BackColor = System.Drawing.Color.Transparent;
+            this.lblNomorLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblNomorLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNomorLeft.ForeColor = System.Drawing.Color.Gold;
+            this.lblNomorLeft.Location = new System.Drawing.Point(0, 0);
+            this.lblNomorLeft.Margin = new System.Windows.Forms.Padding(0);
+            this.lblNomorLeft.Name = "lblNomorLeft";
+            this.lblNomorLeft.Size = new System.Drawing.Size(163, 35);
+            this.lblNomorLeft.TabIndex = 6;
+            this.lblNomorLeft.Text = "NOMOR";
+            this.lblNomorLeft.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // centerDiv
             // 
@@ -971,14 +981,16 @@ namespace Tobasa
             // 
             // lblTopText1
             // 
+            this.lblTopText1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTopText1.BackColor = System.Drawing.Color.MidnightBlue;
-            this.lblTopText1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTopText1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTopText1.ForeColor = System.Drawing.Color.Gold;
-            this.lblTopText1.Location = new System.Drawing.Point(1, 1);
-            this.lblTopText1.Margin = new System.Windows.Forms.Padding(0);
+            this.lblTopText1.Location = new System.Drawing.Point(2, 1);
+            this.lblTopText1.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.lblTopText1.Name = "lblTopText1";
-            this.lblTopText1.Size = new System.Drawing.Size(502, 26);
+            this.lblTopText1.Size = new System.Drawing.Size(500, 26);
             this.lblTopText1.TabIndex = 4;
             this.lblTopText1.Text = "...";
             this.lblTopText1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1007,14 +1019,16 @@ namespace Tobasa
             // 
             // lblTopText0
             // 
+            this.lblTopText0.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTopText0.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.lblTopText0.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTopText0.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTopText0.ForeColor = System.Drawing.Color.Gold;
-            this.lblTopText0.Location = new System.Drawing.Point(1, 1);
-            this.lblTopText0.Margin = new System.Windows.Forms.Padding(0);
+            this.lblTopText0.Location = new System.Drawing.Point(2, 1);
+            this.lblTopText0.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.lblTopText0.Name = "lblTopText0";
-            this.lblTopText0.Size = new System.Drawing.Size(502, 26);
+            this.lblTopText0.Size = new System.Drawing.Size(500, 26);
             this.lblTopText0.TabIndex = 3;
             this.lblTopText0.Text = "...";
             this.lblTopText0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1122,15 +1136,17 @@ namespace Tobasa
             // 
             // lblDate
             // 
+            this.lblDate.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDate.AutoSize = true;
             this.lblDate.BackColor = System.Drawing.Color.Transparent;
-            this.lblDate.Dock = System.Windows.Forms.DockStyle.Right;
             this.lblDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.lblDate.Location = new System.Drawing.Point(254, 1);
-            this.lblDate.Margin = new System.Windows.Forms.Padding(0);
+            this.lblDate.Location = new System.Drawing.Point(2, 1);
+            this.lblDate.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.lblDate.Name = "lblDate";
-            this.lblDate.Size = new System.Drawing.Size(249, 26);
+            this.lblDate.Size = new System.Drawing.Size(500, 26);
             this.lblDate.TabIndex = 2;
             this.lblDate.Text = "Rabu 26-08-2015 14.23.20";
             this.lblDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1138,6 +1154,9 @@ namespace Tobasa
             // 
             // centerMiddleDiv
             // 
+            this.centerMiddleDiv.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.centerMiddleDiv.BackColor = System.Drawing.Color.MidnightBlue;
             this.centerMiddleDiv.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.centerMiddleDiv.ColumnCount = 2;
@@ -1145,22 +1164,22 @@ namespace Tobasa
             this.centerMiddleDiv.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.centerMiddleDiv.Controls.Add(this.pnlAntrianFinished, 0, 0);
             this.centerMiddleDiv.Controls.Add(this.pnlOwnPostStat, 1, 0);
-            this.centerMiddleDiv.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.centerMiddleDiv.Location = new System.Drawing.Point(0, 175);
-            this.centerMiddleDiv.Margin = new System.Windows.Forms.Padding(0);
+            this.centerMiddleDiv.Location = new System.Drawing.Point(1, 175);
+            this.centerMiddleDiv.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.centerMiddleDiv.Name = "centerMiddleDiv";
             this.centerMiddleDiv.RowCount = 1;
             this.centerMiddleDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.centerMiddleDiv.Size = new System.Drawing.Size(504, 176);
+            this.centerMiddleDiv.Size = new System.Drawing.Size(502, 176);
             this.centerMiddleDiv.TabIndex = 4;
             // 
             // pnlAntrianFinished
             // 
             this.pnlAntrianFinished.Controls.Add(this.tableLayoutPanel1);
             this.pnlAntrianFinished.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlAntrianFinished.Location = new System.Drawing.Point(3, 3);
+            this.pnlAntrianFinished.Location = new System.Drawing.Point(0, 0);
+            this.pnlAntrianFinished.Margin = new System.Windows.Forms.Padding(0);
             this.pnlAntrianFinished.Name = "pnlAntrianFinished";
-            this.pnlAntrianFinished.Size = new System.Drawing.Size(246, 170);
+            this.pnlAntrianFinished.Size = new System.Drawing.Size(251, 176);
             this.pnlAntrianFinished.TabIndex = 4;
             // 
             // tableLayoutPanel1
@@ -1171,11 +1190,12 @@ namespace Tobasa
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 85F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(246, 170);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(251, 176);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // lblQueueNumberFinished
@@ -1188,9 +1208,9 @@ namespace Tobasa
             this.lblQueueNumberFinished.Location = new System.Drawing.Point(0, 0);
             this.lblQueueNumberFinished.Margin = new System.Windows.Forms.Padding(0);
             this.lblQueueNumberFinished.Name = "lblQueueNumberFinished";
-            this.lblQueueNumberFinished.Size = new System.Drawing.Size(246, 25);
+            this.lblQueueNumberFinished.Size = new System.Drawing.Size(251, 26);
             this.lblQueueNumberFinished.TabIndex = 1;
-            this.lblQueueNumberFinished.Text = "Antrian Telah Selesai";
+            this.lblQueueNumberFinished.Text = "ANTRIAN TELAH SELESAI";
             this.lblQueueNumberFinished.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblQueueNumberFinished.Resize += new System.EventHandler(this.OnLabelResize);
             // 
@@ -1213,7 +1233,7 @@ namespace Tobasa
             this.tableLayoutPanel2.Controls.Add(this.lblFin5, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.lblFin1, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 28);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 29);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(12);
@@ -1224,7 +1244,7 @@ namespace Tobasa
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(240, 142);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(245, 147);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // lblFin4
@@ -1235,9 +1255,9 @@ namespace Tobasa
             this.lblFin4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin4.ForeColor = System.Drawing.Color.Lavender;
             this.lblFin4.Image = global::Tobasa.Properties.Resources.bgblue4;
-            this.lblFin4.Location = new System.Drawing.Point(15, 104);
+            this.lblFin4.Location = new System.Drawing.Point(15, 108);
             this.lblFin4.Name = "lblFin4";
-            this.lblFin4.Size = new System.Drawing.Size(102, 26);
+            this.lblFin4.Size = new System.Drawing.Size(104, 27);
             this.lblFin4.TabIndex = 10;
             this.lblFin4.Text = "A5";
             this.lblFin4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1251,10 +1271,10 @@ namespace Tobasa
             this.lblFin9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin9.ForeColor = System.Drawing.Color.Lavender;
             this.lblFin9.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblFin9.Location = new System.Drawing.Point(120, 104);
+            this.lblFin9.Location = new System.Drawing.Point(122, 108);
             this.lblFin9.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblFin9.Name = "lblFin9";
-            this.lblFin9.Size = new System.Drawing.Size(105, 26);
+            this.lblFin9.Size = new System.Drawing.Size(108, 27);
             this.lblFin9.TabIndex = 9;
             this.lblFin9.Text = "A10";
             this.lblFin9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1267,10 +1287,10 @@ namespace Tobasa
             this.lblFin8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblFin8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin8.ForeColor = System.Drawing.Color.Gold;
-            this.lblFin8.Location = new System.Drawing.Point(120, 81);
+            this.lblFin8.Location = new System.Drawing.Point(122, 84);
             this.lblFin8.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblFin8.Name = "lblFin8";
-            this.lblFin8.Size = new System.Drawing.Size(105, 23);
+            this.lblFin8.Size = new System.Drawing.Size(108, 24);
             this.lblFin8.TabIndex = 8;
             this.lblFin8.Text = "A9";
             this.lblFin8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1284,10 +1304,10 @@ namespace Tobasa
             this.lblFin7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin7.ForeColor = System.Drawing.Color.Lavender;
             this.lblFin7.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblFin7.Location = new System.Drawing.Point(120, 58);
+            this.lblFin7.Location = new System.Drawing.Point(122, 60);
             this.lblFin7.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblFin7.Name = "lblFin7";
-            this.lblFin7.Size = new System.Drawing.Size(105, 23);
+            this.lblFin7.Size = new System.Drawing.Size(108, 24);
             this.lblFin7.TabIndex = 7;
             this.lblFin7.Text = "A8";
             this.lblFin7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1300,9 +1320,9 @@ namespace Tobasa
             this.lblFin3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblFin3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin3.ForeColor = System.Drawing.Color.Gold;
-            this.lblFin3.Location = new System.Drawing.Point(15, 81);
+            this.lblFin3.Location = new System.Drawing.Point(15, 84);
             this.lblFin3.Name = "lblFin3";
-            this.lblFin3.Size = new System.Drawing.Size(102, 23);
+            this.lblFin3.Size = new System.Drawing.Size(104, 24);
             this.lblFin3.TabIndex = 6;
             this.lblFin3.Text = "A4";
             this.lblFin3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1315,10 +1335,10 @@ namespace Tobasa
             this.lblFin6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblFin6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin6.ForeColor = System.Drawing.Color.Gold;
-            this.lblFin6.Location = new System.Drawing.Point(120, 35);
+            this.lblFin6.Location = new System.Drawing.Point(122, 36);
             this.lblFin6.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblFin6.Name = "lblFin6";
-            this.lblFin6.Size = new System.Drawing.Size(105, 23);
+            this.lblFin6.Size = new System.Drawing.Size(108, 24);
             this.lblFin6.TabIndex = 5;
             this.lblFin6.Text = "A7";
             this.lblFin6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1332,9 +1352,9 @@ namespace Tobasa
             this.lblFin2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin2.ForeColor = System.Drawing.Color.Lavender;
             this.lblFin2.Image = global::Tobasa.Properties.Resources.bgblue4;
-            this.lblFin2.Location = new System.Drawing.Point(15, 58);
+            this.lblFin2.Location = new System.Drawing.Point(15, 60);
             this.lblFin2.Name = "lblFin2";
-            this.lblFin2.Size = new System.Drawing.Size(102, 23);
+            this.lblFin2.Size = new System.Drawing.Size(104, 24);
             this.lblFin2.TabIndex = 4;
             this.lblFin2.Text = "A3";
             this.lblFin2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1350,7 +1370,7 @@ namespace Tobasa
             this.lblFin0.Image = global::Tobasa.Properties.Resources.bgblue4;
             this.lblFin0.Location = new System.Drawing.Point(15, 12);
             this.lblFin0.Name = "lblFin0";
-            this.lblFin0.Size = new System.Drawing.Size(102, 23);
+            this.lblFin0.Size = new System.Drawing.Size(104, 24);
             this.lblFin0.TabIndex = 3;
             this.lblFin0.Text = "A1";
             this.lblFin0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1364,10 +1384,10 @@ namespace Tobasa
             this.lblFin5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin5.ForeColor = System.Drawing.Color.Lavender;
             this.lblFin5.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblFin5.Location = new System.Drawing.Point(120, 12);
+            this.lblFin5.Location = new System.Drawing.Point(122, 12);
             this.lblFin5.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.lblFin5.Name = "lblFin5";
-            this.lblFin5.Size = new System.Drawing.Size(105, 23);
+            this.lblFin5.Size = new System.Drawing.Size(108, 24);
             this.lblFin5.TabIndex = 2;
             this.lblFin5.Text = "A6";
             this.lblFin5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1380,9 +1400,9 @@ namespace Tobasa
             this.lblFin1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblFin1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFin1.ForeColor = System.Drawing.Color.Gold;
-            this.lblFin1.Location = new System.Drawing.Point(15, 35);
+            this.lblFin1.Location = new System.Drawing.Point(15, 36);
             this.lblFin1.Name = "lblFin1";
-            this.lblFin1.Size = new System.Drawing.Size(102, 23);
+            this.lblFin1.Size = new System.Drawing.Size(104, 24);
             this.lblFin1.TabIndex = 1;
             this.lblFin1.Text = "A2";
             this.lblFin1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1392,9 +1412,10 @@ namespace Tobasa
             // 
             this.pnlOwnPostStat.Controls.Add(this.tableLayoutPanel6);
             this.pnlOwnPostStat.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlOwnPostStat.Location = new System.Drawing.Point(255, 3);
+            this.pnlOwnPostStat.Location = new System.Drawing.Point(251, 0);
+            this.pnlOwnPostStat.Margin = new System.Windows.Forms.Padding(0);
             this.pnlOwnPostStat.Name = "pnlOwnPostStat";
-            this.pnlOwnPostStat.Size = new System.Drawing.Size(246, 170);
+            this.pnlOwnPostStat.Size = new System.Drawing.Size(251, 176);
             this.pnlOwnPostStat.TabIndex = 5;
             // 
             // tableLayoutPanel6
@@ -1405,11 +1426,12 @@ namespace Tobasa
             this.tableLayoutPanel6.Controls.Add(this.tableLayoutPanel3, 0, 1);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 2;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 85F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(246, 170);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(251, 176);
             this.tableLayoutPanel6.TabIndex = 1;
             // 
             // lblPostNameCaption
@@ -1422,7 +1444,7 @@ namespace Tobasa
             this.lblPostNameCaption.Location = new System.Drawing.Point(0, 0);
             this.lblPostNameCaption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPostNameCaption.Name = "lblPostNameCaption";
-            this.lblPostNameCaption.Size = new System.Drawing.Size(246, 25);
+            this.lblPostNameCaption.Size = new System.Drawing.Size(251, 26);
             this.lblPostNameCaption.TabIndex = 3;
             this.lblPostNameCaption.Text = "POST NAME";
             this.lblPostNameCaption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1438,13 +1460,13 @@ namespace Tobasa
             this.tableLayoutPanel3.Controls.Add(this.lblPostCounter, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.lblPostNumber, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(6, 28);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(6, 29);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(6, 3, 6, 0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 75F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(234, 142);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(239, 147);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
             // lblPostCounter
@@ -1454,10 +1476,10 @@ namespace Tobasa
             this.lblPostCounter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPostCounter.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPostCounter.ForeColor = System.Drawing.Color.Gold;
-            this.lblPostCounter.Location = new System.Drawing.Point(0, 106);
+            this.lblPostCounter.Location = new System.Drawing.Point(0, 110);
             this.lblPostCounter.Margin = new System.Windows.Forms.Padding(0);
             this.lblPostCounter.Name = "lblPostCounter";
-            this.lblPostCounter.Size = new System.Drawing.Size(234, 36);
+            this.lblPostCounter.Size = new System.Drawing.Size(239, 37);
             this.lblPostCounter.TabIndex = 4;
             this.lblPostCounter.Text = "Loket";
             this.lblPostCounter.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1476,7 +1498,7 @@ namespace Tobasa
             this.lblPostNumber.Name = "lblPostNumber";
             this.lblPostNumber.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPostNumber.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPostNumber.Size = new System.Drawing.Size(234, 106);
+            this.lblPostNumber.Size = new System.Drawing.Size(239, 110);
             this.lblPostNumber.TabIndex = 3;
             this.lblPostNumber.Text = "A000";
             this.lblPostNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1487,10 +1509,10 @@ namespace Tobasa
             // 
             this.centerPanelVideo.BackColor = System.Drawing.Color.Gainsboro;
             this.centerPanelVideo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.centerPanelVideo.Location = new System.Drawing.Point(1, 354);
-            this.centerPanelVideo.Margin = new System.Windows.Forms.Padding(1, 3, 1, 5);
+            this.centerPanelVideo.Location = new System.Drawing.Point(1, 351);
+            this.centerPanelVideo.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.centerPanelVideo.Name = "centerPanelVideo";
-            this.centerPanelVideo.Size = new System.Drawing.Size(502, 345);
+            this.centerPanelVideo.Size = new System.Drawing.Size(502, 353);
             this.centerPanelVideo.TabIndex = 0;
             // 
             // rightDiv
@@ -1502,12 +1524,12 @@ namespace Tobasa
             this.rightDiv.Controls.Add(this.rightDivNmrCtr, 0, 0);
             this.rightDiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rightDiv.Location = new System.Drawing.Point(756, 0);
-            this.rightDiv.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
+            this.rightDiv.Margin = new System.Windows.Forms.Padding(0);
             this.rightDiv.Name = "rightDiv";
             this.rightDiv.RowCount = 2;
             this.rightDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
             this.rightDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 95F));
-            this.rightDiv.Size = new System.Drawing.Size(252, 701);
+            this.rightDiv.Size = new System.Drawing.Size(252, 704);
             this.rightDiv.TabIndex = 4;
             // 
             // rightDivPost
@@ -1522,8 +1544,8 @@ namespace Tobasa
             this.rightDivPost.Controls.Add(this.pnlPost8, 0, 3);
             this.rightDivPost.Controls.Add(this.pnlPost9, 0, 4);
             this.rightDivPost.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rightDivPost.Location = new System.Drawing.Point(3, 35);
-            this.rightDivPost.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.rightDivPost.Location = new System.Drawing.Point(0, 35);
+            this.rightDivPost.Margin = new System.Windows.Forms.Padding(0);
             this.rightDivPost.Name = "rightDivPost";
             this.rightDivPost.RowCount = 5;
             this.rightDivPost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
@@ -1531,7 +1553,7 @@ namespace Tobasa
             this.rightDivPost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.rightDivPost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.rightDivPost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.rightDivPost.Size = new System.Drawing.Size(246, 663);
+            this.rightDivPost.Size = new System.Drawing.Size(252, 669);
             this.rightDivPost.TabIndex = 4;
             // 
             // pnlPost5
@@ -1548,14 +1570,14 @@ namespace Tobasa
             this.pnlPost5.Controls.Add(this.lblPost5No, 0, 1);
             this.pnlPost5.Controls.Add(this.lblPost5CounterNo, 1, 1);
             this.pnlPost5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlPost5.Location = new System.Drawing.Point(0, 3);
-            this.pnlPost5.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this.pnlPost5.Location = new System.Drawing.Point(0, 1);
+            this.pnlPost5.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost5.Name = "pnlPost5";
             this.pnlPost5.RowCount = 3;
             this.pnlPost5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost5.Size = new System.Drawing.Size(246, 129);
+            this.pnlPost5.Size = new System.Drawing.Size(252, 131);
             this.pnlPost5.TabIndex = 16;
             // 
             // lblPost5JumAn
@@ -1564,10 +1586,10 @@ namespace Tobasa
             this.lblPost5JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost5JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost5JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost5JumAn.Location = new System.Drawing.Point(0, 102);
+            this.lblPost5JumAn.Location = new System.Drawing.Point(0, 104);
             this.lblPost5JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost5JumAn.Name = "lblPost5JumAn";
-            this.lblPost5JumAn.Size = new System.Drawing.Size(159, 27);
+            this.lblPost5JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost5JumAn.TabIndex = 11;
             this.lblPost5JumAn.Text = "Jumlah Antrian";
             this.lblPost5JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1579,10 +1601,10 @@ namespace Tobasa
             this.lblPost5JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost5JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost5JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost5JumAnVal.Location = new System.Drawing.Point(159, 102);
+            this.lblPost5JumAnVal.Location = new System.Drawing.Point(163, 104);
             this.lblPost5JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost5JumAnVal.Name = "lblPost5JumAnVal";
-            this.lblPost5JumAnVal.Size = new System.Drawing.Size(87, 27);
+            this.lblPost5JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost5JumAnVal.TabIndex = 10;
             this.lblPost5JumAnVal.Text = "0";
             this.lblPost5JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1600,7 +1622,7 @@ namespace Tobasa
             this.lblPost5Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost5Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost5Caption.Name = "lblPost5Caption";
-            this.lblPost5Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost5Caption.Size = new System.Drawing.Size(252, 26);
             this.lblPost5Caption.TabIndex = 0;
             this.lblPost5Caption.Text = "POST#5";
             this.lblPost5Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1612,12 +1634,12 @@ namespace Tobasa
             this.lblPost5No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost5No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost5No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost5No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost5No.Location = new System.Drawing.Point(0, 26);
             this.lblPost5No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost5No.Name = "lblPost5No";
             this.lblPost5No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost5No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost5No.Size = new System.Drawing.Size(159, 77);
+            this.lblPost5No.Size = new System.Drawing.Size(163, 78);
             this.lblPost5No.TabIndex = 2;
             this.lblPost5No.Text = "A000";
             this.lblPost5No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1632,12 +1654,12 @@ namespace Tobasa
             this.lblPost5CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost5CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost5CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost5CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost5CounterNo.Location = new System.Drawing.Point(163, 26);
             this.lblPost5CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost5CounterNo.Name = "lblPost5CounterNo";
             this.lblPost5CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost5CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost5CounterNo.Size = new System.Drawing.Size(87, 77);
+            this.lblPost5CounterNo.Size = new System.Drawing.Size(89, 78);
             this.lblPost5CounterNo.TabIndex = 4;
             this.lblPost5CounterNo.Text = "0";
             this.lblPost5CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1659,13 +1681,13 @@ namespace Tobasa
             this.pnlPost6.Controls.Add(this.lblPost6CounterNo, 1, 1);
             this.pnlPost6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlPost6.Location = new System.Drawing.Point(0, 134);
-            this.pnlPost6.Margin = new System.Windows.Forms.Padding(0, 2, 0, 3);
+            this.pnlPost6.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost6.Name = "pnlPost6";
             this.pnlPost6.RowCount = 3;
             this.pnlPost6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost6.Size = new System.Drawing.Size(246, 127);
+            this.pnlPost6.Size = new System.Drawing.Size(252, 131);
             this.pnlPost6.TabIndex = 15;
             // 
             // lblPost6JumAn
@@ -1674,10 +1696,10 @@ namespace Tobasa
             this.lblPost6JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost6JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost6JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost6JumAn.Location = new System.Drawing.Point(0, 101);
+            this.lblPost6JumAn.Location = new System.Drawing.Point(0, 104);
             this.lblPost6JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost6JumAn.Name = "lblPost6JumAn";
-            this.lblPost6JumAn.Size = new System.Drawing.Size(159, 26);
+            this.lblPost6JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost6JumAn.TabIndex = 6;
             this.lblPost6JumAn.Text = "Jumlah Antrian";
             this.lblPost6JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1689,10 +1711,10 @@ namespace Tobasa
             this.lblPost6JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost6JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost6JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost6JumAnVal.Location = new System.Drawing.Point(159, 101);
+            this.lblPost6JumAnVal.Location = new System.Drawing.Point(163, 104);
             this.lblPost6JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost6JumAnVal.Name = "lblPost6JumAnVal";
-            this.lblPost6JumAnVal.Size = new System.Drawing.Size(87, 26);
+            this.lblPost6JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost6JumAnVal.TabIndex = 5;
             this.lblPost6JumAnVal.Text = "0";
             this.lblPost6JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1710,7 +1732,7 @@ namespace Tobasa
             this.lblPost6Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost6Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost6Caption.Name = "lblPost6Caption";
-            this.lblPost6Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost6Caption.Size = new System.Drawing.Size(252, 26);
             this.lblPost6Caption.TabIndex = 0;
             this.lblPost6Caption.Text = "POST#6";
             this.lblPost6Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1722,12 +1744,12 @@ namespace Tobasa
             this.lblPost6No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost6No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost6No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost6No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost6No.Location = new System.Drawing.Point(0, 26);
             this.lblPost6No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost6No.Name = "lblPost6No";
             this.lblPost6No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost6No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost6No.Size = new System.Drawing.Size(159, 76);
+            this.lblPost6No.Size = new System.Drawing.Size(163, 78);
             this.lblPost6No.TabIndex = 2;
             this.lblPost6No.Text = "A000";
             this.lblPost6No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1742,12 +1764,12 @@ namespace Tobasa
             this.lblPost6CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost6CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost6CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost6CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost6CounterNo.Location = new System.Drawing.Point(163, 26);
             this.lblPost6CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost6CounterNo.Name = "lblPost6CounterNo";
             this.lblPost6CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost6CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost6CounterNo.Size = new System.Drawing.Size(87, 76);
+            this.lblPost6CounterNo.Size = new System.Drawing.Size(89, 78);
             this.lblPost6CounterNo.TabIndex = 4;
             this.lblPost6CounterNo.Text = "0";
             this.lblPost6CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1769,13 +1791,13 @@ namespace Tobasa
             this.pnlPost7.Controls.Add(this.lblPost7CounterNo, 1, 1);
             this.pnlPost7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlPost7.Location = new System.Drawing.Point(0, 267);
-            this.pnlPost7.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.pnlPost7.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost7.Name = "pnlPost7";
             this.pnlPost7.RowCount = 3;
             this.pnlPost7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost7.Size = new System.Drawing.Size(246, 126);
+            this.pnlPost7.Size = new System.Drawing.Size(252, 131);
             this.pnlPost7.TabIndex = 14;
             // 
             // lblPost7JumAn
@@ -1784,10 +1806,10 @@ namespace Tobasa
             this.lblPost7JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost7JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost7JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost7JumAn.Location = new System.Drawing.Point(0, 100);
+            this.lblPost7JumAn.Location = new System.Drawing.Point(0, 104);
             this.lblPost7JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost7JumAn.Name = "lblPost7JumAn";
-            this.lblPost7JumAn.Size = new System.Drawing.Size(159, 26);
+            this.lblPost7JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost7JumAn.TabIndex = 8;
             this.lblPost7JumAn.Text = "Jumlah Antrian";
             this.lblPost7JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1799,10 +1821,10 @@ namespace Tobasa
             this.lblPost7JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost7JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost7JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost7JumAnVal.Location = new System.Drawing.Point(159, 100);
+            this.lblPost7JumAnVal.Location = new System.Drawing.Point(163, 104);
             this.lblPost7JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost7JumAnVal.Name = "lblPost7JumAnVal";
-            this.lblPost7JumAnVal.Size = new System.Drawing.Size(87, 26);
+            this.lblPost7JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost7JumAnVal.TabIndex = 7;
             this.lblPost7JumAnVal.Text = "0";
             this.lblPost7JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1820,7 +1842,7 @@ namespace Tobasa
             this.lblPost7Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost7Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost7Caption.Name = "lblPost7Caption";
-            this.lblPost7Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost7Caption.Size = new System.Drawing.Size(252, 26);
             this.lblPost7Caption.TabIndex = 0;
             this.lblPost7Caption.Text = "POST#7";
             this.lblPost7Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1832,12 +1854,12 @@ namespace Tobasa
             this.lblPost7No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost7No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost7No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost7No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost7No.Location = new System.Drawing.Point(0, 26);
             this.lblPost7No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost7No.Name = "lblPost7No";
             this.lblPost7No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost7No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost7No.Size = new System.Drawing.Size(159, 75);
+            this.lblPost7No.Size = new System.Drawing.Size(163, 78);
             this.lblPost7No.TabIndex = 2;
             this.lblPost7No.Text = "A000";
             this.lblPost7No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1852,12 +1874,12 @@ namespace Tobasa
             this.lblPost7CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost7CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost7CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost7CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost7CounterNo.Location = new System.Drawing.Point(163, 26);
             this.lblPost7CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost7CounterNo.Name = "lblPost7CounterNo";
             this.lblPost7CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost7CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost7CounterNo.Size = new System.Drawing.Size(87, 75);
+            this.lblPost7CounterNo.Size = new System.Drawing.Size(89, 78);
             this.lblPost7CounterNo.TabIndex = 4;
             this.lblPost7CounterNo.Text = "0";
             this.lblPost7CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1878,14 +1900,14 @@ namespace Tobasa
             this.pnlPost8.Controls.Add(this.lblPost8No, 0, 1);
             this.pnlPost8.Controls.Add(this.lblPost8CounterNo, 1, 1);
             this.pnlPost8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlPost8.Location = new System.Drawing.Point(0, 399);
-            this.pnlPost8.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.pnlPost8.Location = new System.Drawing.Point(0, 400);
+            this.pnlPost8.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost8.Name = "pnlPost8";
             this.pnlPost8.RowCount = 3;
             this.pnlPost8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost8.Size = new System.Drawing.Size(246, 126);
+            this.pnlPost8.Size = new System.Drawing.Size(252, 131);
             this.pnlPost8.TabIndex = 13;
             // 
             // lblPost8JumAn
@@ -1894,10 +1916,10 @@ namespace Tobasa
             this.lblPost8JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost8JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost8JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost8JumAn.Location = new System.Drawing.Point(0, 100);
+            this.lblPost8JumAn.Location = new System.Drawing.Point(0, 104);
             this.lblPost8JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost8JumAn.Name = "lblPost8JumAn";
-            this.lblPost8JumAn.Size = new System.Drawing.Size(159, 26);
+            this.lblPost8JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost8JumAn.TabIndex = 10;
             this.lblPost8JumAn.Text = "Jumlah Antrian";
             this.lblPost8JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1909,10 +1931,10 @@ namespace Tobasa
             this.lblPost8JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost8JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost8JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost8JumAnVal.Location = new System.Drawing.Point(159, 100);
+            this.lblPost8JumAnVal.Location = new System.Drawing.Point(163, 104);
             this.lblPost8JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost8JumAnVal.Name = "lblPost8JumAnVal";
-            this.lblPost8JumAnVal.Size = new System.Drawing.Size(87, 26);
+            this.lblPost8JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost8JumAnVal.TabIndex = 9;
             this.lblPost8JumAnVal.Text = "0";
             this.lblPost8JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1930,7 +1952,7 @@ namespace Tobasa
             this.lblPost8Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost8Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost8Caption.Name = "lblPost8Caption";
-            this.lblPost8Caption.Size = new System.Drawing.Size(246, 25);
+            this.lblPost8Caption.Size = new System.Drawing.Size(252, 26);
             this.lblPost8Caption.TabIndex = 0;
             this.lblPost8Caption.Text = "POST#8";
             this.lblPost8Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1942,12 +1964,12 @@ namespace Tobasa
             this.lblPost8No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost8No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost8No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost8No.Location = new System.Drawing.Point(0, 25);
+            this.lblPost8No.Location = new System.Drawing.Point(0, 26);
             this.lblPost8No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost8No.Name = "lblPost8No";
             this.lblPost8No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost8No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost8No.Size = new System.Drawing.Size(159, 75);
+            this.lblPost8No.Size = new System.Drawing.Size(163, 78);
             this.lblPost8No.TabIndex = 2;
             this.lblPost8No.Text = "A000";
             this.lblPost8No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1962,12 +1984,12 @@ namespace Tobasa
             this.lblPost8CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost8CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost8CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost8CounterNo.Location = new System.Drawing.Point(159, 25);
+            this.lblPost8CounterNo.Location = new System.Drawing.Point(163, 26);
             this.lblPost8CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost8CounterNo.Name = "lblPost8CounterNo";
             this.lblPost8CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost8CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost8CounterNo.Size = new System.Drawing.Size(87, 75);
+            this.lblPost8CounterNo.Size = new System.Drawing.Size(89, 78);
             this.lblPost8CounterNo.TabIndex = 4;
             this.lblPost8CounterNo.Text = "0";
             this.lblPost8CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1988,14 +2010,14 @@ namespace Tobasa
             this.pnlPost9.Controls.Add(this.lblPost9No, 0, 1);
             this.pnlPost9.Controls.Add(this.lblPost9CounterNo, 1, 1);
             this.pnlPost9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlPost9.Location = new System.Drawing.Point(0, 531);
-            this.pnlPost9.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this.pnlPost9.Location = new System.Drawing.Point(0, 533);
+            this.pnlPost9.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.pnlPost9.Name = "pnlPost9";
             this.pnlPost9.RowCount = 3;
             this.pnlPost9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.pnlPost9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.pnlPost9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlPost9.Size = new System.Drawing.Size(246, 132);
+            this.pnlPost9.Size = new System.Drawing.Size(252, 135);
             this.pnlPost9.TabIndex = 12;
             // 
             // lblPost9JumAn
@@ -2004,10 +2026,10 @@ namespace Tobasa
             this.lblPost9JumAn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost9JumAn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost9JumAn.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost9JumAn.Location = new System.Drawing.Point(0, 105);
+            this.lblPost9JumAn.Location = new System.Drawing.Point(0, 108);
             this.lblPost9JumAn.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost9JumAn.Name = "lblPost9JumAn";
-            this.lblPost9JumAn.Size = new System.Drawing.Size(159, 27);
+            this.lblPost9JumAn.Size = new System.Drawing.Size(163, 27);
             this.lblPost9JumAn.TabIndex = 11;
             this.lblPost9JumAn.Text = "Jumlah Antrian";
             this.lblPost9JumAn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2019,10 +2041,10 @@ namespace Tobasa
             this.lblPost9JumAnVal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost9JumAnVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost9JumAnVal.ForeColor = System.Drawing.Color.Beige;
-            this.lblPost9JumAnVal.Location = new System.Drawing.Point(159, 105);
+            this.lblPost9JumAnVal.Location = new System.Drawing.Point(163, 108);
             this.lblPost9JumAnVal.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost9JumAnVal.Name = "lblPost9JumAnVal";
-            this.lblPost9JumAnVal.Size = new System.Drawing.Size(87, 27);
+            this.lblPost9JumAnVal.Size = new System.Drawing.Size(89, 27);
             this.lblPost9JumAnVal.TabIndex = 10;
             this.lblPost9JumAnVal.Text = "0";
             this.lblPost9JumAnVal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2040,7 +2062,7 @@ namespace Tobasa
             this.lblPost9Caption.Location = new System.Drawing.Point(0, 0);
             this.lblPost9Caption.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost9Caption.Name = "lblPost9Caption";
-            this.lblPost9Caption.Size = new System.Drawing.Size(246, 26);
+            this.lblPost9Caption.Size = new System.Drawing.Size(252, 27);
             this.lblPost9Caption.TabIndex = 0;
             this.lblPost9Caption.Text = "POST#9";
             this.lblPost9Caption.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2052,12 +2074,12 @@ namespace Tobasa
             this.lblPost9No.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPost9No.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost9No.ForeColor = System.Drawing.Color.Gold;
-            this.lblPost9No.Location = new System.Drawing.Point(0, 26);
+            this.lblPost9No.Location = new System.Drawing.Point(0, 27);
             this.lblPost9No.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost9No.Name = "lblPost9No";
             this.lblPost9No.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost9No.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost9No.Size = new System.Drawing.Size(159, 79);
+            this.lblPost9No.Size = new System.Drawing.Size(163, 81);
             this.lblPost9No.TabIndex = 2;
             this.lblPost9No.Text = "A000";
             this.lblPost9No.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2072,12 +2094,12 @@ namespace Tobasa
             this.lblPost9CounterNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost9CounterNo.ForeColor = System.Drawing.Color.Gold;
             this.lblPost9CounterNo.Image = global::Tobasa.Properties.Resources.bgblue3;
-            this.lblPost9CounterNo.Location = new System.Drawing.Point(159, 26);
+            this.lblPost9CounterNo.Location = new System.Drawing.Point(163, 27);
             this.lblPost9CounterNo.Margin = new System.Windows.Forms.Padding(0);
             this.lblPost9CounterNo.Name = "lblPost9CounterNo";
             this.lblPost9CounterNo.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPost9CounterNo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPost9CounterNo.Size = new System.Drawing.Size(87, 79);
+            this.lblPost9CounterNo.Size = new System.Drawing.Size(89, 81);
             this.lblPost9CounterNo.TabIndex = 4;
             this.lblPost9CounterNo.Text = "0";
             this.lblPost9CounterNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2093,14 +2115,14 @@ namespace Tobasa
             this.rightDivNmrCtr.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
             this.rightDivNmrCtr.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
             this.rightDivNmrCtr.Controls.Add(this.lblCounterRight, 0, 0);
-            this.rightDivNmrCtr.Controls.Add(this.label5, 0, 0);
+            this.rightDivNmrCtr.Controls.Add(this.lblNomorRight, 0, 0);
             this.rightDivNmrCtr.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rightDivNmrCtr.Location = new System.Drawing.Point(3, 0);
-            this.rightDivNmrCtr.Margin = new System.Windows.Forms.Padding(3, 0, 3, 1);
+            this.rightDivNmrCtr.Location = new System.Drawing.Point(0, 0);
+            this.rightDivNmrCtr.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
             this.rightDivNmrCtr.Name = "rightDivNmrCtr";
             this.rightDivNmrCtr.RowCount = 1;
             this.rightDivNmrCtr.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.rightDivNmrCtr.Size = new System.Drawing.Size(246, 34);
+            this.rightDivNmrCtr.Size = new System.Drawing.Size(252, 34);
             this.rightDivNmrCtr.TabIndex = 3;
             // 
             // lblCounterRight
@@ -2110,30 +2132,30 @@ namespace Tobasa
             this.lblCounterRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCounterRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCounterRight.ForeColor = System.Drawing.Color.Gold;
-            this.lblCounterRight.Location = new System.Drawing.Point(159, 0);
+            this.lblCounterRight.Location = new System.Drawing.Point(163, 0);
             this.lblCounterRight.Margin = new System.Windows.Forms.Padding(0);
             this.lblCounterRight.Name = "lblCounterRight";
-            this.lblCounterRight.Size = new System.Drawing.Size(87, 34);
+            this.lblCounterRight.Size = new System.Drawing.Size(89, 34);
             this.lblCounterRight.TabIndex = 7;
-            this.lblCounterRight.Text = "Loket";
+            this.lblCounterRight.Text = "LOKET";
             this.lblCounterRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblCounterRight.Resize += new System.EventHandler(this.OnLabelResize);
             // 
-            // label5
+            // lblNomorRight
             // 
-            this.label5.AutoSize = true;
-            this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.ForeColor = System.Drawing.Color.Gold;
-            this.label5.Location = new System.Drawing.Point(0, 0);
-            this.label5.Margin = new System.Windows.Forms.Padding(0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(159, 34);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Nomor";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label5.Resize += new System.EventHandler(this.OnLabelResize);
+            this.lblNomorRight.AutoSize = true;
+            this.lblNomorRight.BackColor = System.Drawing.Color.Transparent;
+            this.lblNomorRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblNomorRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNomorRight.ForeColor = System.Drawing.Color.Gold;
+            this.lblNomorRight.Location = new System.Drawing.Point(0, 0);
+            this.lblNomorRight.Margin = new System.Windows.Forms.Padding(0);
+            this.lblNomorRight.Name = "lblNomorRight";
+            this.lblNomorRight.Size = new System.Drawing.Size(163, 34);
+            this.lblNomorRight.TabIndex = 6;
+            this.lblNomorRight.Text = "NOMOR";
+            this.lblNomorRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblNomorRight.Resize += new System.EventHandler(this.OnLabelResize);
             // 
             // timerPost0
             // 
@@ -2174,6 +2196,21 @@ namespace Tobasa
             // timerPost9
             // 
             this.timerPost9.Tick += new System.EventHandler(this.OnTimer);
+            // 
+            // runningTextBottom
+            // 
+            this.runningTextBottom.AutoSize = true;
+            this.runningTextBottom.BackColor = System.Drawing.Color.Transparent;
+            this.runningTextBottom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.runningTextBottom.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.runningTextBottom.ForeColor = System.Drawing.Color.Gold;
+            this.runningTextBottom.Location = new System.Drawing.Point(0, -494);
+            this.runningTextBottom.Margin = new System.Windows.Forms.Padding(0);
+            this.runningTextBottom.Name = "runningTextBottom";
+            this.runningTextBottom.Size = new System.Drawing.Size(1008, 38);
+            this.runningTextBottom.TabIndex = 0;
+            this.runningTextBottom.Text = "Aplikasi antrian Tobasa";
+            this.runningTextBottom.UseCompatibleTextRendering = true;
             // 
             // Display
             // 
@@ -2299,7 +2336,7 @@ namespace Tobasa
         private System.Windows.Forms.Label lblPost3JumAnVal;
         private System.Windows.Forms.TableLayoutPanel leftDivNmrCtr;
         private System.Windows.Forms.Label lblCounterLeft;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblNomorLeft;
         private System.Windows.Forms.TableLayoutPanel centerDateTimeDiv;
         private System.Windows.Forms.Label lblDate;
         private System.Windows.Forms.Panel pnlAntrianFinished;
@@ -2359,7 +2396,7 @@ namespace Tobasa
 		private System.Windows.Forms.Label lblPost9CounterNo;
 		private System.Windows.Forms.TableLayoutPanel rightDivNmrCtr;
 		private System.Windows.Forms.Label lblCounterRight;
-		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label lblNomorRight;
 		private System.Windows.Forms.TableLayoutPanel centerBrandDiv;
 		private System.Windows.Forms.TableLayoutPanel centerBrandLogoDiv;
 		private System.Windows.Forms.TableLayoutPanel centerBrandLogoLabelDiv;

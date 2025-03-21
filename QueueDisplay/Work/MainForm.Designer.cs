@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2021  Jefri Sibarani
+    Copyright (C) 2015-2024  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ namespace Tobasa
             // mnuOption
             // 
             this.mnuOption.Name = "mnuOption";
-            this.mnuOption.Size = new System.Drawing.Size(180, 22);
+            this.mnuOption.Size = new System.Drawing.Size(148, 22);
             this.mnuOption.Text = "Show &Options";
             this.mnuOption.Click += new System.EventHandler(this.OnOption);
             // 
@@ -202,7 +202,7 @@ namespace Tobasa
             // 
             this.mnuExit.Name = "mnuExit";
             this.mnuExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.mnuExit.Size = new System.Drawing.Size(180, 22);
+            this.mnuExit.Size = new System.Drawing.Size(148, 22);
             this.mnuExit.Text = "E&xit";
             this.mnuExit.Click += new System.EventHandler(this.OnExit);
             // 
@@ -218,14 +218,14 @@ namespace Tobasa
             // mnuShowDisplay
             // 
             this.mnuShowDisplay.Name = "mnuShowDisplay";
-            this.mnuShowDisplay.Size = new System.Drawing.Size(180, 22);
+            this.mnuShowDisplay.Size = new System.Drawing.Size(144, 22);
             this.mnuShowDisplay.Text = "Show Display";
             this.mnuShowDisplay.Click += new System.EventHandler(this.OnShowDisplay);
             // 
             // mnuFullScreen
             // 
             this.mnuFullScreen.Name = "mnuFullScreen";
-            this.mnuFullScreen.Size = new System.Drawing.Size(180, 22);
+            this.mnuFullScreen.Size = new System.Drawing.Size(144, 22);
             this.mnuFullScreen.Text = "Full Screen";
             this.mnuFullScreen.Click += new System.EventHandler(this.OnFullScreen);
             // 
