@@ -61,25 +61,6 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SQLITE")]
-        public string ProviderType {
-            get {
-                return ((string)(this["ProviderType"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;")]
-        public string ConnectionString_PGSQL {
-            get {
-                return ((string)(this["ConnectionString_PGSQL"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ad7415644add93d6e719d2b593da6e6e")]
         public string ConnectionStringPassword {
             get {
@@ -115,6 +96,25 @@ namespace Tobasa.Properties {
         public string ConnectionString_SQLITE {
             get {
                 return ((string)(this["ConnectionString_SQLITE"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Host=127.0.0.1;Username=antrian;Database=antri;Port=5462;")]
+        public string ConnectionString_PGSQL {
+            get {
+                return ((string)(this["ConnectionString_PGSQL"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PGSQL")]
+        public string ProviderType {
+            get {
+                return ((string)(this["ProviderType"]));
             }
         }
     }

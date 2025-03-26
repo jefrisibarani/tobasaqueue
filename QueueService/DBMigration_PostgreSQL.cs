@@ -11,53 +11,164 @@ namespace Tobasa
 
         public static string t_queue_ipaccesslists =
             @"
-
+            CREATE TABLE queue_ipaccesslists (
+               ipaddress  VARCHAR(15)   NOT NULL,
+               allowed    INTEGER NOT   NULL,
+               keterangan VARCHAR(256),
+               PRIMARY KEY(ipaddress)
             );
             ";
 
         public static string t_queue_jobs =
             @"
-
+            CREATE TABLE queue_jobs
+            (
+               id          INTEGER      NOT NULL,
+               number      INTEGER      NOT NULL,
+               status      VARCHAR(10)  NOT NULL DEFAULT 'WAITING',
+               station     VARCHAR(32),
+               post        VARCHAR(32)  NOT NULL,
+               source      VARCHAR(32)  NOT NULL,
+               date        DATE         NOT NULL DEFAULT CURRENT_DATE,
+               starttime   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+               calltime    TIMESTAMP,
+               endtime     TIMESTAMP,
+               call2time   TIMESTAMP,
+               bookingcode VARCHAR(50) NOT NULL DEFAULT '',   
+               PRIMARY KEY(id)
+            );
             ";
 
         public static string t_queue_logins =
             @"
-
+            CREATE TABLE queue_logins 
+            (
+               id        serial PRIMARY KEY,
+               username  VARCHAR(50) NOT NULL UNIQUE,
+               password  VARCHAR(64) NOT NULL UNIQUE,
+               expired   TIMESTAMP   NOT NULL,
+               active    INTEGER     NOT NULL
+            );
             ";
 
         public static string t_queue_posts =
             @"
-
+            CREATE TABLE queue_posts 
+            (
+               name         VARCHAR(32)  PRIMARY KEY,
+               keterangan   VARCHAR(256) NOT NULL DEFAULT '',
+               numberprefix VARCHAR(5)   NOT NULL DEFAULT '',
+               quota0       INTEGER      NOT NULL DEFAULT 1000,
+               quota1       INTEGER      NOT NULL DEFAULT 1000
+            );
             ";
 
         public static string t_queue_runningtexts =
             @"
-
+            CREATE TABLE queue_runningtexts (
+               id           SERIAL      PRIMARY KEY,
+               station_name VARCHAR(32) NOT NULL,
+               sticky       INTEGER     NOT NULL DEFAULT 0,
+               active       INTEGER     NOT NULL DEFAULT 0,
+               running_text TEXT
+            );
             ";
 
         public static string t_queue_sequences =
             @"
-
+            CREATE TABLE queue_sequences
+            (
+               id          BIGSERIAL    PRIMARY KEY,
+               number      INTEGER      NOT NULL,
+               status      VARCHAR(10)  NOT NULL DEFAULT 'WAITING',
+               station     VARCHAR(32),
+               post        VARCHAR(32)  NOT NULL,
+               source      VARCHAR(32)  NOT NULL,
+               date        DATE         NOT NULL DEFAULT (CURRENT_DATE),
+               starttime   TIMESTAMP    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+               calltime    TIMESTAMP,
+               endtime     TIMESTAMP,
+               call2time   TIMESTAMP,
+               bookingcode VARCHAR(50) NOT NULL DEFAULT ''
+            );
             ";
 
         public static string t_queue_stations =
             @"
- 
+              CREATE TABLE queue_stations (
+               name         VARCHAR(32) NOT NULL,
+               post         VARCHAR(32) NOT NULL,
+               keterangan   TEXT,
+               canlogin     INTEGER     NOT NULL,
+               PRIMARY KEY(name,post)
+            );
             ";
 
         public static string v_queue_posts_summary =
             @"
-
+            CREATE VIEW v_queue_posts_summary
+            AS 
+            SELECT p.name, p.numberprefix, p.keterangan
+            ,( SELECT MAX(NUMBER)   FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = CURRENT_DATE ) AS called_last
+            ,( SELECT COUNT(number) FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = CURRENT_DATE ) AS called_total
+            ,( SELECT MIN(number)   FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = CURRENT_DATE ) AS waiting_first
+            ,( SELECT MAX(number)   FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = CURRENT_DATE ) AS waiting_last
+            ,( SELECT COUNT(number) FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = CURRENT_DATE ) AS waiting_total
+            FROM queue_posts p;
             ";
 
         public static string v_queue_sequences =
             @"
-
+            CREATE VIEW v_queue_sequences
+            AS 
+            SELECT seq.id, 
+                   seq.number, 
+                   seq.status, 
+                   seq.station, 
+                   seq.post, 
+                   seq.source, 
+                   seq.starttime, 
+                   seq.endtime, 
+                   vsr.numberleft,
+                   vsr.numbermax
+            FROM queue_sequences AS seq
+            JOIN
+               (
+                  SELECT post, MIN(id) AS idmin , COUNT(number) AS numberleft, MAX(number) AS numbermax
+                  FROM queue_sequences WHERE status = 'WAITING' AND date = CURRENT_DATE
+                  GROUP BY post
+               ) AS vsr
+            ON seq.post = vsr.post
+            WHERE seq.id = vsr.idmin
+            AND date = CURRENT_DATE;
             ";
 
         public static string tr_queue_update_jobs =
             @"
+            CREATE OR REPLACE FUNCTION update_queue_jobs()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                UPDATE queue_jobs
+                SET   number     = NEW.number,
+                      status     = NEW.status,
+                      station    = NEW.station,
+                      post       = NEW.post,
+                      source     = NEW.source,
+                      ""date""     = NEW.date,
+                      starttime  = NEW.starttime,
+                      calltime   = NEW.calltime,
+                      call2time  = NEW.call2time,
+                      endtime    = NEW.endtime
+                WHERE id = NEW.id;
 
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER tr_queue_update_jobs
+            AFTER UPDATE ON queue_sequences
+            FOR EACH ROW
+            EXECUTE FUNCTION update_queue_jobs();
             ";
 
         public static string cmd_delete_all_tables =
@@ -77,8 +188,8 @@ namespace Tobasa
         public static string cmd_insert_all_basic_data =
             @"
             INSERT INTO queue_logins(username,password,expired,active)   VALUES
-               ('tobasaqueue', 'A1410C6E07BDA0D774A76E644024801EB00175B27B85D0289469978603EBB9F4','2025-01-01 00:00:00.000',1),
-               ('admin',       '51C5FB67361F529DD9DDF96959FC5FA51960E0F7516560290BD7BFCF9421C6F6','2025-01-01 00:00:00.000',1);
+               ('tobasaqueue', 'A1410C6E07BDA0D774A76E644024801EB00175B27B85D0289469978603EBB9F4','2035-01-01 00:00:00.000',1),
+               ('admin',       '51C5FB67361F529DD9DDF96959FC5FA51960E0F7516560290BD7BFCF9421C6F6','2035-01-01 00:00:00.000',1);
 
             INSERT INTO queue_ipaccesslists VALUES 
                ('10.62.22.1',  1, 'Komputer devepoment'),
@@ -245,7 +356,20 @@ namespace Tobasa
 
         public static string GetObjectSummaryQuery(string databaseName)
         {
-            string sql = @"";
+            string sql = $@"
+            SELECT
+              ( SELECT COUNT(*) FROM information_schema.tables 
+                WHERE table_type = 'BASE TABLE' AND table_name LIKE 'queue_%'
+                AND table_schema NOT IN ('pg_catalog', 'information_schema')) AS total_table
+
+            , ( SELECT COUNT(*) FROM information_schema.tables 
+                WHERE table_type = 'VIEW' AND table_name LIKE 'v_queue_%' 
+                AND table_schema NOT IN ('pg_catalog', 'information_schema')) AS total_view
+
+            , ( SELECT COUNT(*) FROM information_schema.triggers  
+                WHERE event_object_schema NOT IN ('pg_catalog', 'information_schema')
+                AND TRIGGER_NAME = 'tr_queue_update_jobs' ) AS total_trigger;
+            ";
             return sql;
         }
     }

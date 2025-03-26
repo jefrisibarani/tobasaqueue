@@ -351,10 +351,18 @@ namespace Tobasa
         public static string GetObjectSummaryQuery(string databaseName)
         {
             string sql = $@"
-                SELECT 
-                  ( SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND table_catalog = '{databaseName}' AND TABLE_NAME LIKE 'queue_%' ) AS total_table
-                , ( SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'VIEW' AND table_catalog = '{databaseName}' AND TABLE_NAME LIKE 'v_queue_%' ) AS total_view
-                , ( SELECT COUNT(name) FROM sys.triggers WHERE parent_id = OBJECT_ID('queue_sequences') AND name = 'tr_queue_update_jobs' ) AS total_trigger
+            SELECT 
+              ( SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES 
+                WHERE TABLE_TYPE = 'BASE TABLE' AND table_catalog = '{databaseName}' 
+                AND TABLE_NAME LIKE 'queue_%' ) AS total_table
+
+            , ( SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES 
+                WHERE TABLE_TYPE = 'VIEW' AND table_catalog = '{databaseName}' 
+                AND TABLE_NAME LIKE 'v_queue_%' ) AS total_view
+                
+            , ( SELECT COUNT(*) FROM sys.triggers 
+                WHERE parent_id = OBJECT_ID('queue_sequences') 
+                AND name = 'tr_queue_update_jobs' ) AS total_trigger;
             ";
 
             return sql;

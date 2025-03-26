@@ -44,6 +44,7 @@ namespace Tobasa
         private bool _formIsClosing = false;
 
         private bool _autoConnectToServer = true;
+        private String displayTheme = "Classic";
         #endregion
 
         #region TCP Client stuffs
@@ -706,6 +707,8 @@ namespace Tobasa
 
             _postProperties.SaveToConfiguration();
 
+            _settings.Theme = displayTheme;
+
             _settings.Save();
         }
 
@@ -1160,5 +1163,14 @@ namespace Tobasa
         }
 
         #endregion
+
+        private void OnThemeSelected(object sender, EventArgs e)
+        {
+            Button b = (Button)sender;
+
+            String themeName = b.Name;
+            String selectedTheme = mDisplay.ApplyTheme(themeName);
+            displayTheme = selectedTheme;
+        }
     }
 }

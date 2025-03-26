@@ -730,7 +730,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowInfoTextTop0 {
             get {
                 return ((bool)(this["ShowInfoTextTop0"]));
@@ -742,7 +742,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowInfoTextTop1 {
             get {
                 return ((bool)(this["ShowInfoTextTop1"]));
@@ -1219,7 +1219,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ShowCenterMiddleDiv {
             get {
                 return ((bool)(this["ShowCenterMiddleDiv"]));
@@ -1259,6 +1259,18 @@ namespace Tobasa.Properties {
         public global::System.Collections.Specialized.StringCollection UIPostList {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["UIPostList"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Classic")]
+        public string Theme {
+            get {
+                return ((string)(this["Theme"]));
+            }
+            set {
+                this["Theme"] = value;
             }
         }
     }

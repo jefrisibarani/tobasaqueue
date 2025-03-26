@@ -20,7 +20,7 @@
 #endregion
 
 using MySqlConnector;
-
+using Npgsql;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -118,6 +118,14 @@ namespace Tobasa
                 builder.Add("Password", clearPwd);
                 return builder.ToString();
             }
+            else if (ProviderType == DatabaseProviderType.PGSQL)
+            {
+                NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder();
+                builder.ConnectionString = partialConnStr;
+                string clearPwd = Util.DecryptPassword(encryptedPwd, salt);
+                builder.Add("Password", clearPwd);
+                return builder.ToString();
+            }
             else
                 return "";
         }
@@ -134,6 +142,8 @@ namespace Tobasa
                         _conn = new MySqlConnection(connString);
                     else if (_providerType == DatabaseProviderType.MSSQL)
                         _conn = new OleDbConnection(connString);
+                    else if (_providerType == DatabaseProviderType.PGSQL)
+                        _conn = new NpgsqlConnection(connString);
                     else
                     {
                         throw new AppException("Connect() Unsupported database provider");
@@ -230,6 +240,17 @@ namespace Tobasa
                         DEFAULT_MSSQL_CONNSTRING_PASSWORD);
 
                     _conn = new OleDbConnection(conString);
+                    _conn.Open();
+                    _connected = true;
+                }
+                else if (_providerType == DatabaseProviderType.PGSQL)
+                {
+                    conString = GetConnectionString(
+                        DEFAULT_PGSQL_CONNSTRING,
+                        DEFAULT_SECURITY_SALT,
+                        DEFAULT_PGSQL_CONNSTRING_PASSWORD);
+
+                    _conn = new NpgsqlConnection(conString);
                     _conn.Open();
                     _connected = true;
                 }
@@ -331,6 +352,8 @@ namespace Tobasa
                         adapter = new MySqlDataAdapter(sql, (MySqlConnection)_conn);
                     else if (ProviderType == DatabaseProviderType.MSSQL)
                         adapter = new OleDbDataAdapter(sql, (OleDbConnection)_conn);
+                    else if (ProviderType == DatabaseProviderType.PGSQL)
+                        adapter = new NpgsqlDataAdapter(sql, (NpgsqlConnection)_conn);
                     else
                     {
                         throw new AppException("CreateDataAdapter(): Unsupported database provider");
@@ -371,6 +394,12 @@ namespace Tobasa
                         dataTable = new DataTable();
                         adapter.Fill(dataTable);
                     }
+                    else if (ProviderType == DatabaseProviderType.PGSQL)
+                    {
+                        NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(sql, (NpgsqlConnection)_conn);
+                        dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+                    }
                     else
                     {
                         throw new AppException("CreateDataTable(): Unsupported database provider");
@@ -388,9 +417,20 @@ namespace Tobasa
 
         public DbParameter AddParameter(DbCommand command, string paramName, object value, DbType dataType)
         {
+            // Adjust parameter prefix for MySQL if necessary
+            //if (command is MySql.Data.MySqlClient.MySqlCommand)
+            if (ProviderType == DatabaseProviderType.MYSQL)
+            {
+                paramName = $"?{paramName}";  // MySQL uses `?name`
+            }
+            else
+            {
+                paramName = $"@{paramName}";  // PostgreSQL, MSSQL, SQLite use `@name`
+            }
+
             DbParameter param = command.CreateParameter();
             param.ParameterName = paramName;
-            param.Value = value;
+            param.Value = value ?? DBNull.Value; // Ensure null safety
             param.DbType = dataType;
 
             command.Parameters.Add(param);
@@ -457,6 +497,10 @@ namespace Tobasa
             {
                 sql = "SELECT CAST(getdate() AS date)";
             }
+            else if (ProviderType == DatabaseProviderType.PGSQL)
+            {
+                sql = "SELECT CURRENT_DATE";
+            }
             else
             {
                 throw new AppException("GetDate(): Unsupported database provider");
@@ -492,6 +536,10 @@ namespace Tobasa
             {
                 sql = "SELECT getdate()";
             }
+            else if (ProviderType == DatabaseProviderType.MSSQL)
+            {
+                sql = "SELECT CURRENT_TIMESTAMP";
+            }
             else
             {
                 throw new AppException("GetDate(): Unsupported database provider");
@@ -524,6 +572,10 @@ namespace Tobasa
             else if (ProviderType == DatabaseProviderType.MSSQL)
             {
                 return "getdate()";
+            }
+            else if (ProviderType == DatabaseProviderType.MSSQL)
+            {
+                return "CURRENT_TIMESTAMP";
             }
             else
             {

@@ -101,6 +101,8 @@ namespace Tobasa
         public bool isFullScreen;
         bool startUpCompleted;
 
+        private DisplayTheme colorProfile = null;
+
         // Our DirectShow engine
         private DSEngine dsEngine;
 
@@ -780,7 +782,10 @@ namespace Tobasa
 
             startUpCompleted = true;
 
-            UpdateColor();
+            if (Properties.Settings.Default.Theme != "Classic")
+            {
+                ApplyTheme(Properties.Settings.Default.Theme);
+            }
         }
 
         #endregion
@@ -1105,20 +1110,20 @@ namespace Tobasa
             }
 
             // animate label
-            if (lblNo.ForeColor == Color.Gold)
+            if (lblNo.ForeColor == colorProfile.basePostTextColor)
             {
-                lblNo.ForeColor = Properties.Settings.Default.NumberAnimationColor;
+                lblNo.ForeColor  = Properties.Settings.Default.NumberAnimationColor;
                 lblCtr.ForeColor = Properties.Settings.Default.NumberAnimationColor;
             }
             else
             {
-                lblNo.ForeColor = Color.Gold;
-                lblCtr.ForeColor = Color.Gold;
+                lblNo.ForeColor  = colorProfile.basePostTextColor;
+                lblCtr.ForeColor = colorProfile.basePostTextColor;
             }
 
             /// stops the timer after specified limit(seconds) in settings
             /// hardcoded max limit is 60 seconds
-            int maxlimit = 60;
+            int maxlimit = 120;
             int limit = Properties.Settings.Default.QueueAnimationTimeInSecond;
             if (limit > 0 && limit < maxlimit)
             {
@@ -1126,6 +1131,9 @@ namespace Tobasa
                 {
                     tmr.Stop();
                     sw.Reset();
+                    // go back to initial color
+                    lblNo.ForeColor  = colorProfile.basePostTextColor;
+                    lblCtr.ForeColor = colorProfile.basePostTextColor;
                 }
             }
 
@@ -1714,48 +1722,90 @@ namespace Tobasa
 
             }
         }
-        
-        #endregion
-    
-        public void UpdateColor()
-        {
-            var baseDarkBackColor100 = System.Drawing.ColorTranslator.FromHtml("#005185");
-            var baseDarkBackColor90  = System.Drawing.ColorTranslator.FromHtml("#0c5d93");
-            var baseDarkBackColor80  = System.Drawing.ColorTranslator.FromHtml("#196a9e");
-            var baseDarkBackColor70  = System.Drawing.ColorTranslator.FromHtml("#2576ab");
-            var baseBottomColor      = System.Drawing.ColorTranslator.FromHtml("#b0eeac");
 
-            var baseBackgroundColor     = baseDarkBackColor100;
-            var baseTextDarkColor       = baseDarkBackColor100;
-            var basetTextLightColor     = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-            var baseTextBrandLogoColor  = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-            var baseInfoTextBackColor   = baseDarkBackColor90;
-            var basePostTextColor       = System.Drawing.ColorTranslator.FromHtml("#555555");
+        #endregion
+
+
+        public String ApplyTheme(String themeName)
+        {
+
+            if (themeName == "btnThemeClassic" || themeName == "Classic")
+            {
+                //DisplayTheme colorProfile = new ThemeClassic();
+                //mDisplay.UpdateColor(colorProfile);
+                return "Classic";
+            }
+
+            if (themeName == "btnThemeBlue" || themeName == "Blue")
+            {
+                DisplayTheme colorProfile = new DisplayTheme();
+                UpdateColor(colorProfile);
+                return "Blue";
+            }
+
+            if (themeName == "btnThemeGreen" || themeName == "Green")
+            {
+                DisplayTheme colorProfile = new ThemeGreen();
+                UpdateColor(colorProfile);
+                return "Green";
+            }
+
+            if (themeName == "btnThemeDark" || themeName == "Dark")
+            {
+                DisplayTheme colorProfile = new ThemeDark();
+                UpdateColor(colorProfile);
+                return "Dark";
+            }
+
+            if (themeName == "btnThemeRed" || themeName == "Red")
+            {
+                DisplayTheme colorProfile = new ThemeRed();
+                UpdateColor(colorProfile);
+                return "Red";
+            }
+
+            if (themeName == "btnThemeOrange" || themeName == "Orange")
+            {
+                DisplayTheme colorProfile = new ThemeOrange();
+                UpdateColor(colorProfile);
+                return "Orange";
+            }
+
+            return "Classic";
+        }
+
+        public void UpdateColor(DisplayTheme profile)
+        {
+            colorProfile = profile;
+
+            var baseBackgroundColor         = profile.baseBackgroundColor;
+            var baseTextColor               = profile.baseTextColor;
+            var baseTextBrandLogoColor      = profile.baseTextBrandLogoColor;
 
             #region CENTER TOP DIV COLORS
             var centerTopPanelBackColor     = baseBackgroundColor;
-            var textInfoDatetimeColor       = basetTextLightColor;
-            var textInfoStrip0Color         = basetTextLightColor;
-            var textInfoStrip1Color         = basetTextLightColor; 
-            var textInfoDatetimeBackColor   = baseInfoTextBackColor;
-            var textInfoStrip0BackColor     = baseDarkBackColor80;
-            var textInfoStrip1BackColor     = baseDarkBackColor70;
+            var textInfoDatetimeColor       = profile.basetTextLightColor;
+            var textInfoStrip0Color         = profile.textInfoStrip0Color;
+            var textInfoStrip1Color         = profile.textInfoStrip1Color;
+            var textInfoDatetimeBackColor   = profile.baseInfoTextBackColor;
+            var textInfoStrip0BackColor     = profile.textInfoStrip0BackColor;
+            var textInfoStrip1BackColor     = profile.textInfoStrip1BackColor;
 
-            var centerMainInfoBoxBackColor          = System.Drawing.ColorTranslator.FromHtml("#fff4e1");
-            var centerMainInfoBoxCaptionBackColor   = System.Drawing.ColorTranslator.FromHtml("#ffd68f");
-            var textJobFinishedBackColor            = centerMainInfoBoxBackColor;
-            var textJobFinishedColor                = baseTextDarkColor;
-            var labelFinisBackOddRowColor           = textJobFinishedBackColor;
-            var labelFinishEvenRowBackColor         = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-            var displayOwnPostBackColor             = centerMainInfoBoxBackColor;
-            var displayOwnPostColor                 = baseTextDarkColor;
+
+            var centerMainInfoBoxCaptionBackColor   = profile.centerMainInfoBoxCaptionBackColor;
+            var textJobFinishedColor                = profile.labelJobFinishedColor;
+            var labelJobFinishedColor               = profile.labelJobFinishedColor;
+            var labelFinisBackOddRowColor           = profile.centerMainInfoBoxBackColor; ;
+            var labelFinishEvenRowBackColor         = profile.labelFinishEvenRowBackColor;
+            var displayOwnPostBackColor             = profile.centerMainInfoBoxBackColor; ;
+            var displayOwnPostColor                 = profile.centerMainInfoBoxColor;
             #endregion
 
             #region LEFT AND RIGHT TOP LABEL COLORS
             var leftRightDivBackColor           = baseBackgroundColor;
-            var leftRigthTopQueueNoColor        = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var leftRigthTopQueueNoColor        = profile.leftRigthTopQueueNoColor;
             var leftRigthTopQueueNoBackColor    = baseBackgroundColor;
-            var leftRigthTopCounterColor        = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var leftRigthTopCounterColor        = profile.leftRigthTopCounterColor;
             var leftRightTopCounterBackColor    = baseBackgroundColor;
             #endregion
 
@@ -1763,27 +1813,27 @@ namespace Tobasa
             // COLOR FOR POST INFORMATION
             // --------------------------------------------------------------
             // Post Panel
-            var postPanelBackColor = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var postPanelBackColor              = profile.postPanelBackColor;
             // Post Name Caption
-            var postCaptionColor = baseTextDarkColor;
-            var postCaptionBackColor = System.Drawing.ColorTranslator.FromHtml("#9ccff0");
+            var postCaptionColor                = profile.postCaptionColor;
+            var postCaptionBackColor            = profile.postCaptionBackColor;
             // Queue Number
-            var postQueueNoColor = basePostTextColor;
-            var postQueueNoBackColor = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+            var postQueueNoColor                = profile.basePostTextColor;
+            var postQueueNoBackColor            = profile.postQueueNoBackColor;
             // Counter/loket Number
-            var postCounterNoColor = basePostTextColor;
-            var postCounterNoBackColor = System.Drawing.ColorTranslator.FromHtml("#d9f0ff");
+            var postCounterNoColor              = profile.basePostTextColor;
+            var postCounterNoBackColor          = profile.postCounterNoBackColor;
             // Total Queue Label
-            var postTotalQueueLabelColor = basePostTextColor;
-            var postTotalQueueLabelBackColor = System.Drawing.ColorTranslator.FromHtml("#f3ffec"); //e4ffd3 e4f4ff
+            var postTotalQueueLabelColor        = profile.basePostTextColor;
+            var postTotalQueueLabelBackColor    = profile.postTotalQueueLabelBackColor;
             // Total Queue Value
-            var postTotalQueueValueColor = basePostTextColor;
-            var postTotalQueueValueBackColor = System.Drawing.ColorTranslator.FromHtml("#f3ffec");
+            var postTotalQueueValueColor        = profile.basePostTextColor;
+            var postTotalQueueValueBackColor    = profile.postTotalQueueValueBackColor;
             #endregion
 
             #region BOTOM DIV RUNNING TEXT COLOR 
-            var bottomDivBackColor = baseBottomColor;
-            var bottomDivForeColor = baseTextDarkColor;
+            var bottomDivBackColor              = profile.bottomDivBackColor;
+            var bottomDivForeColor              = profile.bottomDivForeColor;
             #endregion
 
             #region MAIN BRANDING/LOGO BOX
@@ -1819,18 +1869,18 @@ namespace Tobasa
             #endregion
 
             #region DIV WRAPPER FOR FINISHED JOB AND MAIN POST 
-            this.centerMiddleDiv.BackColor = centerMainInfoBoxBackColor;
+            this.centerMiddleDiv.BackColor = profile.centerMainInfoBoxBackColor; 
             this.centerMiddleDiv.BackgroundImage = null;
             #endregion
 
             #region FINISHED QUEUE INFO BOX
             this.tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(2);
 
-            this.pnlAntrianFinished.BackColor = textJobFinishedBackColor;
-            this.tableLayoutPanel1.BackColor = textJobFinishedBackColor;
+            this.pnlAntrianFinished.BackColor = profile.centerMainInfoBoxBackColor; ;
+            this.tableLayoutPanel1.BackColor = profile.centerMainInfoBoxBackColor; ;
             this.lblQueueNumberFinished.ForeColor = textJobFinishedColor;
             this.lblQueueNumberFinished.BackColor = centerMainInfoBoxCaptionBackColor;
-            this.tableLayoutPanel2.BackColor = textJobFinishedBackColor;
+            this.tableLayoutPanel2.BackColor = profile.centerMainInfoBoxBackColor; ;
             this.tableLayoutPanel2.BackgroundImage = null;
             this.lblFin0.BackColor = labelFinishEvenRowBackColor;
             this.lblFin1.BackColor = labelFinisBackOddRowColor;
@@ -1844,25 +1894,25 @@ namespace Tobasa
             this.lblFin9.BackColor = labelFinishEvenRowBackColor;
 
             this.lblFin0.Image= null;
-            this.lblFin0.ForeColor = baseTextDarkColor;
+            this.lblFin0.ForeColor = labelJobFinishedColor;
             this.lblFin1.Image = null;
-            this.lblFin1.ForeColor = baseTextDarkColor;
+            this.lblFin1.ForeColor = labelJobFinishedColor;
             this.lblFin2.Image = null;
-            this.lblFin2.ForeColor = baseTextDarkColor;
+            this.lblFin2.ForeColor = labelJobFinishedColor;
             this.lblFin3.Image = null;
-            this.lblFin3.ForeColor = baseTextDarkColor;
+            this.lblFin3.ForeColor = labelJobFinishedColor;
             this.lblFin4.Image = null;
-            this.lblFin4.ForeColor = baseTextDarkColor;
+            this.lblFin4.ForeColor = labelJobFinishedColor;
             this.lblFin5.Image = null;
-            this.lblFin5.ForeColor = baseTextDarkColor;
+            this.lblFin5.ForeColor = labelJobFinishedColor;
             this.lblFin6.Image = null;
-            this.lblFin6.ForeColor = baseTextDarkColor;
+            this.lblFin6.ForeColor = labelJobFinishedColor;
             this.lblFin7.Image = null;
-            this.lblFin7.ForeColor = baseTextDarkColor;
+            this.lblFin7.ForeColor = labelJobFinishedColor;
             this.lblFin8.Image = null;
-            this.lblFin8.ForeColor = baseTextDarkColor;
+            this.lblFin8.ForeColor = labelJobFinishedColor;
             this.lblFin9.Image = null;
-            this.lblFin9.ForeColor = baseTextDarkColor;
+            this.lblFin9.ForeColor = labelJobFinishedColor;
             #endregion
 
             #region DISPLAY CENTER MAIN POST INFO

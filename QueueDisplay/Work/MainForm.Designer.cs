@@ -127,6 +127,13 @@ namespace Tobasa
             this.tbPostName = new System.Windows.Forms.TextBox();
             this.label60 = new System.Windows.Forms.Label();
             this.tabPageRunText = new System.Windows.Forms.TabPage();
+            this.btnThemeOrange = new System.Windows.Forms.Button();
+            this.btnThemeBlue = new System.Windows.Forms.Button();
+            this.btnThemeRed = new System.Windows.Forms.Button();
+            this.btnThemeDark = new System.Windows.Forms.Button();
+            this.btnThemeGreen = new System.Windows.Forms.Button();
+            this.btnThemeClassic = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
             this.txtRuntext1 = new System.Windows.Forms.TextBox();
             this.label53 = new System.Windows.Forms.Label();
             this.txtRuntext0 = new System.Windows.Forms.TextBox();
@@ -935,7 +942,7 @@ namespace Tobasa
             // 
             // tbPostId
             // 
-            this.tbPostId.Location = new System.Drawing.Point(432, 19);
+            this.tbPostId.Location = new System.Drawing.Point(361, 18);
             this.tbPostId.Name = "tbPostId";
             this.tbPostId.ReadOnly = true;
             this.tbPostId.Size = new System.Drawing.Size(107, 20);
@@ -970,6 +977,13 @@ namespace Tobasa
             // 
             // tabPageRunText
             // 
+            this.tabPageRunText.Controls.Add(this.btnThemeOrange);
+            this.tabPageRunText.Controls.Add(this.btnThemeBlue);
+            this.tabPageRunText.Controls.Add(this.btnThemeRed);
+            this.tabPageRunText.Controls.Add(this.btnThemeDark);
+            this.tabPageRunText.Controls.Add(this.btnThemeGreen);
+            this.tabPageRunText.Controls.Add(this.btnThemeClassic);
+            this.tabPageRunText.Controls.Add(this.label11);
             this.tabPageRunText.Controls.Add(this.txtRuntext1);
             this.tabPageRunText.Controls.Add(this.label53);
             this.tabPageRunText.Controls.Add(this.txtRuntext0);
@@ -979,15 +993,90 @@ namespace Tobasa
             this.tabPageRunText.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageRunText.Size = new System.Drawing.Size(617, 198);
             this.tabPageRunText.TabIndex = 17;
-            this.tabPageRunText.Text = "Running Text";
+            this.tabPageRunText.Text = "Running Text & Theme";
             this.tabPageRunText.UseVisualStyleBackColor = true;
+            // 
+            // btnThemeOrange
+            // 
+            this.btnThemeOrange.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeOrange.Location = new System.Drawing.Point(484, 92);
+            this.btnThemeOrange.Name = "btnThemeOrange";
+            this.btnThemeOrange.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeOrange.TabIndex = 46;
+            this.btnThemeOrange.Text = "Orange";
+            this.btnThemeOrange.UseVisualStyleBackColor = true;
+            this.btnThemeOrange.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeBlue
+            // 
+            this.btnThemeBlue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeBlue.Location = new System.Drawing.Point(173, 92);
+            this.btnThemeBlue.Name = "btnThemeBlue";
+            this.btnThemeBlue.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeBlue.TabIndex = 45;
+            this.btnThemeBlue.Text = "Blue";
+            this.btnThemeBlue.UseVisualStyleBackColor = true;
+            this.btnThemeBlue.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeRed
+            // 
+            this.btnThemeRed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeRed.Location = new System.Drawing.Point(406, 92);
+            this.btnThemeRed.Name = "btnThemeRed";
+            this.btnThemeRed.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeRed.TabIndex = 44;
+            this.btnThemeRed.Text = "Red";
+            this.btnThemeRed.UseVisualStyleBackColor = true;
+            this.btnThemeRed.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeDark
+            // 
+            this.btnThemeDark.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeDark.Location = new System.Drawing.Point(329, 92);
+            this.btnThemeDark.Name = "btnThemeDark";
+            this.btnThemeDark.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeDark.TabIndex = 43;
+            this.btnThemeDark.Text = "Dark";
+            this.btnThemeDark.UseVisualStyleBackColor = true;
+            this.btnThemeDark.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeGreen
+            // 
+            this.btnThemeGreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeGreen.Location = new System.Drawing.Point(251, 92);
+            this.btnThemeGreen.Name = "btnThemeGreen";
+            this.btnThemeGreen.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeGreen.TabIndex = 42;
+            this.btnThemeGreen.Text = "Green";
+            this.btnThemeGreen.UseVisualStyleBackColor = true;
+            this.btnThemeGreen.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeClassic
+            // 
+            this.btnThemeClassic.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeClassic.Location = new System.Drawing.Point(96, 92);
+            this.btnThemeClassic.Name = "btnThemeClassic";
+            this.btnThemeClassic.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeClassic.TabIndex = 41;
+            this.btnThemeClassic.Text = "Classic";
+            this.btnThemeClassic.UseVisualStyleBackColor = true;
+            this.btnThemeClassic.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(10, 96);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(40, 13);
+            this.label11.TabIndex = 40;
+            this.label11.Text = "Theme";
             // 
             // txtRuntext1
             // 
             this.txtRuntext1.Location = new System.Drawing.Point(96, 43);
             this.txtRuntext1.Multiline = true;
             this.txtRuntext1.Name = "txtRuntext1";
-            this.txtRuntext1.Size = new System.Drawing.Size(356, 30);
+            this.txtRuntext1.Size = new System.Drawing.Size(507, 30);
             this.txtRuntext1.TabIndex = 39;
             this.txtRuntext1.Text = "Terimakasih";
             // 
@@ -1005,7 +1094,7 @@ namespace Tobasa
             this.txtRuntext0.Location = new System.Drawing.Point(96, 9);
             this.txtRuntext0.Multiline = true;
             this.txtRuntext0.Name = "txtRuntext0";
-            this.txtRuntext0.Size = new System.Drawing.Size(356, 28);
+            this.txtRuntext0.Size = new System.Drawing.Size(507, 28);
             this.txtRuntext0.TabIndex = 37;
             this.txtRuntext0.Text = "Selamat Datang";
             // 
@@ -1444,6 +1533,13 @@ namespace Tobasa
 		private System.Windows.Forms.CheckBox chkShowRightPosts;
 		private System.Windows.Forms.CheckBox chkShowLeftPosts;
 		private System.Windows.Forms.CheckBox chkShowCenterMiddleDiv;
-	}
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button btnThemeGreen;
+        private System.Windows.Forms.Button btnThemeClassic;
+        private System.Windows.Forms.Button btnThemeDark;
+        private System.Windows.Forms.Button btnThemeRed;
+        private System.Windows.Forms.Button btnThemeBlue;
+        private System.Windows.Forms.Button btnThemeOrange;
+    }
 }
 

@@ -186,10 +186,10 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ShowInfoTextTop0" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ShowInfoTextTop1" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AudioUseLoket" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -309,7 +309,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ShowCenterMiddleDiv" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SwapCounterNoumberLabelPosition" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -328,6 +328,9 @@
   &lt;string&gt;POST8&lt;/string&gt;
   &lt;string&gt;POST9&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="Theme" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Classic</Value>
     </Setting>
   </Settings>
 </SettingsFile>

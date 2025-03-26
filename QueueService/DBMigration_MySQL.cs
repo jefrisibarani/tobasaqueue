@@ -185,8 +185,8 @@ namespace Tobasa
         public static string cmd_insert_all_basic_data =
             @"
             INSERT INTO queue_logins(username,password,expired,active)   VALUES
-               ('tobasaqueue', 'A1410C6E07BDA0D774A76E644024801EB00175B27B85D0289469978603EBB9F4','2025-01-01 00:00:00.000',1),
-               ('admin',       '51C5FB67361F529DD9DDF96959FC5FA51960E0F7516560290BD7BFCF9421C6F6','2025-01-01 00:00:00.000',1);
+               ('tobasaqueue', 'A1410C6E07BDA0D774A76E644024801EB00175B27B85D0289469978603EBB9F4','2035-01-01 00:00:00.000',1),
+               ('admin',       '51C5FB67361F529DD9DDF96959FC5FA51960E0F7516560290BD7BFCF9421C6F6','2035-01-01 00:00:00.000',1);
 
             INSERT INTO queue_ipaccesslists VALUES 
                ('10.62.22.1',  1, 'Komputer devepoment'),
@@ -207,7 +207,7 @@ namespace Tobasa
                ( 'POST6', 'Pos layanan 7',  'DR'),
                ( 'POST7', 'Pos layanan 8',  'P'),
                ( 'POST8', 'Pos layanan 9',  'Z'),
-               ( 'POST9', 'Pos layanan 10', 'HO');   
+               ( 'POST9', 'Pos layanan 10', 'HO');
 	
             INSERT INTO queue_stations (name,post,keterangan,canlogin) VALUES
                ('ADMIN#1',  'POST0',NULL, 1),
@@ -353,10 +353,18 @@ namespace Tobasa
         public static string GetObjectSummaryQuery(string databaseName)
         {
             string sql = $@"
-                SELECT
-                 (SELECT COUNT(table_name) FROM information_schema.tables WHERE TABLE_TYPE = 'BASE TABLE' AND table_schema = '{databaseName}' AND table_name LIKE 'queue_%') AS total_table
-                , (SELECT COUNT(table_name) FROM information_schema.tables WHERE TABLE_TYPE = 'VIEW' AND table_schema = '{databaseName}' AND table_name LIKE 'v_queue_%') AS total_view
-                , (SELECT COUNT(TRIGGER_NAME) FROM information_schema.TRIGGERS WHERE EVENT_OBJECT_TABLE = 'queue_sequences' AND TRIGGER_SCHEMA = '{databaseName}'  AND TRIGGER_NAME = 'tr_queue_update_jobs' ) AS total_trigger
+            SELECT
+              ( SELECT COUNT(*) FROM information_schema.tables 
+                WHERE TABLE_TYPE = 'BASE TABLE'
+                AND table_schema = '{databaseName}' AND table_name LIKE 'queue_%') AS total_table
+                
+            , ( SELECT COUNT(*) FROM information_schema.tables 
+                WHERE TABLE_TYPE = 'VIEW' 
+                AND table_schema = '{databaseName}' AND table_name LIKE 'v_queue_%') AS total_view
+                
+            , ( SELECT COUNT(*) FROM information_schema.TRIGGERS 
+                WHERE EVENT_OBJECT_TABLE = 'queue_sequences' AND TRIGGER_SCHEMA = '{databaseName}' 
+                AND TRIGGER_NAME = 'tr_queue_update_jobs' ) AS total_trigger;
             ";
 
             return sql;

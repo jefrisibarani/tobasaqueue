@@ -236,15 +236,10 @@ namespace Tobasa
             }
             else if (Database.Me.ProviderType == DatabaseProviderType.PGSQL)
             {
-                // TODO_JEFRI: Work on PostgreSQL Database
-                /*
                 conString = Database.Me.GetConnectionString(
                                 setting.ConnectionString_PGSQL,
                                 setting.SecuritySalt,
                                 setting.ConnectionStringPassword);
-                */
-                Log("Tobasa Queue Server could not be started due to unsupported database provider");
-                return;
             }
             else
             {

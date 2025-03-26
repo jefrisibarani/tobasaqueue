@@ -40,7 +40,7 @@ namespace Tobasa
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
                     string strIp    = addr.ToString();
-                    string sql      = $"SELECT allowed FROM {Tbl.ipaccesslists} WHERE ipaddress = ?";
+                    string sql      = $"SELECT allowed FROM {Tbl.ipaccesslists} WHERE ipaddress = @ipaddress";
                     cmd.CommandText = sql;
                     Database.Me.AddParameter(cmd, "ipaddress", strIp, DbType.String);
 
@@ -81,7 +81,7 @@ namespace Tobasa
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    string sql = $"SELECT canlogin FROM {Tbl.stations} WHERE name = ? AND post = ?";
+                    string sql = $"SELECT canlogin FROM {Tbl.stations} WHERE name = @name AND post = @post ";
                     cmd.CommandText = sql;
                     Database.Me.AddParameter(cmd, "name", staName, DbType.String);
                     Database.Me.AddParameter(cmd, "post", staPost, DbType.String);
@@ -123,7 +123,7 @@ namespace Tobasa
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    string sql = $"SELECT username, password, expired, active FROM {Tbl.logins} WHERE username = ?";
+                    string sql = $"SELECT username, password, expired, active FROM {Tbl.logins} WHERE username = @username";
                     cmd.CommandText = sql;
                     Database.Me.AddParameter(cmd, "username", userName, DbType.String);
 
@@ -383,9 +383,9 @@ namespace Tobasa
                 {
                     string sql = "";
                     if (insertData)
-                        sql = $"INSERT INTO {Tbl.stations} (name, post, canlogin, keterangan) VALUES (?,?,?,?)";
+                        sql = $"INSERT INTO {Tbl.stations} (name, post, canlogin, keterangan) VALUES (@name, @post, @canlogin, @keterangan)";
                     else
-                        sql = $"UPDATE {Tbl.stations} SET name = ?, post = ?, canlogin = ?, keterangan = ? WHERE name = ? AND post=? ";
+                        sql = $"UPDATE {Tbl.stations} SET name = @name, post = @post, canlogin = @canlogin, keterangan = @keterangan WHERE name = @name AND post=@post ";
 
                     Database.Me.OpenConnection();
                     using (DbCommand cmd = Database.Me.Connection.CreateCommand())
@@ -782,7 +782,7 @@ namespace Tobasa
 
             try
             {
-                string sql = $"DELETE FROM {Tbl.stations} WHERE name = ? AND post = ?";
+                string sql = $"DELETE FROM {Tbl.stations} WHERE name = @name AND post = @post";
 
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
@@ -844,7 +844,7 @@ namespace Tobasa
 
             try
             {
-                string sql = $"DELETE FROM {Tbl.logins} WHERE username = ?";
+                string sql = $"DELETE FROM {Tbl.logins} WHERE username = @username";
 
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
@@ -1095,13 +1095,13 @@ namespace Tobasa
                 string sql;
 
                 if (status == "PROCESS") {
-                    sql = $@"UPDATE {Tbl.jobs} SET status = 'PROCESS', calltime = {GetSqlDateTimeString()} WHERE id = ?";
+                    sql = $@"UPDATE {Tbl.jobs} SET status = 'PROCESS', calltime = {GetSqlDateTimeString()} WHERE id = @id";
                 }
                 else if (status == "FINISHED") {
-                    sql = $@"UPDATE {Tbl.jobs} SET status = 'FINISHED', call2time = {GetSqlDateTimeString()} WHERE id = ?";
+                    sql = $@"UPDATE {Tbl.jobs} SET status = 'FINISHED', call2time = {GetSqlDateTimeString()} WHERE id = @id";
                 }
                 else if (status == "CLOSED") {
-                    sql = $@"UPDATE {Tbl.jobs} SET status = 'CLOSED', endtime = {GetSqlDateTimeString()} WHERE id = ?";
+                    sql = $@"UPDATE {Tbl.jobs} SET status = 'CLOSED', endtime = {GetSqlDateTimeString()} WHERE id = @id";
                 }
                 else
                     throw new Exception("Invalid job status");
@@ -1115,7 +1115,7 @@ namespace Tobasa
 
                     if (Int32.TryParse(jobid, out jobid_))
                     {
-                        Database.Me.AddParameter(cmd, "id", jobid, DbType.Int32);
+                        Database.Me.AddParameter(cmd, "id", jobid_, DbType.Int32);
 
                         int recordAffected = cmd.ExecuteNonQuery();
                         return recordAffected > 0;
@@ -1164,7 +1164,7 @@ namespace Tobasa
                 string sql;
                 sql = $@"SELECT id, number, status, station, post, source, date, starttime, calltime, call2time, endtime FROM {Tbl.jobs}
                             WHERE status = '{status}'  AND date = {GetSqlDateString()}
-                            AND post = ? ORDER BY starttime ASC";
+                            AND post = @post ORDER BY starttime ASC";
 
                 Database.Me.OpenConnection();
                 DbDataAdapter sda = Database.Me.CreateDataAdapter(sql);
@@ -1203,7 +1203,7 @@ namespace Tobasa
                 string postFilter = "";
 
                 if (!string.IsNullOrWhiteSpace(post))
-                    postFilter = "AND post = ?";
+                    postFilter = "AND post = @post";
 
                 if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
                 {
@@ -1276,7 +1276,7 @@ namespace Tobasa
                 if (number == (Properties.Settings.Default.MaxQueueNumber - 1))
                 {
                     // max_number-1 reached, delete all processed number for this post
-                    sqlDelete = $"DELETE FROM {Tbl.sequences} WHERE status = 'PROCESS' AND number < ? AND post = ?";
+                    sqlDelete = $"DELETE FROM {Tbl.sequences} WHERE status = 'PROCESS' AND number < @number AND post = @post";
 
                     using (DbCommand cmdDelete = Database.Me.Connection.CreateCommand())
                     {
@@ -1292,7 +1292,7 @@ namespace Tobasa
                 else
                 {
                     // delete only processed numbers from specific station
-                    sqlDelete = $"DELETE FROM {Tbl.sequences} WHERE status = 'PROCESS' AND number < ? AND post = ? AND station = ?";
+                    sqlDelete = $"DELETE FROM {Tbl.sequences} WHERE status = 'PROCESS' AND number < @number AND post = @post AND station = @station";
                     using (DbCommand cmdDelete = Database.Me.Connection.CreateCommand())
                     {
                         cmdDelete.CommandText = sqlDelete;
@@ -1347,7 +1347,7 @@ namespace Tobasa
                 using (DbCommand cmdSelect = Database.Me.Connection.CreateCommand())
                 {
                     string sql = $@"SELECT id, number, status, station, post, source, starttime, 
-                                endtime, numberleft, numbermax FROM {Tbl.v_sequences} WHERE post = ?";
+                                endtime, numberleft, numbermax FROM {Tbl.v_sequences} WHERE post = @post";
 
                     cmdSelect.CommandText = sql;
                     Database.Me.AddParameter(cmdSelect, "post", post, DbType.String);
@@ -1380,8 +1380,8 @@ namespace Tobasa
                 using (DbCommand cmdInsert = Database.Me.Connection.CreateCommand())
                 {
                     string sqlUpdate;
-                    sqlUpdate = $@"UPDATE {Tbl.sequences} SET status = 'PROCESS', station = ?, 
-                                        calltime = {GetSqlDateTimeString()} WHERE id = ? AND number = ? AND post = ?";
+                    sqlUpdate = $@"UPDATE {Tbl.sequences} SET status = 'PROCESS', station = @station, 
+                                        calltime = {GetSqlDateTimeString()} WHERE id = @id AND number = @number AND post = @post";
 
                     cmdInsert.CommandText = sqlUpdate;
 
@@ -1488,11 +1488,11 @@ namespace Tobasa
 
                 string sqlFirst = $@"
                     SELECT id,number,status,station,post,source,starttime,endtime
-                        , ( SELECT COUNT(number) FROM {Tbl.sequences} WHERE status = 'WAITING' AND post = ? AND date = {GetSqlDateString()} ) AS numberleft
-                        , ( SELECT MAX(number)   FROM {Tbl.sequences} WHERE status = 'WAITING' AND post = ? AND date = {GetSqlDateString()} ) AS numbermax
+                        , ( SELECT COUNT(number) FROM {Tbl.sequences} WHERE status = 'WAITING' AND post = @par1 AND date = {GetSqlDateString()} ) AS numberleft
+                        , ( SELECT MAX(number)   FROM {Tbl.sequences} WHERE status = 'WAITING' AND post = @par2 AND date = {GetSqlDateString()} ) AS numbermax
                         FROM {Tbl.sequences}
-                        WHERE status = 'PROCESS' AND post = ? AND date = {GetSqlDateString()}
-                        AND id = (SELECT MAX(id) FROM {Tbl.sequences} WHERE status = 'PROCESS' AND post = ? AND date = {GetSqlDateString()} )
+                        WHERE status = 'PROCESS' AND post = @par3 AND date = {GetSqlDateString()}
+                        AND id = (SELECT MAX(id) FROM {Tbl.sequences} WHERE status = 'PROCESS' AND post = @par4 AND date = {GetSqlDateString()} )
                     ";
 
                 Database.Me.OpenConnection();
@@ -1557,7 +1557,7 @@ namespace Tobasa
                 using (DbCommand cmdSelect = Database.Me.Connection.CreateCommand())
                 {
                     string sqlSecond = $@"SELECT id, number, status, station, post, source, starttime, 
-                                            endtime, numberleft, numbermax FROM {Tbl.v_sequences} WHERE post = ?";
+                                            endtime, numberleft, numbermax FROM {Tbl.v_sequences} WHERE post = @post";
                         
                     cmdSelect.CommandText = sqlSecond;
                     Database.Me.AddParameter(cmdSelect, "post", post, DbType.String);
@@ -1659,8 +1659,8 @@ namespace Tobasa
                 int newNumberInt = 0;
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    string sql = $@"SELECT number+1 from {Tbl.sequences} WHERE post = ? AND date = {GetSqlDateString()} 
-                        AND id = (SELECT MAX(id) from {Tbl.sequences} WHERE post = ? AND date = {GetSqlDateString()} )";
+                    string sql = $@"SELECT number+1 from {Tbl.sequences} WHERE post = @post1 AND date = {GetSqlDateString()} 
+                        AND id = (SELECT MAX(id) from {Tbl.sequences} WHERE post = @post2 AND date = {GetSqlDateString()} )";
 
                     cmd.CommandText = sql;
                     Database.Me.AddParameter(cmd, "post1", post, DbType.String);
@@ -1687,11 +1687,11 @@ namespace Tobasa
                     if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
                     {
                         insertSQL = $@"INSERT INTO {Tbl.sequences} (number,post,source) 
-                                    OUTPUT INSERTED.number,INSERTED.starttime,INSERTED.id VALUES (?, ?, ?)";
+                                    OUTPUT INSERTED.number,INSERTED.starttime,INSERTED.id VALUES (@number, @post, @source)";
                     }
                     else
                     {
-                        insertSQL = $@"INSERT INTO {Tbl.sequences} (number,post,source) VALUES (?, ?, ?);
+                        insertSQL = $@"INSERT INTO {Tbl.sequences} (number,post,source) VALUES (@number, @post, @source);
                                     SELECT number, starttime, id FROM {Tbl.sequences} ORDER BY id DESC LIMIT 1;";
                     }
                     cmdInsert.CommandText = insertSQL;
@@ -1732,7 +1732,7 @@ namespace Tobasa
                 {
                     // Copy data to jobs table
                     // ----------------------------
-                    string insertJobSQL = $"INSERT INTO {Tbl.jobs} SELECT * FROM {Tbl.sequences} WHERE id = ?";
+                    string insertJobSQL = $"INSERT INTO {Tbl.jobs} SELECT * FROM {Tbl.sequences} WHERE id = @id";
                         
                     using (DbCommand cmdInsertJob = Database.Me.Connection.CreateCommand())
                     {
@@ -1804,7 +1804,7 @@ namespace Tobasa
 
             try
             {
-                string sql = $@"SELECT station_name, sticky, active, running_text FROM {Tbl.runningtexts} WHERE active=1 AND station_name=?";
+                string sql = $@"SELECT station_name, sticky, active, running_text FROM {Tbl.runningtexts} WHERE active=1 AND station_name = @station_name";
 
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
@@ -1890,7 +1890,7 @@ namespace Tobasa
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    string sql = $"SELECT numberprefix FROM {Tbl.posts} WHERE name = ?";
+                    string sql = $"SELECT numberprefix FROM {Tbl.posts} WHERE name = @name";
                     cmd.CommandText = sql;
                     Database.Me.AddParameter(cmd, "name", post, DbType.String);
 
@@ -1921,7 +1921,7 @@ namespace Tobasa
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
-                    string sql = $"SELECT name, keterangan, numberprefix, quota0, quota1 FROM {Tbl.posts} WHERE name = ?";
+                    string sql = $"SELECT name, keterangan, numberprefix, quota0, quota1 FROM {Tbl.posts} WHERE name = @name";
                     cmd.CommandText = sql;
                     Database.Me.AddParameter(cmd, "name", postName, DbType.String);
                     using (DbDataReader reader = cmd.ExecuteReader())
@@ -1969,6 +1969,8 @@ namespace Tobasa
                 return "CURDATE()";
             else if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
                 return "CAST(getdate() AS date)";
+            else if (Database.Me.ProviderType == DatabaseProviderType.PGSQL)
+                return "CURRENT_DATE";
             else
                 return "CAST(getdate() AS date)";
         }
@@ -1981,6 +1983,8 @@ namespace Tobasa
                return "CURDATE()";
             else if (Database.Me.ProviderType == DatabaseProviderType.MSSQL)
                 return "getdate()";
+            else if (Database.Me.ProviderType == DatabaseProviderType.PGSQL)
+                return "CURRENT_TIMESTAMP";
             else
                 return "getdate()";
         }

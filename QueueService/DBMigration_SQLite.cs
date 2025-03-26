@@ -352,10 +352,16 @@ namespace Tobasa
         public static string GetObjectSummaryQuery(string databaseName)
         {
             string sql = @"
-                SELECT 
-                  (SELECT count(name) FROM sqlite_master WHERE type='table' AND name LIKE 'queue_%') AS total_table
-                , (SELECT COUNT(name) FROM sqlite_master WHERE type='view' AND name LIKE 'v_queue_%') AS total_view
-                , (SELECT COUNT(name) FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'queue_sequences' AND name = 'tr_queue_update_jobs' ) AS total_trigger
+            SELECT 
+              ( SELECT count(name) FROM sqlite_master 
+                WHERE type='table' AND name LIKE 'queue_%') AS total_table
+
+            , ( SELECT COUNT(name) FROM sqlite_master 
+                WHERE type='view' AND name LIKE 'v_queue_%') AS total_view
+
+            , ( SELECT COUNT(name) FROM sqlite_master 
+                WHERE type = 'trigger' AND tbl_name = 'queue_sequences' 
+                AND name = 'tr_queue_update_jobs' ) AS total_trigger;
             ";
 
             return sql;
