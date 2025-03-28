@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2015-2024  Jefri Sibarani
+    Copyright (C) 2015-2025  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,6 +49,9 @@ namespace Tobasa
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.btnAbout = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -91,6 +94,9 @@ namespace Tobasa
             this.label13 = new System.Windows.Forms.Label();
             this.btnRefreshFin = new System.Windows.Forms.Button();
             this.gridJobsFin = new System.Windows.Forms.DataGridView();
+            this.tabSummary = new System.Windows.Forms.TabPage();
+            this.btnRefreshSummary = new System.Windows.Forms.Button();
+            this.gridQueueSummary = new System.Windows.Forms.DataGridView();
             this.tabOptions = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnSaveSettings = new System.Windows.Forms.Button();
@@ -123,6 +129,8 @@ namespace Tobasa
             ((System.ComponentModel.ISupportInitialize)(this.gridJobs)).BeginInit();
             this.tabFinished.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridJobsFin)).BeginInit();
+            this.tabSummary.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQueueSummary)).BeginInit();
             this.tabOptions.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.gbConnProps.SuspendLayout();
@@ -160,6 +168,7 @@ namespace Tobasa
             this.mainTab.Controls.Add(this.tabPageMain);
             this.mainTab.Controls.Add(this.tabProcessing);
             this.mainTab.Controls.Add(this.tabFinished);
+            this.mainTab.Controls.Add(this.tabSummary);
             this.mainTab.Controls.Add(this.tabOptions);
             this.mainTab.Location = new System.Drawing.Point(5, 5);
             this.mainTab.Name = "mainTab";
@@ -776,6 +785,65 @@ namespace Tobasa
             this.gridJobsFin.TabIndex = 4;
             this.gridJobsFin.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnGridJobsFinCellDoubleClick);
             // 
+            // tabSummary
+            // 
+            this.tabSummary.Controls.Add(this.btnRefreshSummary);
+            this.tabSummary.Controls.Add(this.gridQueueSummary);
+            this.tabSummary.Location = new System.Drawing.Point(4, 22);
+            this.tabSummary.Name = "tabSummary";
+            this.tabSummary.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSummary.Size = new System.Drawing.Size(671, 423);
+            this.tabSummary.TabIndex = 4;
+            this.tabSummary.Text = "Queue Summary";
+            this.tabSummary.UseVisualStyleBackColor = true;
+            // 
+            // btnRefreshSummary
+            // 
+            this.btnRefreshSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshSummary.Location = new System.Drawing.Point(575, 355);
+            this.btnRefreshSummary.Name = "btnRefreshSummary";
+            this.btnRefreshSummary.Size = new System.Drawing.Size(75, 23);
+            this.btnRefreshSummary.TabIndex = 6;
+            this.btnRefreshSummary.Text = "Refresh";
+            this.btnRefreshSummary.UseVisualStyleBackColor = true;
+            this.btnRefreshSummary.Click += new System.EventHandler(this.OnRefresh);
+            // 
+            // gridQueueSummary
+            // 
+            this.gridQueueSummary.AllowUserToAddRows = false;
+            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Thistle;
+            this.gridQueueSummary.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle8;
+            this.gridQueueSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridQueueSummary.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQueueSummary.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            this.gridQueueSummary.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridQueueSummary.DefaultCellStyle = dataGridViewCellStyle10;
+            this.gridQueueSummary.Location = new System.Drawing.Point(9, 21);
+            this.gridQueueSummary.MinimumSize = new System.Drawing.Size(448, 0);
+            this.gridQueueSummary.MultiSelect = false;
+            this.gridQueueSummary.Name = "gridQueueSummary";
+            this.gridQueueSummary.ReadOnly = true;
+            this.gridQueueSummary.RowHeadersWidth = 20;
+            this.gridQueueSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQueueSummary.Size = new System.Drawing.Size(641, 328);
+            this.gridQueueSummary.TabIndex = 5;
+            // 
             // tabOptions
             // 
             this.tabOptions.Controls.Add(this.groupBox1);
@@ -1029,6 +1097,8 @@ namespace Tobasa
             this.tabFinished.ResumeLayout(false);
             this.tabFinished.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridJobsFin)).EndInit();
+            this.tabSummary.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridQueueSummary)).EndInit();
             this.tabOptions.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -1102,6 +1172,9 @@ namespace Tobasa
 		private System.Windows.Forms.CheckBox chkManageAdvanceQueue;
 		private System.Windows.Forms.Button btnSaveSettings;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TabPage tabSummary;
+        private System.Windows.Forms.DataGridView gridQueueSummary;
+        private System.Windows.Forms.Button btnRefreshSummary;
     }
 }
 

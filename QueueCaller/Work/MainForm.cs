@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2015-2024  Jefri Sibarani
+    Copyright (C) 2015-2025  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -369,7 +369,12 @@ namespace Tobasa
                     else
                     { }
                 }
-
+                // Handle SysGetQueueSummary
+                else if (qmessage.MessageType == Msg.SysGetQueueSummary && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string jsonDataTable = qmessage.PayloadValues["result"];
+                    InitGridSummary(jsonDataTable);
+                }
                 // Handle CallerUpdateQueueLeft
                 else if (qmessage.MessageType == Msg.CallerUpdateQueueLeft && qmessage.Direction == MessageDirection.REQUEST)
                 {
@@ -434,6 +439,21 @@ namespace Tobasa
                                  Msg.CompDelimiter + jobStatus +
                                  Msg.CompDelimiter + "0" +
                                  Msg.CompDelimiter + "0";
+
+                _client.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
+        }
+
+        private void RequestQueueSummaryServer(string post="all")
+        {
+            if (_client != null)
+            {
+                string message = Msg.SysGetQueueSummary.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + post;
 
                 _client.Send(message);
             }
@@ -792,6 +812,65 @@ namespace Tobasa
             }
         }
 
+        private void InitGridSummary(string jsonDataTable = "")
+        {
+            try
+            {
+                DataTable dataTable = null;
+                dataTable = (DataTable)JsonConvert.DeserializeObject(jsonDataTable, (typeof(DataTable)));
+
+                if (dataTable == null || dataTable.Rows.Count == 0)
+                {
+                    gridQueueSummary.DataSource = null;
+                    return;
+                }
+
+                gridQueueSummary.DataSource = dataTable;
+
+                DataGridView gridView = gridQueueSummary;
+                DataGridViewColumn column = null;
+                column = gridView.Columns[0];
+                column.Width = 40;
+                column.HeaderText = "Post";
+
+                column = gridView.Columns[1];
+                column.Width = 40;
+                column.HeaderText = "Prefix";
+
+                column = gridView.Columns[2];
+                column.Width = 40;
+                column.HeaderText = "Note";
+
+                column = gridView.Columns[3];
+                column.Width = 35;
+                column.HeaderText = "Last Call";
+
+                column = gridView.Columns[4];
+                column.Width = 35;
+                column.HeaderText = "Total Called";
+
+                column = gridView.Columns[5];
+                column.Width = 45;
+                column.HeaderText = "First Waiting";
+
+                column = gridView.Columns[6];
+                column.Width = 45;
+                column.HeaderText = "Last Waiting";
+
+                column = gridView.Columns[7];
+                column.Width = 45;
+                column.HeaderText = "Total Waiting";
+
+                column = gridView.Columns[8];
+                column.Width = 70;
+                column.HeaderText = "Last Station";
+            }
+            catch (Exception e)
+            {
+                Logger.Log("QueueCaller", e);
+            }
+        }
+
         private void OnGridJobsCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
@@ -864,6 +943,8 @@ namespace Tobasa
                 RequestJobsFromServer(_settings.StationPost,"PROCESS",0,0);
             else if ((Button)sender == btnRefreshFin)
                 RequestJobsFromServer(_settings.StationPost,"FINISHED",0,0);
+            else if ((Button)sender == btnRefreshSummary)
+                RequestQueueSummaryServer(_settings.StationPost);
         }
 
         private void OnPageSelected(object sender, TabControlEventArgs e)
@@ -877,6 +958,8 @@ namespace Tobasa
                 RequestJobsFromServer(_settings.StationPost,"PROCESS",0,0);
             else if (page == tabFinished)
                 RequestJobsFromServer(_settings.StationPost,"FINISHED",0,0);
+            else if (page == tabSummary)
+                RequestQueueSummaryServer(_settings.StationPost);
         }
 
 		#endregion
@@ -990,11 +1073,8 @@ namespace Tobasa
             toolTip.SetToolTip(btnChangePost7, _postIdsDict["POST7"]);
             toolTip.SetToolTip(btnChangePost8, _postIdsDict["POST8"]);
             toolTip.SetToolTip(btnChangePost9, _postIdsDict["POST9"]);
-
         }
 
         #endregion
-
-
     }
 }

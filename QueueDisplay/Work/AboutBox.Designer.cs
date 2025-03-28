@@ -2,7 +2,7 @@
 #region License
 /*
     Sotware Antrian Tobasa
-    Copyright (C) 2015-2024  Jefri Sibarani
+    Copyright (C) 2015-2025  Jefri Sibarani
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

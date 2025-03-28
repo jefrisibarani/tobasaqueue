@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2015-2024  Jefri Sibarani
+    Copyright (C) 2015-2025  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -372,6 +372,21 @@ namespace Tobasa
                 .AddResultPayload(0, "post")
                 .AddResultPayload(1, "status")
                 .AddResultPayload(2, "result");
+
+
+        /** Get Queue Summary
+        Payload     : 4th token
+        Syntax REQ  : SYS|GET_QUEUE_SUMMARY|REQ|Identifier|[Post]
+           Post     : Post name
+        Syntax RES  : SYS|GET_QUEUE_SUMMARY|RES|Identifier|[Post!Result]
+           Post     : Post name
+           Result   : JSON Serialized DataTable
+        */
+        public static readonly Type SysGetQueueSummary =
+            CreateType("SYS", "GET_QUEUE_SUMMARY", "SysGetQueueSummary", 5, 4, 1, 2)
+                .AddRequestPayload(0, "post")
+                .AddResultPayload(0, "post")
+                .AddResultPayload(1, "result");
 
 
         /** Get basic summary of a Post, Issued by Modul Caller

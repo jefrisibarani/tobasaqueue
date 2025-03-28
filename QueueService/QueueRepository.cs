@@ -1154,6 +1154,52 @@ namespace Tobasa
             }
         }
 
+        
+        public static string GetQueueSummary(Dictionary<string, string> parameter)
+        {
+            try
+            {
+                string post = parameter["post"];
+                return GetQueueSummary(post);
+            }
+            catch (AppException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("GetQueueSummary, " + ex.Message);
+            }
+        }
+
+        public static string GetQueueSummary(string post)
+        {
+            if (!Database.Me.Connected)
+                return "";
+
+            try
+            {
+                string sql;
+                sql = $@"SELECT * FROM v_queue_posts_summary";
+
+                Database.Me.OpenConnection();
+                DbDataAdapter sda = Database.Me.CreateDataAdapter(sql);
+
+                DataTable dataTable = new DataTable();
+                sda.Fill(dataTable);
+
+                string jsonDataTable = JsonConvert.SerializeObject(dataTable, Formatting.None);
+                if (jsonDataTable == "[]")
+                    jsonDataTable = "";
+
+                return jsonDataTable;
+            }
+            catch (Exception ex)
+            {
+                throw new AppException("GetQueueSummary, " + ex.Message);
+            }
+        }
+
         public static string GetJob(string post, string status, int offset = 0, int limit = 0)
         {
             if (! Database.Me.Connected)

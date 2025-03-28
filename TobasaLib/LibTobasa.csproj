@@ -179,7 +179,6 @@
     <Compile Include="Work\MessageHandler.cs" />
     <Compile Include="Work\Notifier.cs" />
     <Compile Include="Work\MessageType.cs" />
-    <Compile Include="Work\PromptDialog.cs" />
     <Compile Include="Work\TCPClient.cs" />
     <Compile Include="Work\DSEngine.cs" />
     <Compile Include="Work\Logger.cs" />

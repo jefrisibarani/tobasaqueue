@@ -1,7 +1,7 @@
 ﻿#region License
 /*
     Tobasa Library - Provide Async TCP server, DirectShow wrapper and simple Logger class
-    Copyright (C) 2015-2024  Jefri Sibarani
+    Copyright (C) 2015-2025  Jefri Sibarani
  
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -153,6 +153,10 @@ namespace Tobasa
             else if (_rawMessage.StartsWith(Msg.SysGetJob.Text))
             {
                 _messageType = Msg.SysGetJob;
+            }
+            else if (_rawMessage.StartsWith(Msg.SysGetQueueSummary.Text))
+            {
+                _messageType = Msg.SysGetQueueSummary;
             }
             else if (_rawMessage.StartsWith(Msg.CallerGetInfo.Text))
             {

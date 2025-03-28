@@ -203,6 +203,33 @@ namespace Tobasa
                     handler.Process();
                 }
 
+
+                // Handle SysGetQueueSummary
+                if (qmessage.MessageType == Msg.SysGetQueueSummary && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    string post = qmessage.PayloadValues["post"];
+
+                    MessageHandler<string> handler = new MessageHandler<string>(qmessage)
+                    {
+                        ReceiveHandler = new Func<Dictionary<string, string>, string>(QueueRepository.GetQueueSummary),
+                        ResponseHandler = (session, jsonTable) =>
+                        {
+                            // Send response to client
+                            // SYS|GET_QUEUE_SUMMARY|RES|Identifier|Post!JsonResult
+                            string message = Msg.SysGetQueueSummary.Text +
+                                             Msg.Separator + "RES" +
+                                             Msg.Separator + "Identifier" +
+                                             Msg.Separator + client.Post +
+                                             Msg.CompDelimiter + jsonTable;
+
+                            session.Send(message);
+                        }
+                    };
+
+                    handler.Process();
+                }
+
+
                 // Handle SysGetList
                 if (qmessage.MessageType == Msg.SysGetList && qmessage.Direction == MessageDirection.REQUEST)
                 {
