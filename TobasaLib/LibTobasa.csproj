@@ -173,7 +173,7 @@
     <Compile Include="DirectShowLib\VmRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Work\AppException.cs" />
-    <Compile Include="Work\blowfish.cs" />
+    <Compile Include="Work\Blowfish.cs" />
     <Compile Include="Work\Database.cs" />
     <Compile Include="Work\Message.cs" />
     <Compile Include="Work\MessageHandler.cs" />

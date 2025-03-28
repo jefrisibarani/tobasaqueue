@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
 
+
 namespace Tobasa
 {
     public partial class Display : Form
@@ -39,6 +40,7 @@ namespace Tobasa
         private delegate void AddRunningTextCallback(string text);
         private delegate void ResetRunningTextTextCallback();
         private delegate void DeleteRunningTextCallback(string text);
+        private delegate void UpdateTotalWaitingQueueCallback(string post, string total);
 
         // Struct to save label data -label that need to be resized automatically
         // See labelRecordList,RecordLabelSize(),OnLabelResize()
@@ -186,7 +188,45 @@ namespace Tobasa
                 }
             }
         }
-        
+
+        public void UpdateTotalWaitingQueue(string post, string total)
+        {
+            if (string.IsNullOrWhiteSpace(total))
+                return;
+
+            // InvokeRequired required compares the thread ID of the 
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true. 
+            if (this.InvokeRequired)
+            {
+                UpdateTotalWaitingQueueCallback d = new UpdateTotalWaitingQueueCallback(UpdateTotalWaitingQueue);
+                this.Invoke(d, new object[] { post, total });
+            }
+            else
+            {
+                if (post == "POST0")
+                    lblPost0JumAnVal.Text = total;
+                if (post == "POST1")
+                    lblPost1JumAnVal.Text = total;
+                if (post == "POST2")
+                    lblPost2JumAnVal.Text = total;
+                if (post == "POST3")
+                    lblPost3JumAnVal.Text = total;
+                if (post == "POST4")
+                    lblPost4JumAnVal.Text = total;
+                if (post == "POST5")
+                    lblPost5JumAnVal.Text = total;
+                if (post == "POST6")
+                    lblPost6JumAnVal.Text = total;
+                if (post == "POST7")
+                    lblPost7JumAnVal.Text = total;
+                if (post == "POST8")
+                    lblPost8JumAnVal.Text = total;
+                if (post == "POST9")
+                    lblPost9JumAnVal.Text = total;
+            }
+        }
+
         #endregion
 
         #region QueueServer message handlers

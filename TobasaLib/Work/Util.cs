@@ -308,7 +308,7 @@ namespace Tobasa
             if (string.IsNullOrWhiteSpace(value))
                 return false;
 
-            if (value.ToUpper() == "T"
+            if (value.ToUpper()   == "T"
                || value.ToUpper() == "TRUE"
                || value.ToUpper() == "ON"
                || value.ToUpper() == "Y"

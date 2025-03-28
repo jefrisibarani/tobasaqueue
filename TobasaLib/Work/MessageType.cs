@@ -56,9 +56,9 @@ namespace Tobasa
                         |                             |                    |
                          \--------- Envelope ---------+-------Payload-----/
 
-        Envelope tokens's 1-4 token must be upper case, no space
-        Identifier must contain no space
-        Payload tokens must be lower case, no space
+        Envelope tokens 1–4 must be uppercase with no spaces.
+        The identifier must not contain spaces.
+        Payload tokens must be lowercase with no spaces.
 
          ** ENVELOPE **
             Separator  : |
@@ -416,15 +416,21 @@ namespace Tobasa
            Number   : Number to call 
            Post     : Post name
            Station  : Station name
-        Syntax RES  : CALLER|RECALL|RES|Identifier|[Result]
-           Result   : OK or FAIL
+        Syntax RES  : CALLER|RECALL|RES|Identifier|[Number!Post!Prefix|Station}
+           Number   : Number to call 
+           Post     : Post name
+           Prefix   : Post number prefix
+           Station  : Station name
         */
         public static readonly Type CallerRecall = 
-            CreateType("CALLER", "RECALL", "CallerRecall", 5, 4, 3, 1)
+            CreateType("CALLER", "RECALL", "CallerRecall", 5, 4, 3, 4)
                 .AddRequestPayload(0, "number")
                 .AddRequestPayload(1, "post")
                 .AddRequestPayload(2, "station")
-                .AddResultPayload(0, "result");
+                .AddResultPayload(0, "number")
+                .AddResultPayload(1, "post")
+                .AddResultPayload(2, "postPrefix")
+                .AddResultPayload(3, "station");
 
 
         /** Create new queue number/ticket
@@ -536,7 +542,7 @@ namespace Tobasa
         Payload     : None
         Sender      : 
         Syntax REQ  : DISPLAY|RESET_VALUES|REQ|Identifier|[Post!Station]
-        Syntax REQ  : DISPLAY|RESET_VALUES|RES|Identifier|[Status]
+        Syntax RES  : DISPLAY|RESET_VALUES|RES|Identifier|[Status]
         */
         public static readonly Type DisplayResetValues = 
             CreateType("DISPLAY", "RESET_VALUES", "DisplayResetValues", 5, 4, 2, 1)
@@ -581,7 +587,7 @@ namespace Tobasa
             Prefix  : Post number prefix
             Number  : Next waiting number
             Left    : Total waiting queue
-            Station : Caliing Station/Counter
+            Station : Calling Station/Counter
         */
         public static readonly Type DisplayGetInfo =
             CreateType("DISPLAY", "GET_INFO", "DisplayGetInfo", 5, 4, 1, 5)
@@ -621,6 +627,41 @@ namespace Tobasa
             CreateType("SYS", "GET_LIST", "SysGetList", 5, 4, 1, 1)
                 .AddRequestPayload(0, "name")
                 .AddResultPayload(0, "result");
+
+
+        /** Update total Queue on a Display.
+        Issued by QueueServer to QueueDisplay, to update a post's total queue left
+        
+        Payload     : Position 4
+        Syntax REQ  : DISPLAY|UPDATE_QUEUE_LEFT|REQ|Identifier|[Post!Left]
+           Post     : Post name
+           Left     : Waiting Queue left
+
+        Syntax RES  : DISPLAY|UPDATE_QUEUE_LEFT|RES|Identifier|[Status]
+           Status   : OK or FAIL
+        */
+        public static readonly Type DisplayUpdateQueueLeft =
+            CreateType("DISPLAY", "UPDATE_QUEUE_LEFT", "DisplayUpdateQueueLeft", 5, 4, 2, 1)
+                .AddRequestPayload(0, "post")
+                .AddRequestPayload(1, "left")
+                .AddResultPayload(1, "status");
+
+        /** Update total Queue on a Caller.
+        Issued by QueueServer to QueueCaller, to update a post's total queue left
+        
+        Payload     : Position 4
+        Syntax REQ  : CALLER|UPDATE_QUEUE_LEFT|REQ|Identifier|[Post!Prefix|Left]
+           Post     : Post name
+           Left     : Waiting Queue left
+
+        Syntax RES  : CALLER|UPDATE_QUEUE_LEFT|RES|Identifier|[Status]
+           Status   : OK or FAIL
+        */
+        public static readonly Type CallerUpdateQueueLeft =
+            CreateType("CALLER", "UPDATE_QUEUE_LEFT", "CallerUpdateQueueLeft", 5, 4, 2, 1)
+                .AddRequestPayload(0, "post")
+                .AddRequestPayload(1, "left")
+                .AddResultPayload(1, "status");
 
         #endregion
     }

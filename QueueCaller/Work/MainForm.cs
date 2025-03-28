@@ -304,7 +304,7 @@ namespace Tobasa
                 if (qmessage.MessageType == Msg.SysLogin && qmessage.Direction == MessageDirection.RESPONSE)
                 {
                     string result = qmessage.PayloadValues["result"];
-                    string data   = qmessage.PayloadValues["data"];
+                    string data = qmessage.PayloadValues["data"];
 
                     if (result == "OK")
                     {
@@ -323,12 +323,12 @@ namespace Tobasa
                     }
                 }
                 // Handle CallerGetInfo, CallerGetNext
-                else if ( (qmessage.MessageType == Msg.CallerGetInfo || qmessage.MessageType == Msg.CallerGetNext)
-                            && qmessage.Direction == MessageDirection.RESPONSE )
+                else if ((qmessage.MessageType == Msg.CallerGetInfo || qmessage.MessageType == Msg.CallerGetNext)
+                            && qmessage.Direction == MessageDirection.RESPONSE)
                 {
-                    string prefix      = qmessage.PayloadValues["postprefix"];
-                    string number      = qmessage.PayloadValues["number"];
-                    string numberleft  = qmessage.PayloadValues["numberleft"];
+                    string prefix = qmessage.PayloadValues["postprefix"];
+                    string number = qmessage.PayloadValues["number"];
+                    string numberleft = qmessage.PayloadValues["numberleft"];
 
                     if (string.IsNullOrWhiteSpace(number))
                     {
@@ -359,7 +359,7 @@ namespace Tobasa
                 // Handle SysGetJob
                 else if (qmessage.MessageType == Msg.SysGetJob && qmessage.Direction == MessageDirection.RESPONSE)
                 {
-                    string status        = qmessage.PayloadValues["status"];
+                    string status = qmessage.PayloadValues["status"];
                     string jsonDataTable = qmessage.PayloadValues["result"];
 
                     if (status == "PROCESS")
@@ -368,6 +368,34 @@ namespace Tobasa
                         InitGridFinishedJobs(jsonDataTable);
                     else
                     { }
+                }
+
+                // Handle CallerUpdateQueueLeft
+                else if (qmessage.MessageType == Msg.CallerUpdateQueueLeft && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    string post = qmessage.PayloadValues["post"];
+                    string totalWaiting = qmessage.PayloadValues["left"];
+
+                    if (string.IsNullOrWhiteSpace(totalWaiting))
+                        return;
+
+                    if (_settings.StationPost == post)
+                    {
+                        lblQueueCount.Text = totalWaiting;
+                    }
+                }
+                else if (qmessage.MessageType == Msg.CallerRecall && qmessage.Direction == MessageDirection.RESPONSE)
+                {
+                    string number    = qmessage.PayloadValues["number"];
+                    string post      = qmessage.PayloadValues["post"];
+                    string caller    = qmessage.PayloadValues["station"];
+                    string postrefix = qmessage.PayloadValues["postPrefix"];
+                    if (_settings.StationPost == post && _settings.StationName == caller)
+                    {
+                        lblQueueCount.Text = number;
+                        lblNumber.Text = postrefix + number;
+                    }
+
                 }
                 // Handle SysNotify
                 else if (qmessage.MessageType == Msg.SysNotify)
@@ -413,7 +441,7 @@ namespace Tobasa
                 Util.ShowConnectionError(this);
         }
 
-        private void UpdateJobStatus(string jobStatus, string jobId, string jobNumber)
+        public void UpdateJobStatus(string jobStatus, string jobId, string jobNumber)
         {
             if (_client != null)
             {
@@ -474,6 +502,29 @@ namespace Tobasa
                                  Msg.Separator + "REQ" +
                                  Msg.Separator + "Identifier" +
                                  Msg.Separator + _curNumber +
+                                 Msg.CompDelimiter + _settings.StationPost +
+                                 Msg.CompDelimiter + _settings.StationName;
+
+                _client.Send(message);
+            }
+            else
+                Util.ShowConnectionError(this);
+        }
+
+        public void CallAgain(String number)
+        {
+            if (number == "0" || number == "")
+            {
+                MessageBox.Show(this, "Invalid number", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (_client != null)
+            {
+                string message = Msg.CallerRecall.Text +
+                                 Msg.Separator + "REQ" +
+                                 Msg.Separator + "Identifier" +
+                                 Msg.Separator + number +
                                  Msg.CompDelimiter + _settings.StationPost +
                                  Msg.CompDelimiter + _settings.StationName;
 
@@ -752,7 +803,7 @@ namespace Tobasa
             if (jobId == "")
                 return;
 
-            string msg = "Set this queue number status to FINISHED ?";
+            string msg = $"Set this queue number {jobNo} status to FINISHED ?";
 
             if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
@@ -771,12 +822,40 @@ namespace Tobasa
             if (jobId == "")
                 return;
 
-            string msg = "Set this queue number status to CLOSED ?";
+            string msg = $"Set this queue number {jobNo} status to CLOSED ?";
 
             if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 UpdateJobStatus("CLOSED", jobId, jobNo);
             }
+        }
+
+        private void OnGridJobsCellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            if (e.RowIndex < 0)
+                return;
+
+            string jobId = Convert.ToString(gridJobs.Rows[e.RowIndex].Cells[0].Value);
+            string jobNo = Convert.ToString(gridJobs.Rows[e.RowIndex].Cells[1].Value);
+
+            if (jobId == "")
+                return;
+
+
+            // Select the row where right-click happened
+            gridJobs.ClearSelection();
+            gridJobs.Rows[e.RowIndex].Selected = true;
+
+            string msg = $@"Call number {jobNo} again?";
+            if (MessageBox.Show(msg, "Action", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                CallAgain(jobNo);
+            }
+
+            //ActionDialog.Show(this, jobId, jobNo);
         }
 
         private void OnRefresh(object sender, EventArgs e)
@@ -915,5 +994,7 @@ namespace Tobasa
         }
 
         #endregion
+
+
     }
 }

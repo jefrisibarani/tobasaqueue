@@ -258,6 +258,13 @@ namespace Tobasa
                     string runningText = qmessage.PayloadValues["text"];
                     mDisplay.DeleteRunningText(runningText);
                 }
+                // Handle DisplayUpdateQueueLeft
+                else if (qmessage.MessageType == Msg.DisplayUpdateQueueLeft && qmessage.Direction == MessageDirection.REQUEST)
+                {
+                    string post         = qmessage.PayloadValues["post"];
+                    string totalWaiting = qmessage.PayloadValues["left"];
+                    mDisplay.UpdateTotalWaitingQueue(post, totalWaiting);
+                }
                 // Handle SysNotify
                 else if (qmessage.MessageType == Msg.SysNotify)
                 {

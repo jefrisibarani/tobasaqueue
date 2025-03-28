@@ -210,6 +210,14 @@ namespace Tobasa
             {
                 _messageType = Msg.SysGetList;
             }
+            else if (_rawMessage.StartsWith(Msg.DisplayUpdateQueueLeft.Text))
+            {
+                _messageType = Msg.DisplayUpdateQueueLeft;
+            }
+            else if (_rawMessage.StartsWith(Msg.CallerUpdateQueueLeft.Text))
+            {
+                _messageType = Msg.CallerUpdateQueueLeft;
+            }
             else
             {
                 _valid = false;

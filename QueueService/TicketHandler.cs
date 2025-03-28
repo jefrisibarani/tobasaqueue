@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 
 namespace Tobasa
 {
@@ -38,8 +39,36 @@ namespace Tobasa
                                                  Msg.CompDelimiter + result["number"] +
                                                  Msg.CompDelimiter + result["post"] +
                                                  Msg.CompDelimiter + result["timestamp"];
-
                                 session.Send(message);
+
+
+
+
+                                // Send message to all Display to update their total waiting queue
+                                string post = qmessage.PayloadValues["post"];
+                                var queueInfo = QueueRepository.GetWaitingNumberAndPostSummary(post);
+                                if (queueInfo == null)
+                                {
+                                    return;
+                                }
+
+                                string totalWaiting = queueInfo["numberLeft"];
+
+
+                                string message1 = Msg.DisplayUpdateQueueLeft.Text +
+                                                 Msg.Separator + "REQ" +
+                                                 Msg.Separator + "Identifier" +
+                                                 Msg.Separator + post +
+                                                 Msg.CompDelimiter + totalWaiting;
+                                QueueServer.SendMessageToQueueDisplay(message1, post);
+
+                                // also to all Caller
+                                string message2 = Msg.CallerUpdateQueueLeft.Text +
+                                                 Msg.Separator + "REQ" +
+                                                 Msg.Separator + "Identifier" +
+                                                 Msg.Separator + post +
+                                                 Msg.CompDelimiter + totalWaiting;
+                                QueueServer.SendMessageToQueueCaller(message2, post);
                             }
                         }
                     };

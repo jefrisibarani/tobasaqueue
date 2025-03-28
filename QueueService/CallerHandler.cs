@@ -35,7 +35,7 @@ namespace Tobasa
                                 string numberLeft   = result["numberLeft"];
 
                                 // Send response to client(caller)
-                                string messageC = 
+                                string message = 
                                     Msg.CallerGetInfo.Text +
                                     Msg.Separator + "RES" +
                                     Msg.Separator + "Identifier" +
@@ -43,7 +43,20 @@ namespace Tobasa
                                     Msg.CompDelimiter + numberS +
                                     Msg.CompDelimiter + numberLeft;
 
-                                session.Send(messageC);
+                                session.Send(message);
+                            }
+                            else
+                            {
+                                // Send response to client(caller)
+                                string message =
+                                    Msg.CallerGetInfo.Text +
+                                    Msg.Separator + "RES" +
+                                    Msg.Separator + "Identifier" +
+                                    Msg.Separator + "" +
+                                    Msg.CompDelimiter + "" +
+                                    Msg.CompDelimiter + "0";
+
+                                session.Send(message);
                             }
                         }
                     };
@@ -98,6 +111,16 @@ namespace Tobasa
                                     // Now we want to delete processed number
                                     int numberI = Convert.ToInt32(numberS);
                                     QueueRepository.DeleteProcessedNumberFromQueue(numberI, callerId, post);
+
+
+
+                                    // update total waiting queue all Caller
+                                    string message2 = Msg.CallerUpdateQueueLeft.Text +
+                                                     Msg.Separator + "REQ" +
+                                                     Msg.Separator + "Identifier" +
+                                                     Msg.Separator + post +
+                                                     Msg.CompDelimiter + numberLeft;
+                                    QueueServer.SendMessageToQueueCaller(message2, post);
                                 }
                             }
                             else
@@ -130,7 +153,7 @@ namespace Tobasa
 
                     // Send message to Queue display, to update displayed number
                     // XXX is sent to replace total waiting queue 
-                    string messageD = 
+                    string message = 
                         Msg.DisplayRecall.Text +
                         Msg.Separator + "REQ" +
                         Msg.Separator + "Identifier" +
@@ -140,7 +163,18 @@ namespace Tobasa
                         Msg.CompDelimiter + post +
                         Msg.CompDelimiter + caller;
 
-                    QueueServer.SendMessageToQueueDisplay(messageD, post);
+                    QueueServer.SendMessageToQueueDisplay(message, post);
+
+
+                    string message1 =
+                        Msg.CallerRecall.Text +
+                        Msg.Separator + "RES" +
+                        Msg.Separator + "Identifier" +
+                        Msg.Separator + number +
+                        Msg.CompDelimiter + post +
+                        Msg.CompDelimiter + postrefix +
+                        Msg.CompDelimiter + caller;
+                    QueueServer.SendMessageToQueueCaller(post, post);
                 }
             }
             catch(AppException ex)
@@ -152,7 +186,7 @@ namespace Tobasa
                 exp = ex;
             }
 
-            if(exp != null)
+            if (exp != null)
             {
                 Logger.Log("CallerHandler", exp);
 

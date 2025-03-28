@@ -118,6 +118,7 @@ namespace Tobasa
             ,( SELECT MIN(number)   FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_first
             ,( SELECT MAX(number)   FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_last
             ,( SELECT COUNT(number) FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_total
+            ,( SELECT station       FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = date('now','localtime') AND number=called_last) AS last_station
             FROM queue_posts p;
             ";
 
@@ -219,6 +220,7 @@ namespace Tobasa
                ('ADMIN#1',  'POST7',NULL, 1),
                ('ADMIN#1',  'POST8',NULL, 1),
                ('ADMIN#1',  'POST9',NULL, 1),
+
                ('ADMIN#2',  'POST0',NULL, 1),
                ('ADMIN#2',  'POST1',NULL, 1),
                ('ADMIN#2',  'POST2',NULL, 1),
@@ -285,6 +287,61 @@ namespace Tobasa
                ('CALL#5',   'POST8',NULL, 1),
                ('CALL#5',   'POST9',NULL, 1),
 
+               ('CALL#6',   'POST0',NULL, 1),
+               ('CALL#6',   'POST1',NULL, 1),
+               ('CALL#6',   'POST2',NULL, 1),
+               ('CALL#6',   'POST3',NULL, 1),
+               ('CALL#6',   'POST4',NULL, 1),
+               ('CALL#6',   'POST5',NULL, 1),
+               ('CALL#6',   'POST6',NULL, 1),
+               ('CALL#6',   'POST7',NULL, 1),
+               ('CALL#6',   'POST8',NULL, 1),
+               ('CALL#6',   'POST9',NULL, 1),
+
+               ('CALL#7',   'POST0',NULL, 1),
+               ('CALL#7',   'POST1',NULL, 1),
+               ('CALL#7',   'POST2',NULL, 1),
+               ('CALL#7',   'POST3',NULL, 1),
+               ('CALL#7',   'POST4',NULL, 1),
+               ('CALL#7',   'POST5',NULL, 1),
+               ('CALL#7',   'POST6',NULL, 1),
+               ('CALL#7',   'POST7',NULL, 1),
+               ('CALL#7',   'POST8',NULL, 1),
+               ('CALL#7',   'POST9',NULL, 1),
+
+               ('CALL#8',   'POST0',NULL, 1),
+               ('CALL#8',   'POST1',NULL, 1),
+               ('CALL#8',   'POST2',NULL, 1),
+               ('CALL#8',   'POST3',NULL, 1),
+               ('CALL#8',   'POST4',NULL, 1),
+               ('CALL#8',   'POST5',NULL, 1),
+               ('CALL#8',   'POST6',NULL, 1),
+               ('CALL#8',   'POST7',NULL, 1),
+               ('CALL#8',   'POST8',NULL, 1),
+               ('CALL#8',   'POST9',NULL, 1),
+
+               ('CALL#9',   'POST0',NULL, 1),
+               ('CALL#9',   'POST1',NULL, 1),
+               ('CALL#9',   'POST2',NULL, 1),
+               ('CALL#9',   'POST3',NULL, 1),
+               ('CALL#9',   'POST4',NULL, 1),
+               ('CALL#9',   'POST5',NULL, 1),
+               ('CALL#9',   'POST6',NULL, 1),
+               ('CALL#9',   'POST7',NULL, 1),
+               ('CALL#9',   'POST8',NULL, 1),
+               ('CALL#9',   'POST9',NULL, 1),
+
+               ('CALL#10',  'POST0',NULL, 1),
+               ('CALL#10',  'POST1',NULL, 1),
+               ('CALL#10',  'POST2',NULL, 1),
+               ('CALL#10',  'POST3',NULL, 1),
+               ('CALL#10',  'POST4',NULL, 1),
+               ('CALL#10',  'POST5',NULL, 1),
+               ('CALL#10',  'POST6',NULL, 1),
+               ('CALL#10',  'POST7',NULL, 1),
+               ('CALL#10',  'POST8',NULL, 1),
+               ('CALL#10',  'POST9',NULL, 1),
+
                ('DISP#1',   'POST0',NULL, 1),
                ('DISP#1',   'POST1',NULL, 1),
                ('DISP#1',   'POST2',NULL, 1),
@@ -327,7 +384,29 @@ namespace Tobasa
                ('TICKET#2', 'POST6',NULL, 1),
                ('TICKET#2', 'POST7',NULL, 1),
                ('TICKET#2', 'POST8',NULL, 1),
-               ('TICKET#2', 'POST9',NULL, 1);
+               ('TICKET#2', 'POST9',NULL, 1),
+
+               ('TICKET#3', 'POST0',NULL, 1),
+               ('TICKET#3', 'POST1',NULL, 1),
+               ('TICKET#3', 'POST2',NULL, 1),
+               ('TICKET#3', 'POST3',NULL, 1),
+               ('TICKET#3', 'POST4',NULL, 1),
+               ('TICKET#3', 'POST5',NULL, 1),
+               ('TICKET#3', 'POST6',NULL, 1),
+               ('TICKET#3', 'POST7',NULL, 1),
+               ('TICKET#3', 'POST8',NULL, 1),
+               ('TICKET#3', 'POST9',NULL, 1),
+
+               ('TICKET#4', 'POST0',NULL, 1),
+               ('TICKET#4', 'POST1',NULL, 1),
+               ('TICKET#4', 'POST2',NULL, 1),
+               ('TICKET#4', 'POST3',NULL, 1),
+               ('TICKET#4', 'POST4',NULL, 1),
+               ('TICKET#4', 'POST5',NULL, 1),
+               ('TICKET#4', 'POST6',NULL, 1),
+               ('TICKET#4', 'POST7',NULL, 1),
+               ('TICKET#4', 'POST8',NULL, 1),
+               ('TICKET#4', 'POST9',NULL, 1);
             ";
 
         public static List<string> GetCommandList()

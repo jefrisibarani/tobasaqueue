@@ -42,10 +42,10 @@ namespace Tobasa
 
     public class Database : Notifier
     {
-        public static string DEFAULT_MYSQL_CONNSTRING = "Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;";
+        public static string DEFAULT_MYSQL_CONNSTRING = "Data Source=127.0.0.1,3306;User ID=antrian;Initial Catalog=antri;";
         public static string DEFAULT_MYSQL_CONNSTRING_PASSWORD = "ad7415644add93d6e719d2b593da6e6e";
         
-        public static string DEFAULT_PGSQL_CONNSTRING = "Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;";
+        public static string DEFAULT_PGSQL_CONNSTRING = "Host=127.0.0.1;Username=antrian;Database=antri;Port=5432;";
         public static string DEFAULT_PGSQL_CONNSTRING_PASSWORD = "ad7415644add93d6e719d2b593da6e6e";
         
         public static string DEFAULT_MSSQL_CONNSTRING = "Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;";
@@ -146,7 +146,7 @@ namespace Tobasa
                         _conn = new NpgsqlConnection(connString);
                     else
                     {
-                        throw new AppException("Connect() Unsupported database provider");
+                        throw new AppException("Unsupported database provider");
                     }
                     _conn.Open();
 
@@ -256,7 +256,7 @@ namespace Tobasa
                 }
                 else
                 {
-                    throw new AppException("RetryConnectWithDefaults(): Unsupported database provider");
+                    throw new AppException("Unsupported database provider");
                 }
             }
             catch (Exception e)
@@ -356,7 +356,7 @@ namespace Tobasa
                         adapter = new NpgsqlDataAdapter(sql, (NpgsqlConnection)_conn);
                     else
                     {
-                        throw new AppException("CreateDataAdapter(): Unsupported database provider");
+                        throw new AppException("Unsupported database provider");
                     }
 
                     return adapter;
@@ -402,7 +402,7 @@ namespace Tobasa
                     }
                     else
                     {
-                        throw new AppException("CreateDataTable(): Unsupported database provider");
+                        throw new AppException("Unsupported database provider");
                     }
 
                     return dataTable;
@@ -503,7 +503,7 @@ namespace Tobasa
             }
             else
             {
-                throw new AppException("GetDate(): Unsupported database provider");
+                throw new AppException("Unsupported database provider");
             }
 
             Database.Me.OpenConnection();
@@ -542,7 +542,7 @@ namespace Tobasa
             }
             else
             {
-                throw new AppException("GetDate(): Unsupported database provider");
+                throw new AppException("Unsupported database provider");
             }
 
             Database.Me.OpenConnection();
@@ -579,7 +579,7 @@ namespace Tobasa
             }
             else
             {
-                throw new AppException("GetDateTimeSqlString(): Unsupported database provider");
+                throw new AppException("Unsupported database provider");
             }
         }
 

@@ -439,6 +439,11 @@ namespace Tobasa
             SendMessageToClient(ClientType.QueueDisplay, text, post);
         }
 
+        public static void SendMessageToQueueCaller(string text, string post = "")
+        {
+            SendMessageToClient(ClientType.QueueCaller, text, post);
+        }
+
         public static void SendMessageToClient(ClientType type, string text, string post = "")
         {
             foreach (KeyValuePair<int, Client> kv in clients)

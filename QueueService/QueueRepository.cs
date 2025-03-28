@@ -62,7 +62,7 @@ namespace Tobasa
             }
             catch (Exception e)
             {
-                throw new AppException("CheckIpAddress: " + e.Message);
+                throw new AppException("CheckIpAddress, " + e.Message);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Tobasa
             }
             catch (Exception e)
             {
-                throw new AppException("CanLogin: " + e.Message);
+                throw new AppException("CanLogin, " + e.Message);
             }
         }
 
@@ -170,7 +170,7 @@ namespace Tobasa
             }
             catch (Exception e)
             {
-                throw new AppException("Login: " + e.Message);
+                throw new AppException("Login, " + e.Message);
             }
         }
 
@@ -216,7 +216,7 @@ namespace Tobasa
                     return Tuple.Create(success, affected);
                 }
                 else
-                    throw new Exception("Invalid table name: " + tableName);
+                    throw new Exception("Invalid table name, " + tableName);
             }
             catch (AppException ex)
             {
@@ -224,7 +224,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("InsertUpdateTable: " + ex.Message);
+                throw new AppException("InsertUpdateTable, " + ex.Message);
             }
         }
 
@@ -295,7 +295,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("InsertUpdateRunningText: " + ex.Message);
+                throw new AppException("InsertUpdateRunningText, " + ex.Message);
             }
 
             affected = -1;
@@ -363,7 +363,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("InsertUpdateAccessList: " + ex.Message);
+                throw new AppException("InsertUpdateAccessList, " + ex.Message);
             }
 
             affected = -1;
@@ -421,7 +421,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("InsertUpdateStation: " + ex.Message);
+                throw new AppException("InsertUpdateStation, " + ex.Message);
             }
 
             affected = -1;
@@ -501,7 +501,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("InsertUpdatePost: " + ex.Message);
+                throw new AppException("InsertUpdatePost, " + ex.Message);
             }
 
             affected = -1;
@@ -646,7 +646,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("InsertUpdateLogin: " + ex.Message);
+                throw new AppException("InsertUpdateLogin, " + ex.Message);
             }
 
             affected = -1;
@@ -694,7 +694,7 @@ namespace Tobasa
                     return Tuple.Create(success, affected);
                 }
                 else
-                    throw new Exception("Invalid table name: " + tableName);
+                    throw new Exception("Invalid table name, " + tableName);
             }
             catch (AppException ex)
             {
@@ -702,7 +702,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("DeleteTable: " + ex.Message);
+                throw new AppException("DeleteTable, " + ex.Message);
             }
         }
 
@@ -735,7 +735,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("DeleteRunningText: " + ex.Message);
+                throw new AppException("DeleteRunningText, " + ex.Message);
             }
         }
 
@@ -768,7 +768,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("DeleteAccessList: " + ex.Message);
+                throw new AppException("DeleteAccessList, " + ex.Message);
             }
         }
 
@@ -797,7 +797,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("DeleteStation: " + ex.Message);
+                throw new AppException("DeleteStation, " + ex.Message);
             }
         }
 
@@ -830,7 +830,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("DeletePost: " + ex.Message);
+                throw new AppException("DeletePost, " + ex.Message);
             }
         }
 
@@ -858,7 +858,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("DeleteLogin: " + ex.Message);
+                throw new AppException("DeleteLogin, " + ex.Message);
             }
         }
 
@@ -913,7 +913,7 @@ namespace Tobasa
                         jsonTable = GetLogin(offset, limit);
                 }
                 else
-                    throw new Exception("Invalid table name: " + tableName);
+                    throw new Exception("Invalid table name, " + tableName);
 
                 return new Dictionary<string, string>()
                 {
@@ -928,7 +928,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetTable: " + ex.Message);
+                throw new AppException("GetTable, " + ex.Message);
             }
         }
 
@@ -953,7 +953,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetRunningText: " + ex.Message);
+                throw new AppException("GetRunningText, " + ex.Message);
             }
         }
 
@@ -978,7 +978,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetAccessList: " + ex.Message);
+                throw new AppException("GetAccessList, " + ex.Message);
             }
         }
 
@@ -1003,7 +1003,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetStation: " + ex.Message);
+                throw new AppException("GetStation, " + ex.Message);
             }
         }
 
@@ -1028,7 +1028,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetPost: " + ex.Message);
+                throw new AppException("GetPost, " + ex.Message);
             }
         }
 
@@ -1053,7 +1053,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetLogin: " + ex.Message);
+                throw new AppException("GetLogin, " + ex.Message);
             }
         }
 
@@ -1073,7 +1073,7 @@ namespace Tobasa
                 if (status == "FINISHED" || status == "CLOSED")
                     return UpdateJob(status, jobid, jobno);
                 else
-                    throw new AppException("UpdateJob: Invalid job status");
+                    throw new AppException("Invalid job status");
             }
             catch (AppException ex)
             {
@@ -1081,7 +1081,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("UpdateJob: " + ex.Message);
+                throw new AppException("UpdateJob, " + ex.Message);
             }
         }
 
@@ -1126,7 +1126,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("UpdateJob: " + ex.Message);
+                throw new AppException("UpdateJob, " + ex.Message);
             }
         }
 
@@ -1150,7 +1150,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetJob: " + ex.Message);
+                throw new AppException("GetJob, " + ex.Message);
             }
         }
 
@@ -1181,7 +1181,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetJob: " + ex.Message);
+                throw new AppException("GetJob, " + ex.Message);
             }
         }
 
@@ -1251,7 +1251,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetFinishedJobInCsvList: " + ex.Message);
+                throw new AppException("GetFinishedJobInCsvList, " + ex.Message);
             }
         }
 
@@ -1311,7 +1311,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("DeleteProcessedNumberFromQueue: " + ex.Message);
+                throw new AppException("DeleteProcessedNumberFromQueue, " + ex.Message);
             }
         }
 
@@ -1425,7 +1425,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetNextWaitingNumber: " + ex.Message);
+                throw new AppException("GetNextWaitingNumber, " + ex.Message);
             }
         }
 
@@ -1445,17 +1445,25 @@ namespace Tobasa
                 if (result1 != null && result1.ContainsKey("number"))
                 {
                     string lastProcessedNumber = result1["number"];
-                    if( ! string.IsNullOrWhiteSpace(lastProcessedNumber))
+                    if ( ! string.IsNullOrWhiteSpace(lastProcessedNumber))
                     {
                         return result1;
                     }
                     else
                     {
                         Dictionary<string, string> result2 = GetWaitingNumberAndPostSummary(post);
-                        if(result2 != null && result2.ContainsKey("number"))
+                        if (result2 != null && result2.ContainsKey("number"))
                         {
                             return result2;
                         }
+                    }
+                }
+                else
+                {
+                    Dictionary<string, string> result = GetWaitingNumberAndPostSummary(post);
+                    if (result != null && result.ContainsKey("number"))
+                    {
+                        return result;
                     }
                 }
             }
@@ -1465,7 +1473,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetJob: " + ex.Message);
+                throw new AppException("GetJob, " + ex.Message);
             }
 
             return null;
@@ -1535,7 +1543,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetLastProcessedNumberAndPostSummary: " + ex.Message);
+                throw new AppException("GetLastProcessedNumberAndPostSummary, " + ex.Message);
             }
         }
 
@@ -1599,7 +1607,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetWaitingNumberAndPostSummary: " + ex.Message);
+                throw new AppException("GetWaitingNumberAndPostSummary, " + ex.Message);
             }
         }
 
@@ -1627,7 +1635,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("CreateNewNumber: " + ex.Message);
+                throw new AppException("CreateNewNumber, " + ex.Message);
             }
         }
 
@@ -1765,7 +1773,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("CreateNewNumber: " + ex.Message);
+                throw new AppException("CreateNewNumber, " + ex.Message);
             }
         }
 
@@ -1793,7 +1801,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetRunningText: " + ex.Message);
+                throw new AppException("GetRunningText, " + ex.Message);
             }
         }
 
@@ -1827,7 +1835,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetStationRunningText: " + ex.Message);
+                throw new AppException("GetStationRunningText, " + ex.Message);
             }
         }
 
@@ -1872,7 +1880,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetList: " + ex.Message);
+                throw new AppException("GetList, " + ex.Message);
             }
         }
 
@@ -1907,7 +1915,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetPostNumberPrefix: " + ex.Message);
+                throw new AppException("GetPostNumberPrefix, " + ex.Message);
             }
         }
 
@@ -1947,7 +1955,7 @@ namespace Tobasa
             }
             catch (Exception ex)
             {
-                throw new AppException("GetPostNumberPrefix: " + ex.Message);
+                throw new AppException("GetPostNumberPrefix, " + ex.Message);
             }
         }
 

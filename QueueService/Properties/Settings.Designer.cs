@@ -111,7 +111,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PGSQL")]
+        [global::System.Configuration.DefaultSettingValueAttribute("MYSQL")]
         public string ProviderType {
             get {
                 return ((string)(this["ProviderType"]));

@@ -83,6 +83,7 @@ namespace Tobasa
             this.btnChangePost8 = new System.Windows.Forms.Button();
             this.btnChangePost9 = new System.Windows.Forms.Button();
             this.tabProcessing = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.gridJobs = new System.Windows.Forms.DataGridView();
@@ -229,7 +230,7 @@ namespace Tobasa
             // capStation
             // 
             this.capStation.AutoSize = true;
-            this.capStation.BackColor = System.Drawing.Color.CadetBlue;
+            this.capStation.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.capStation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.capStation.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.capStation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -245,7 +246,7 @@ namespace Tobasa
             // capNumber
             // 
             this.capNumber.AutoSize = true;
-            this.capNumber.BackColor = System.Drawing.Color.CadetBlue;
+            this.capNumber.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.capNumber.Dock = System.Windows.Forms.DockStyle.Fill;
             this.capNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.capNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -261,7 +262,7 @@ namespace Tobasa
             // capNext
             // 
             this.capNext.AutoSize = true;
-            this.capNext.BackColor = System.Drawing.Color.CadetBlue;
+            this.capNext.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.capNext.Dock = System.Windows.Forms.DockStyle.Fill;
             this.capNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.capNext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -455,7 +456,7 @@ namespace Tobasa
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(146, 86);
             this.label11.TabIndex = 13;
-            this.label11.Text = "F9 : Recall";
+            this.label11.Text = "F9 : Call Again";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // postsBtnDiv
@@ -608,6 +609,7 @@ namespace Tobasa
             // tabProcessing
             // 
             this.tabProcessing.BackColor = System.Drawing.SystemColors.Window;
+            this.tabProcessing.Controls.Add(this.label1);
             this.tabProcessing.Controls.Add(this.label14);
             this.tabProcessing.Controls.Add(this.btnRefresh);
             this.tabProcessing.Controls.Add(this.gridJobs);
@@ -619,6 +621,18 @@ namespace Tobasa
             this.tabProcessing.TabIndex = 1;
             this.tabProcessing.Text = "Processing";
             // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.MediumBlue;
+            this.label1.Location = new System.Drawing.Point(6, 332);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(199, 16);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Right click on a row to Call Again";
+            // 
             // label14
             // 
             this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -627,14 +641,14 @@ namespace Tobasa
             this.label14.ForeColor = System.Drawing.Color.MediumBlue;
             this.label14.Location = new System.Drawing.Point(6, 305);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(207, 16);
+            this.label14.Size = new System.Drawing.Size(279, 16);
             this.label14.TabIndex = 7;
-            this.label14.Text = "Double click on a row to set status";
+            this.label14.Text = "Double click on a row to set status as Finished";
             // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Location = new System.Drawing.Point(468, 301);
+            this.btnRefresh.Location = new System.Drawing.Point(575, 301);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(75, 23);
             this.btnRefresh.TabIndex = 4;
@@ -683,9 +697,10 @@ namespace Tobasa
             this.gridJobs.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridJobs.RowHeadersWidth = 20;
             this.gridJobs.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridJobs.Size = new System.Drawing.Size(534, 274);
+            this.gridJobs.Size = new System.Drawing.Size(641, 274);
             this.gridJobs.TabIndex = 3;
             this.gridJobs.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnGridJobsCellDoubleClick);
+            this.gridJobs.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnGridJobsCellMouseClick);
             // 
             // tabFinished
             // 
@@ -709,14 +724,14 @@ namespace Tobasa
             this.label13.ForeColor = System.Drawing.Color.MediumBlue;
             this.label13.Location = new System.Drawing.Point(6, 305);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(248, 16);
+            this.label13.Size = new System.Drawing.Size(246, 16);
             this.label13.TabIndex = 6;
-            this.label13.Text = "Double click on a row to close the Queue";
+            this.label13.Text = "Double click on a row to close a Number";
             // 
             // btnRefreshFin
             // 
             this.btnRefreshFin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshFin.Location = new System.Drawing.Point(468, 301);
+            this.btnRefreshFin.Location = new System.Drawing.Point(575, 301);
             this.btnRefreshFin.Name = "btnRefreshFin";
             this.btnRefreshFin.Size = new System.Drawing.Size(75, 23);
             this.btnRefreshFin.TabIndex = 5;
@@ -757,7 +772,7 @@ namespace Tobasa
             this.gridJobsFin.ReadOnly = true;
             this.gridJobsFin.RowHeadersWidth = 20;
             this.gridJobsFin.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridJobsFin.Size = new System.Drawing.Size(534, 274);
+            this.gridJobsFin.Size = new System.Drawing.Size(641, 274);
             this.gridJobsFin.TabIndex = 4;
             this.gridJobsFin.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnGridJobsFinCellDoubleClick);
             // 
@@ -1086,6 +1101,7 @@ namespace Tobasa
 		private System.Windows.Forms.CheckBox chkManageAllPostAdvanceQueue;
 		private System.Windows.Forms.CheckBox chkManageAdvanceQueue;
 		private System.Windows.Forms.Button btnSaveSettings;
-	}
+        private System.Windows.Forms.Label label1;
+    }
 }
 
