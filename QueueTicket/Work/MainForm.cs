@@ -40,6 +40,9 @@ namespace Tobasa
         private TicketPrint _printJob = new TicketPrint();
         private bool _isFullScreen = false;
 
+        private DisplayTheme colorProfile = null;
+        private Label lblBranding = null;
+
         // Struct to save label data -label that need tobe resized automatically
         // See labelRecordList,RecordLabelSize(),OnLabelResize()
         // Set label Resize event handler to OnLabelResize()
@@ -80,9 +83,9 @@ namespace Tobasa
         }
 
         //  our images
-        private Bitmap dispLogoImg = null;
-        private Bitmap displayHeaderBg = null;
-        private Bitmap dispHeaderImg = null;
+        private Bitmap dispLogoImg      = null;
+        private Bitmap displayHeaderBg  = null;
+        private Bitmap dispHeaderImg    = null;
 
         private Bitmap post0BtnImgOn = null;
         private Bitmap post0BtnImgOff = null;
@@ -111,25 +114,34 @@ namespace Tobasa
 
         public MainForm()
         {
-            _isFullScreen = false;
-            labelRecordList = new ArrayList();
+            try
+            {
 
-            InitializeComponent();
-            // we want to receive key event
-            KeyPreview = true;
+                _isFullScreen = false;
+                labelRecordList = new ArrayList();
 
-            InitImages();
-            InitTexts();
-            InitButtonText();
-            AdaptDivMenuLayout();
-            AdaptLeftRightMenuLayout();
-            RecordLabelSize();
+                InitializeComponent();
+                // we want to receive key event
+                KeyPreview = true;
 
-            if (_settings.StartDisplayFullScreen)
-                ToggleFullScreen();
+                InitImages();
+                InitTexts();
+                InitButtonText();
+                AdaptDivMenuLayout();
+                AdaptLeftRightMenuLayout();
+                RecordLabelSize();
+                SetupTheme();
 
-            // Start TCP client
-            StartClient();
+                if (_settings.StartDisplayFullScreen)
+                    ToggleFullScreen();
+
+                // Start TCP client
+                StartClient();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error during start up: " + e.Message + "\n" + e.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         #endregion
@@ -199,6 +211,7 @@ namespace Tobasa
 
             _client.Start();
         }
+        
         private void CloseConnection()
         {
             if (_client != null)
@@ -274,23 +287,83 @@ namespace Tobasa
 
         #region Form appearance stuffs
 
+        public void SetupTheme()
+        {
+            pnlHeader.BackgroundImage = null;
+            picLogo.Image = null;
+            picHeader.Image = null;
+
+            if (File.Exists(Tobasa.Properties.Settings.Default.LogoImage))
+                picLogo.Image = new Bitmap(Tobasa.Properties.Settings.Default.LogoImage);
+            else
+                picLogo.Image = Tobasa.Properties.Resources.QueueLogo150;
+
+            InitBranding();
+
+            DoApplyTheme(Tobasa.Properties.Settings.Default.Theme);
+        }
+
+        public String ApplyTheme(String themeName)
+        {
+            //InitBranding();
+
+            return DoApplyTheme(themeName);
+        }
+
+        void InitBranding()
+        {
+            String mainBrandingImagePath = Tobasa.Properties.Settings.Default.MainBrandingImage;
+            bool useBrandingImage = Tobasa.Properties.Settings.Default.UseMainBrandingImage;
+            if (File.Exists(mainBrandingImagePath) && useBrandingImage)
+            {
+                Bitmap mainBrandingImage = new Bitmap(mainBrandingImagePath);
+                pnlHeader.BackgroundImage = mainBrandingImage;
+                pnlHeader.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+                pnlHeader.Controls.Clear();
+            }
+            else
+            {
+                pnlHeader.BackgroundImage = null;
+                picHeader.Image = null;
+
+                lblBranding = new System.Windows.Forms.Label();
+                labelRecordList.Add(new LabelRecord(lblBranding));
+
+                lblBranding.AutoSize = true;
+                lblBranding.Dock = System.Windows.Forms.DockStyle.Fill;
+                lblBranding.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                lblBranding.ForeColor = System.Drawing.Color.Gainsboro;
+                lblBranding.Location = new System.Drawing.Point(0, 0);
+                lblBranding.Margin = new System.Windows.Forms.Padding(0);
+                lblBranding.Name = "lblBranding";
+                lblBranding.Size = new System.Drawing.Size(393, 79);
+                lblBranding.TabIndex = 0;
+                lblBranding.Text = Tobasa.Properties.Settings.Default.MainLogoText;
+                lblBranding.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                lblBranding.Resize += new System.EventHandler(this.OnLabelResize);
+
+                pnlHeaderDiv.Controls.Remove(this.picHeader);
+                pnlHeaderDiv.Controls.Add(lblBranding, 1, 0);
+            }
+        }
+
         void InitImages()
         {
             // Header images
-            if (File.Exists(_settings.DisplayHeaderBg))
-                displayHeaderBg = new Bitmap(_settings.DisplayHeaderBg);
-            else
-                displayHeaderBg = Properties.Resources.DisplayHeaderBg;
+            //if (File.Exists(_settings.DisplayHeaderBg))
+            //    displayHeaderBg = new Bitmap(_settings.DisplayHeaderBg);
+            //else
+            //    displayHeaderBg = Properties.Resources.DisplayHeaderBg;
 
-            if (File.Exists(_settings.DisplayLogoImg))
-                dispLogoImg = new Bitmap(_settings.DisplayLogoImg);
-            else
-                dispLogoImg = Properties.Resources.QueueLogo150;
+            //if (File.Exists(_settings.DisplayLogoImg))
+            //    dispLogoImg = new Bitmap(_settings.DisplayLogoImg);
+            //else
+            //    dispLogoImg = Properties.Resources.QueueLogo150;
 
-            if (File.Exists(_settings.DisplayHeaderImg))
-                dispHeaderImg = new Bitmap(_settings.DisplayHeaderImg);
-            else
-                dispHeaderImg = Properties.Resources.DisplayHeaderImg;
+            //if (File.Exists(_settings.DisplayHeaderImg))
+            //    dispHeaderImg = new Bitmap(_settings.DisplayHeaderImg);
+            //else
+            //    dispHeaderImg = Properties.Resources.DisplayHeaderImg;
 
 
             // POST#0 on
@@ -484,9 +557,9 @@ namespace Tobasa
                 post9BtnImgOff = Util.MakeGrayscale3(post9BtnImgOff);
             }
 
-            pnlHeader.BackgroundImage = displayHeaderBg;
-            picLogo.Image = dispLogoImg;
-            picHeader.Image = dispHeaderImg;
+            //pnlHeader.BackgroundImage = displayHeaderBg;
+            //picLogo.Image = dispLogoImg;
+            //picHeader.Image = dispHeaderImg;
 
             picBtnPnl0.Image = post0BtnImgOff;
             picBtnPnl1.Image = post1BtnImgOff;
@@ -698,6 +771,96 @@ namespace Tobasa
                 divMenu.ColumnStyles[0].Width = 50F;
                 divMenu.ColumnStyles[1].Width = 50F;
             }
+        }
+
+        private String DoApplyTheme(String themeName)
+        {
+
+            if (themeName == "btnThemeClassic" || themeName == "Classic")
+            {
+                return "Classic";
+            }
+
+            if (themeName == "btnThemeBlue" || themeName == "Blue")
+            {
+                DisplayTheme colorProfile = new DisplayTheme();
+                UpdateColor(colorProfile);
+                return "Blue";
+            }
+
+            if (themeName == "btnThemeGreen" || themeName == "Green")
+            {
+                DisplayTheme colorProfile = new ThemeGreen();
+                UpdateColor(colorProfile);
+                return "Green";
+            }
+
+            if (themeName == "btnThemeDark" || themeName == "Dark")
+            {
+                DisplayTheme colorProfile = new ThemeDark();
+                UpdateColor(colorProfile);
+                return "Dark";
+            }
+
+            if (themeName == "btnThemeRed" || themeName == "Red")
+            {
+                DisplayTheme colorProfile = new ThemeRed();
+                UpdateColor(colorProfile);
+                return "Red";
+            }
+
+            if (themeName == "btnThemeOrange" || themeName == "Orange")
+            {
+                DisplayTheme colorProfile = new ThemeOrange();
+                UpdateColor(colorProfile);
+                return "Orange";
+            }
+
+            return "Classic";
+        }
+
+        public void UpdateColor(DisplayTheme profile)
+        {
+            colorProfile = profile;
+
+            var baseBackgroundColor      = profile.baseBackgroundColor;
+            var baseTextColor            = profile.baseTextColor;
+            var basePostCaptionBackColor = profile.basePostCaptionBackColor;
+
+            this.BackColor = baseBackgroundColor;
+            divBottom.BackColor = profile.bottomDivBackColor;
+            divBottom.ForeColor = profile.bottomDivForeColor;
+            runningTextBottom.ForeColor = profile.bottomDivForeColor;
+
+            lblPnl0.BackColor = basePostCaptionBackColor;
+            lblPnl0.ForeColor = baseTextColor;
+
+            lblPnl1.BackColor = basePostCaptionBackColor;
+            lblPnl1.ForeColor = baseTextColor;
+
+            lblPnl2.BackColor = basePostCaptionBackColor;
+            lblPnl2.ForeColor = baseTextColor;
+
+            lblPnl3.BackColor = basePostCaptionBackColor;
+            lblPnl3.ForeColor = baseTextColor;
+
+            lblPnl4.BackColor = basePostCaptionBackColor;
+            lblPnl4.ForeColor = baseTextColor;
+
+            lblPnl5.BackColor = basePostCaptionBackColor;
+            lblPnl5.ForeColor = baseTextColor;
+
+            lblPnl6.BackColor = basePostCaptionBackColor;
+            lblPnl6.ForeColor = baseTextColor;
+
+            lblPnl7.BackColor = basePostCaptionBackColor;
+            lblPnl7.ForeColor = baseTextColor;
+
+            lblPnl8.BackColor = basePostCaptionBackColor;
+            lblPnl8.ForeColor = baseTextColor;
+
+            lblPnl9.BackColor = basePostCaptionBackColor;
+            lblPnl9.ForeColor = baseTextColor;
         }
 
         #endregion
@@ -1042,7 +1205,7 @@ namespace Tobasa
 
                         if (e.Control)
                         {
-                            OptionForm form = new OptionForm();
+                            OptionForm form = new OptionForm(this);
                             form.ShowDialog();
                         }
                         break;

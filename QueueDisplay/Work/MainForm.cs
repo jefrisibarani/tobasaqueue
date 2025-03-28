@@ -621,14 +621,20 @@ namespace Tobasa
             txtRuntext0.Text = _settings.RunningText0;
             txtRuntext1.Text = _settings.RunningText1;
 
+            
+            tbMainBrandingImage.Text = _settings.DisplayMainBrandingImage; // Main Branding image that replace tbImgLogo and tbTextLogo
             tbImgLogo.Text = _settings.DisplayLogoImg;
             tbTextLogo.Text = _settings.DisplayLogoText;
+            chkUseBrandingImageAsMainLogo.Checked = _settings.UseMainBrandingImage;
+            ApplyDisplayLogoOptionState(_settings.UseMainBrandingImage);
 
             // setup POST Options
             _postProperties.LoadFromConfiguration();
             cbSelectPost.Text = "POST0";
             var postId = cbSelectPost.Text;
             SetPostPropertiesControl(postId);
+
+            RestoreButtonThemes();
         }
 
         private void SaveSettings()
@@ -682,8 +688,10 @@ namespace Tobasa
             _settings.RunningText0 = txtRuntext0.Text;
             _settings.RunningText1 = txtRuntext1.Text;
 
+            _settings.DisplayMainBrandingImage = tbMainBrandingImage.Text;
             _settings.DisplayLogoImg = tbImgLogo.Text;
             _settings.DisplayLogoText = tbTextLogo.Text;
+            _settings.UseMainBrandingImage = chkUseBrandingImageAsMainLogo.Checked;
 
 
             // save post options
@@ -733,6 +741,50 @@ namespace Tobasa
             this.chkMute.Enabled = enable;
         }
 
+        private void ApplyDisplayLogoOptionState(bool useBranding)
+        {
+            tbMainBrandingImage.Enabled = useBranding;
+            btnSetMainLogo.Enabled = useBranding;
+            tbImgLogo.Enabled = !useBranding;
+            tbTextLogo.Enabled = !useBranding;
+            btnSetLogoImg.Enabled = !useBranding;
+        }
+
+
+        private void RestoreButtonThemes()
+        {
+            String themeName = Properties.Settings.Default.Theme;
+
+            if (themeName == "btnThemeClassic" || themeName == "Classic")
+            {
+                btnThemeClassic.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeBlue" || themeName == "Blue")
+            {
+                btnThemeBlue.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeGreen" || themeName == "Green")
+            {
+                btnThemeGreen.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeDark" || themeName == "Dark")
+            {
+                btnThemeDark.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeRed" || themeName == "Red")
+            {
+                btnThemeRed.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeOrange" || themeName == "Orange")
+            {
+                btnThemeOrange.BackColor = System.Drawing.Color.LightGreen;
+            }
+        }
         #endregion
 
         #region Form event handlers
@@ -1162,8 +1214,6 @@ namespace Tobasa
             SetPostPropertiesControl(postId);
         }
 
-        #endregion
-
         private void OnThemeSelected(object sender, EventArgs e)
         {
             Button b = (Button)sender;
@@ -1172,5 +1222,29 @@ namespace Tobasa
             String selectedTheme = mDisplay.ApplyTheme(themeName);
             displayTheme = selectedTheme;
         }
+
+        private void OnSetMainLogoImage(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDlg = new OpenFileDialog();
+
+            fileDlg.InitialDirectory = Util.ProcessDir;
+            fileDlg.Filter = "Image Files(*.PNG;*.JPG;*.BMP)|*.PNG;*.JPG;*.BMP|All files (*.*)|*.*";
+
+            DialogResult result = fileDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                tbMainBrandingImage.Text = fileDlg.FileName;
+                _settings.DisplayMainBrandingImage = fileDlg.FileName;
+            }
+        }
+
+        private void OnUseBrandingImageAsMainLogo(object sender, EventArgs e)
+        {
+            bool useBranding = chkUseBrandingImageAsMainLogo.Checked;
+
+            ApplyDisplayLogoOptionState(useBranding);
+        }
+
+        #endregion
     }
 }

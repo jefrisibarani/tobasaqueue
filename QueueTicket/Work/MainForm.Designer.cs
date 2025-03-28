@@ -121,6 +121,7 @@ namespace Tobasa
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.divMain.AutoSize = true;
+            this.divMain.BackColor = System.Drawing.Color.Transparent;
             this.divMain.ColumnCount = 1;
             this.divMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.divMain.Controls.Add(this.divContent, 0, 0);
@@ -135,6 +136,7 @@ namespace Tobasa
             // 
             // divContent
             // 
+            this.divContent.BackColor = System.Drawing.Color.Transparent;
             this.divContent.ColumnCount = 1;
             this.divContent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.divContent.Controls.Add(this.pnlHeader, 0, 0);
@@ -150,7 +152,7 @@ namespace Tobasa
             // 
             // pnlHeader
             // 
-            this.pnlHeader.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.pnlHeader.BackColor = System.Drawing.Color.Transparent;
             this.pnlHeader.BackgroundImage = global::Tobasa.Properties.Resources.MenuLabelBg;
             this.pnlHeader.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pnlHeader.Controls.Add(this.pnlHeaderDiv);
@@ -274,11 +276,11 @@ namespace Tobasa
             this.lblPnl9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl9.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl9.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl9.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl9.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl9.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl9.Name = "lblPnl9";
             this.lblPnl9.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl9.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl9.Size = new System.Drawing.Size(263, 61);
             this.lblPnl9.TabIndex = 9;
             this.lblPnl9.Text = "Label Menu 9";
             this.lblPnl9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -321,11 +323,11 @@ namespace Tobasa
             this.lblPnl8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl8.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl8.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl8.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl8.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl8.Name = "lblPnl8";
             this.lblPnl8.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl8.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl8.Size = new System.Drawing.Size(263, 61);
             this.lblPnl8.TabIndex = 15;
             this.lblPnl8.Text = "Label Menu 8";
             this.lblPnl8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -368,11 +370,11 @@ namespace Tobasa
             this.lblPnl7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl7.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl7.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl7.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl7.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl7.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl7.Name = "lblPnl7";
             this.lblPnl7.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl7.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl7.Size = new System.Drawing.Size(263, 61);
             this.lblPnl7.TabIndex = 15;
             this.lblPnl7.Text = "Label Menu 7";
             this.lblPnl7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -415,11 +417,11 @@ namespace Tobasa
             this.lblPnl6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl6.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl6.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl6.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl6.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl6.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl6.Name = "lblPnl6";
             this.lblPnl6.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl6.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl6.Size = new System.Drawing.Size(263, 61);
             this.lblPnl6.TabIndex = 15;
             this.lblPnl6.Text = "Label Menu 6";
             this.lblPnl6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -462,11 +464,11 @@ namespace Tobasa
             this.lblPnl5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl5.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl5.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl5.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl5.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl5.Name = "lblPnl5";
             this.lblPnl5.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl5.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl5.Size = new System.Drawing.Size(263, 61);
             this.lblPnl5.TabIndex = 15;
             this.lblPnl5.Text = "Label Menu 5";
             this.lblPnl5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -531,11 +533,11 @@ namespace Tobasa
             this.lblPnl4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl4.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl4.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl4.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl4.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl4.Name = "lblPnl4";
             this.lblPnl4.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl4.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl4.Size = new System.Drawing.Size(263, 61);
             this.lblPnl4.TabIndex = 15;
             this.lblPnl4.Text = "Label Menu 4";
             this.lblPnl4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -578,11 +580,11 @@ namespace Tobasa
             this.lblPnl3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl3.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl3.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl3.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl3.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl3.Name = "lblPnl3";
             this.lblPnl3.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl3.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl3.Size = new System.Drawing.Size(263, 61);
             this.lblPnl3.TabIndex = 15;
             this.lblPnl3.Text = "Label Menu 3";
             this.lblPnl3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -625,11 +627,11 @@ namespace Tobasa
             this.lblPnl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl2.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl2.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl2.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl2.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl2.Name = "lblPnl2";
             this.lblPnl2.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl2.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl2.Size = new System.Drawing.Size(263, 61);
             this.lblPnl2.TabIndex = 14;
             this.lblPnl2.Text = "Label Menu 2";
             this.lblPnl2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -672,11 +674,11 @@ namespace Tobasa
             this.lblPnl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl1.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl1.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl1.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl1.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl1.Name = "lblPnl1";
             this.lblPnl1.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl1.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl1.Size = new System.Drawing.Size(263, 61);
             this.lblPnl1.TabIndex = 6;
             this.lblPnl1.Text = "Label Menu 1";
             this.lblPnl1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -719,11 +721,11 @@ namespace Tobasa
             this.lblPnl0.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPnl0.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPnl0.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblPnl0.Location = new System.Drawing.Point(4, 4);
-            this.lblPnl0.Margin = new System.Windows.Forms.Padding(4);
+            this.lblPnl0.Location = new System.Drawing.Point(6, 6);
+            this.lblPnl0.Margin = new System.Windows.Forms.Padding(6);
             this.lblPnl0.Name = "lblPnl0";
             this.lblPnl0.Padding = new System.Windows.Forms.Padding(2);
-            this.lblPnl0.Size = new System.Drawing.Size(267, 65);
+            this.lblPnl0.Size = new System.Drawing.Size(263, 61);
             this.lblPnl0.TabIndex = 9;
             this.lblPnl0.Text = "Label Menu 0";
             this.lblPnl0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -755,6 +757,19 @@ namespace Tobasa
             this.divBottom.RowCount = 1;
             this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.divBottom.Size = new System.Drawing.Size(778, 51);
             this.divBottom.TabIndex = 13;
             // 
@@ -765,7 +780,7 @@ namespace Tobasa
             this.runningTextBottom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.runningTextBottom.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.runningTextBottom.ForeColor = System.Drawing.Color.Gold;
-            this.runningTextBottom.Location = new System.Drawing.Point(3, 0);
+            this.runningTextBottom.Location = new System.Drawing.Point(3, 193);
             this.runningTextBottom.Name = "runningTextBottom";
             this.runningTextBottom.Size = new System.Drawing.Size(776, 51);
             this.runningTextBottom.TabIndex = 0;

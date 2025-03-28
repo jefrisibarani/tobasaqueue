@@ -309,7 +309,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ShowCenterMiddleDiv" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SwapCounterNoumberLabelPosition" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -331,6 +331,12 @@
     </Setting>
     <Setting Name="Theme" Type="System.String" Scope="User">
       <Value Profile="(Default)">Classic</Value>
+    </Setting>
+    <Setting Name="DisplayMainBrandingImage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\DisplayMainBrandingImage.png</Value>
+    </Setting>
+    <Setting Name="UseMainBrandingImage" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

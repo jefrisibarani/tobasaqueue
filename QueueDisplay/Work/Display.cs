@@ -96,6 +96,9 @@ namespace Tobasa
         string midTextPost5, midTextPost6, midTextPost7, midTextPost8, midTextPost9;
         
         Bitmap displayLogoImg  = null;
+        
+        Bitmap displayMainBrandingImage = null;
+        PictureBox displayMainBrandingImageBox = null;
 
         private const int CP_NOCLOSE_BUTTON = 0x200;
         public bool isFullScreen;
@@ -740,51 +743,64 @@ namespace Tobasa
         #region Constructor / Destructor
         public Display()
         {
-            startUpCompleted = false;
-            labelRecordList  = new ArrayList();
-            isFullScreen     = false;
-            
-            InitializeComponent();
-
-            // need this so we can SetLocation to another screen
-            StartPosition = FormStartPosition.Manual;
-            
-            // we want to receive key event
-            KeyPreview = true;
-
-            SetPostCaptions();
-            InitLogo();
-            SetLoketOrCounterText();
-            RecordLabelSize();
-            AdaptCenterLayout();
-            AdaptLeftDivPostLayout();
-            AdaptRightDivPostLayout();
-            AdaptMainLeftAndRightLayout();
-
-            if (Properties.Settings.Default.StartNumberWithUnderscore)
-                ResetDisplayNumbers();
-
-            // set two built in runnning text
-            AddRunningText(Properties.Settings.Default.RunningText0);
-            AddRunningText(Properties.Settings.Default.RunningText1);
-
-            dsEngine = new DSEngine(this.centerPanelVideo, this.Handle);
-
-            // Set location to another screen if available
-            ShowToSecondScreen();
-
-            if (Properties.Settings.Default.StartDisplayFullScreen)
-                SetFullScreen();
-            else
-                DontFullScreen();
-
-            StartTimers();
-
-            startUpCompleted = true;
-
-            if (Properties.Settings.Default.Theme != "Classic")
+            try
             {
-                ApplyTheme(Properties.Settings.Default.Theme);
+
+                startUpCompleted = false;
+                labelRecordList = new ArrayList();
+                isFullScreen = false;
+
+                InitializeComponent();
+
+                // need this so we can SetLocation to another screen
+                StartPosition = FormStartPosition.Manual;
+
+                // we want to receive key event
+                KeyPreview = true;
+
+                SetPostCaptions();
+                InitLogo();
+                SetLoketOrCounterText();
+                RecordLabelSize();
+                AdaptCenterLayout();
+                AdaptLeftDivPostLayout();
+                AdaptRightDivPostLayout();
+                AdaptMainLeftAndRightLayout();
+
+                if (Properties.Settings.Default.StartNumberWithUnderscore)
+                    ResetDisplayNumbers();
+
+                // set two built in runnning text
+                AddRunningText(Properties.Settings.Default.RunningText0);
+                AddRunningText(Properties.Settings.Default.RunningText1);
+
+                dsEngine = new DSEngine(this.centerPanelVideo, this.Handle);
+
+                // Set location to another screen if available
+                ShowToSecondScreen();
+
+                if (Properties.Settings.Default.StartDisplayFullScreen)
+                    SetFullScreen();
+                else
+                    DontFullScreen();
+
+                StartTimers();
+
+                startUpCompleted = true;
+
+                if (Properties.Settings.Default.Theme != "Classic")
+                {
+                    ApplyTheme(Properties.Settings.Default.Theme);
+                }
+                else
+                {
+                    colorProfile = new DisplayTheme();
+                    colorProfile.basePostTextColor = Color.Gold;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error during start up: " + e.Message + "\n" + e.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1209,13 +1225,38 @@ namespace Tobasa
 
         public void InitLogo()
         {
-            if (File.Exists(Properties.Settings.Default.DisplayLogoImg))
-                displayLogoImg = new Bitmap(Properties.Settings.Default.DisplayLogoImg);
-            else
-                displayLogoImg = Properties.Resources.QueueLogo150;
+            String displayMainBrandingImagePath = Properties.Settings.Default.DisplayMainBrandingImage;
+            bool useMainBrandingImage = Properties.Settings.Default.UseMainBrandingImage;
+            if (File.Exists(displayMainBrandingImagePath) && useMainBrandingImage)
+            {
+                displayMainBrandingImage = new Bitmap(displayMainBrandingImagePath);
 
-            pictureBoxLogo.Image = displayLogoImg;
-            lblBranding.Text = Properties.Settings.Default.DisplayLogoText;
+                this.centerBrandDiv.Controls.Clear();
+
+                displayMainBrandingImageBox = new PictureBox();
+                displayMainBrandingImageBox.Dock = System.Windows.Forms.DockStyle.Fill;
+                displayMainBrandingImageBox.Image = displayMainBrandingImage;
+                displayMainBrandingImageBox.Location = new System.Drawing.Point(0, 0);
+                displayMainBrandingImageBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+                displayMainBrandingImageBox.Name = "displayMainBrandingImageBox";
+                //displayMainBrandingImageBox.Size = new System.Drawing.Size(97, 80);
+                displayMainBrandingImageBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+                //displayMainBrandingImageBox.TabIndex = 0;
+                displayMainBrandingImageBox.TabStop = false;
+
+
+                this.centerBrandDiv.Controls.Add(displayMainBrandingImageBox, 0, 0);
+            }
+            else
+            {
+                if (File.Exists(Properties.Settings.Default.DisplayLogoImg))
+                    displayLogoImg = new Bitmap(Properties.Settings.Default.DisplayLogoImg);
+                else
+                    displayLogoImg = Properties.Resources.QueueLogo150;
+
+                pictureBoxLogo.Image = displayLogoImg;
+                lblBranding.Text = Properties.Settings.Default.DisplayLogoText;
+            }
         }
 
         public void ResetDisplayNumbers()
@@ -1725,7 +1766,7 @@ namespace Tobasa
 
         #endregion
 
-
+        #region Form Theme
         public String ApplyTheme(String themeName)
         {
 
@@ -2139,6 +2180,8 @@ namespace Tobasa
             this.runningTextBottom.ForeColor = bottomDivForeColor;
             #endregion
         }
+
+        #endregion
     }
 }
 

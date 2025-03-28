@@ -90,12 +90,21 @@ namespace Tobasa
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.tabMisc = new System.Windows.Forms.TabPage();
+            this.chkUseBrandingImageAsMainLogo = new System.Windows.Forms.CheckBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.btnSetMainLogo = new System.Windows.Forms.Button();
+            this.tbMainBrandingImage = new System.Windows.Forms.TextBox();
+            this.btnThemeOrange = new System.Windows.Forms.Button();
+            this.btnThemeBlue = new System.Windows.Forms.Button();
+            this.btnThemeRed = new System.Windows.Forms.Button();
+            this.btnThemeDark = new System.Windows.Forms.Button();
+            this.btnThemeGreen = new System.Windows.Forms.Button();
+            this.btnThemeClassic = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
             this.chkShowCenterMiddleDiv = new System.Windows.Forms.CheckBox();
             this.chkShowRightPosts = new System.Windows.Forms.CheckBox();
             this.chkShowLeftPosts = new System.Windows.Forms.CheckBox();
             this.chkShowInfoTextTop1 = new System.Windows.Forms.CheckBox();
-            this.chkAudioLoketIDUseAlphabet = new System.Windows.Forms.CheckBox();
-            this.chkPlaySimpleNotification = new System.Windows.Forms.CheckBox();
             this.chkShowInfoTextTop0 = new System.Windows.Forms.CheckBox();
             this.tbTextLogo = new System.Windows.Forms.TextBox();
             this.label32 = new System.Windows.Forms.Label();
@@ -103,16 +112,11 @@ namespace Tobasa
             this.btnSetLogoImg = new System.Windows.Forms.Button();
             this.tbImgLogo = new System.Windows.Forms.TextBox();
             this.chkShowLogo = new System.Windows.Forms.CheckBox();
-            this.chkSpellNumber = new System.Windows.Forms.CheckBox();
             this.label10 = new System.Windows.Forms.Label();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
-            this.chkSetUnderscore = new System.Windows.Forms.CheckBox();
             this.btnAnimationColor = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.btnSetAudioFolder = new System.Windows.Forms.Button();
-            this.tbAudioFolder = new System.Windows.Forms.TextBox();
             this.tabPostOpt = new System.Windows.Forms.TabPage();
             this.cbSelectPost = new System.Windows.Forms.ComboBox();
             this.label91 = new System.Windows.Forms.Label();
@@ -127,13 +131,13 @@ namespace Tobasa
             this.tbPostName = new System.Windows.Forms.TextBox();
             this.label60 = new System.Windows.Forms.Label();
             this.tabPageRunText = new System.Windows.Forms.TabPage();
-            this.btnThemeOrange = new System.Windows.Forms.Button();
-            this.btnThemeBlue = new System.Windows.Forms.Button();
-            this.btnThemeRed = new System.Windows.Forms.Button();
-            this.btnThemeDark = new System.Windows.Forms.Button();
-            this.btnThemeGreen = new System.Windows.Forms.Button();
-            this.btnThemeClassic = new System.Windows.Forms.Button();
-            this.label11 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btnSetAudioFolder = new System.Windows.Forms.Button();
+            this.tbAudioFolder = new System.Windows.Forms.TextBox();
+            this.chkSetUnderscore = new System.Windows.Forms.CheckBox();
+            this.chkSpellNumber = new System.Windows.Forms.CheckBox();
+            this.chkPlaySimpleNotification = new System.Windows.Forms.CheckBox();
+            this.chkAudioLoketIDUseAlphabet = new System.Windows.Forms.CheckBox();
             this.txtRuntext1 = new System.Windows.Forms.TextBox();
             this.label53 = new System.Windows.Forms.Label();
             this.txtRuntext0 = new System.Windows.Forms.TextBox();
@@ -583,12 +587,21 @@ namespace Tobasa
             // 
             // tabMisc
             // 
+            this.tabMisc.Controls.Add(this.chkUseBrandingImageAsMainLogo);
+            this.tabMisc.Controls.Add(this.label12);
+            this.tabMisc.Controls.Add(this.btnSetMainLogo);
+            this.tabMisc.Controls.Add(this.tbMainBrandingImage);
+            this.tabMisc.Controls.Add(this.btnThemeOrange);
+            this.tabMisc.Controls.Add(this.btnThemeBlue);
+            this.tabMisc.Controls.Add(this.btnThemeRed);
+            this.tabMisc.Controls.Add(this.btnThemeDark);
+            this.tabMisc.Controls.Add(this.btnThemeGreen);
+            this.tabMisc.Controls.Add(this.btnThemeClassic);
+            this.tabMisc.Controls.Add(this.label11);
             this.tabMisc.Controls.Add(this.chkShowCenterMiddleDiv);
             this.tabMisc.Controls.Add(this.chkShowRightPosts);
             this.tabMisc.Controls.Add(this.chkShowLeftPosts);
             this.tabMisc.Controls.Add(this.chkShowInfoTextTop1);
-            this.tabMisc.Controls.Add(this.chkAudioLoketIDUseAlphabet);
-            this.tabMisc.Controls.Add(this.chkPlaySimpleNotification);
             this.tabMisc.Controls.Add(this.chkShowInfoTextTop0);
             this.tabMisc.Controls.Add(this.tbTextLogo);
             this.tabMisc.Controls.Add(this.label32);
@@ -596,23 +609,131 @@ namespace Tobasa
             this.tabMisc.Controls.Add(this.btnSetLogoImg);
             this.tabMisc.Controls.Add(this.tbImgLogo);
             this.tabMisc.Controls.Add(this.chkShowLogo);
-            this.tabMisc.Controls.Add(this.chkSpellNumber);
             this.tabMisc.Controls.Add(this.label10);
             this.tabMisc.Controls.Add(this.numericUpDown);
             this.tabMisc.Controls.Add(this.label9);
-            this.tabMisc.Controls.Add(this.chkSetUnderscore);
             this.tabMisc.Controls.Add(this.btnAnimationColor);
             this.tabMisc.Controls.Add(this.label8);
-            this.tabMisc.Controls.Add(this.label7);
-            this.tabMisc.Controls.Add(this.btnSetAudioFolder);
-            this.tabMisc.Controls.Add(this.tbAudioFolder);
             this.tabMisc.Location = new System.Drawing.Point(4, 22);
             this.tabMisc.Name = "tabMisc";
             this.tabMisc.Padding = new System.Windows.Forms.Padding(3);
             this.tabMisc.Size = new System.Drawing.Size(617, 198);
             this.tabMisc.TabIndex = 3;
-            this.tabMisc.Text = "Miscellaneous";
+            this.tabMisc.Text = "Appearance";
             this.tabMisc.UseVisualStyleBackColor = true;
+            // 
+            // chkUseBrandingImageAsMainLogo
+            // 
+            this.chkUseBrandingImageAsMainLogo.AutoSize = true;
+            this.chkUseBrandingImageAsMainLogo.Location = new System.Drawing.Point(14, 16);
+            this.chkUseBrandingImageAsMainLogo.Name = "chkUseBrandingImageAsMainLogo";
+            this.chkUseBrandingImageAsMainLogo.Size = new System.Drawing.Size(182, 17);
+            this.chkUseBrandingImageAsMainLogo.TabIndex = 57;
+            this.chkUseBrandingImageAsMainLogo.Text = "Use branding image as main logo";
+            this.chkUseBrandingImageAsMainLogo.UseVisualStyleBackColor = true;
+            this.chkUseBrandingImageAsMainLogo.CheckedChanged += new System.EventHandler(this.OnUseBrandingImageAsMainLogo);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(11, 39);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(81, 13);
+            this.label12.TabIndex = 56;
+            this.label12.Text = "Branding Image";
+            // 
+            // btnSetMainLogo
+            // 
+            this.btnSetMainLogo.Location = new System.Drawing.Point(322, 36);
+            this.btnSetMainLogo.Name = "btnSetMainLogo";
+            this.btnSetMainLogo.Size = new System.Drawing.Size(31, 23);
+            this.btnSetMainLogo.TabIndex = 55;
+            this.btnSetMainLogo.Text = "...";
+            this.btnSetMainLogo.UseVisualStyleBackColor = true;
+            this.btnSetMainLogo.Click += new System.EventHandler(this.OnSetMainLogoImage);
+            // 
+            // tbMainBrandingImage
+            // 
+            this.tbMainBrandingImage.Location = new System.Drawing.Point(98, 36);
+            this.tbMainBrandingImage.Name = "tbMainBrandingImage";
+            this.tbMainBrandingImage.Size = new System.Drawing.Size(218, 20);
+            this.tbMainBrandingImage.TabIndex = 54;
+            this.tbMainBrandingImage.Text = "\r\n        ";
+            // 
+            // btnThemeOrange
+            // 
+            this.btnThemeOrange.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeOrange.Location = new System.Drawing.Point(444, 168);
+            this.btnThemeOrange.Name = "btnThemeOrange";
+            this.btnThemeOrange.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeOrange.TabIndex = 53;
+            this.btnThemeOrange.Text = "Orange";
+            this.btnThemeOrange.UseVisualStyleBackColor = true;
+            this.btnThemeOrange.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeBlue
+            // 
+            this.btnThemeBlue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeBlue.Location = new System.Drawing.Point(133, 168);
+            this.btnThemeBlue.Name = "btnThemeBlue";
+            this.btnThemeBlue.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeBlue.TabIndex = 52;
+            this.btnThemeBlue.Text = "Blue";
+            this.btnThemeBlue.UseVisualStyleBackColor = true;
+            this.btnThemeBlue.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeRed
+            // 
+            this.btnThemeRed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeRed.Location = new System.Drawing.Point(366, 168);
+            this.btnThemeRed.Name = "btnThemeRed";
+            this.btnThemeRed.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeRed.TabIndex = 51;
+            this.btnThemeRed.Text = "Red";
+            this.btnThemeRed.UseVisualStyleBackColor = true;
+            this.btnThemeRed.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeDark
+            // 
+            this.btnThemeDark.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeDark.Location = new System.Drawing.Point(289, 168);
+            this.btnThemeDark.Name = "btnThemeDark";
+            this.btnThemeDark.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeDark.TabIndex = 50;
+            this.btnThemeDark.Text = "Dark";
+            this.btnThemeDark.UseVisualStyleBackColor = true;
+            this.btnThemeDark.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeGreen
+            // 
+            this.btnThemeGreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeGreen.Location = new System.Drawing.Point(211, 168);
+            this.btnThemeGreen.Name = "btnThemeGreen";
+            this.btnThemeGreen.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeGreen.TabIndex = 49;
+            this.btnThemeGreen.Text = "Green";
+            this.btnThemeGreen.UseVisualStyleBackColor = true;
+            this.btnThemeGreen.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // btnThemeClassic
+            // 
+            this.btnThemeClassic.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThemeClassic.Location = new System.Drawing.Point(56, 168);
+            this.btnThemeClassic.Name = "btnThemeClassic";
+            this.btnThemeClassic.Size = new System.Drawing.Size(72, 23);
+            this.btnThemeClassic.TabIndex = 48;
+            this.btnThemeClassic.Text = "Classic";
+            this.btnThemeClassic.UseVisualStyleBackColor = true;
+            this.btnThemeClassic.Click += new System.EventHandler(this.OnThemeSelected);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(11, 173);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(40, 13);
+            this.label11.TabIndex = 47;
+            this.label11.Text = "Theme";
             // 
             // chkShowCenterMiddleDiv
             // 
@@ -654,36 +775,10 @@ namespace Tobasa
             this.chkShowInfoTextTop1.Text = "Show top info strip (server message)";
             this.chkShowInfoTextTop1.UseVisualStyleBackColor = true;
             // 
-            // chkAudioLoketIDUseAlphabet
-            // 
-            this.chkAudioLoketIDUseAlphabet.AutoSize = true;
-            this.chkAudioLoketIDUseAlphabet.Checked = true;
-            this.chkAudioLoketIDUseAlphabet.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAudioLoketIDUseAlphabet.Location = new System.Drawing.Point(211, 151);
-            this.chkAudioLoketIDUseAlphabet.Name = "chkAudioLoketIDUseAlphabet";
-            this.chkAudioLoketIDUseAlphabet.Size = new System.Drawing.Size(156, 17);
-            this.chkAudioLoketIDUseAlphabet.TabIndex = 34;
-            this.chkAudioLoketIDUseAlphabet.Text = "Counter audio use alphabet";
-            this.chkAudioLoketIDUseAlphabet.UseVisualStyleBackColor = true;
-            this.chkAudioLoketIDUseAlphabet.CheckedChanged += new System.EventHandler(this.OnCounterUseAlphabet);
-            // 
-            // chkPlaySimpleNotification
-            // 
-            this.chkPlaySimpleNotification.AutoSize = true;
-            this.chkPlaySimpleNotification.Checked = true;
-            this.chkPlaySimpleNotification.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkPlaySimpleNotification.Location = new System.Drawing.Point(14, 151);
-            this.chkPlaySimpleNotification.Name = "chkPlaySimpleNotification";
-            this.chkPlaySimpleNotification.Size = new System.Drawing.Size(164, 17);
-            this.chkPlaySimpleNotification.TabIndex = 33;
-            this.chkPlaySimpleNotification.Text = "Play simple sound notification";
-            this.chkPlaySimpleNotification.UseVisualStyleBackColor = true;
-            this.chkPlaySimpleNotification.CheckedChanged += new System.EventHandler(this.OnPlaySimpleNotification);
-            // 
             // chkShowInfoTextTop0
             // 
             this.chkShowInfoTextTop0.AutoSize = true;
-            this.chkShowInfoTextTop0.Location = new System.Drawing.Point(392, 37);
+            this.chkShowInfoTextTop0.Location = new System.Drawing.Point(392, 39);
             this.chkShowInfoTextTop0.Name = "chkShowInfoTextTop0";
             this.chkShowInfoTextTop0.Size = new System.Drawing.Size(221, 17);
             this.chkShowInfoTextTop0.TabIndex = 32;
@@ -692,16 +787,16 @@ namespace Tobasa
             // 
             // tbTextLogo
             // 
-            this.tbTextLogo.Location = new System.Drawing.Point(87, 38);
+            this.tbTextLogo.Location = new System.Drawing.Point(98, 85);
             this.tbTextLogo.Name = "tbTextLogo";
-            this.tbTextLogo.Size = new System.Drawing.Size(229, 20);
+            this.tbTextLogo.Size = new System.Drawing.Size(218, 20);
             this.tbTextLogo.TabIndex = 31;
             this.tbTextLogo.Text = "\r\n        ";
             // 
             // label32
             // 
             this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(11, 38);
+            this.label32.Location = new System.Drawing.Point(11, 85);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(55, 13);
             this.label32.TabIndex = 30;
@@ -710,7 +805,7 @@ namespace Tobasa
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(11, 17);
+            this.label31.Location = new System.Drawing.Point(11, 64);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(63, 13);
             this.label31.TabIndex = 29;
@@ -718,7 +813,7 @@ namespace Tobasa
             // 
             // btnSetLogoImg
             // 
-            this.btnSetLogoImg.Location = new System.Drawing.Point(322, 14);
+            this.btnSetLogoImg.Location = new System.Drawing.Point(322, 61);
             this.btnSetLogoImg.Name = "btnSetLogoImg";
             this.btnSetLogoImg.Size = new System.Drawing.Size(31, 23);
             this.btnSetLogoImg.TabIndex = 28;
@@ -728,9 +823,9 @@ namespace Tobasa
             // 
             // tbImgLogo
             // 
-            this.tbImgLogo.Location = new System.Drawing.Point(87, 14);
+            this.tbImgLogo.Location = new System.Drawing.Point(98, 61);
             this.tbImgLogo.Name = "tbImgLogo";
-            this.tbImgLogo.Size = new System.Drawing.Size(229, 20);
+            this.tbImgLogo.Size = new System.Drawing.Size(218, 20);
             this.tbImgLogo.TabIndex = 27;
             this.tbImgLogo.Text = "\r\n        ";
             // 
@@ -744,23 +839,10 @@ namespace Tobasa
             this.chkShowLogo.Text = "Show logo";
             this.chkShowLogo.UseVisualStyleBackColor = true;
             // 
-            // chkSpellNumber
-            // 
-            this.chkSpellNumber.AutoSize = true;
-            this.chkSpellNumber.Checked = true;
-            this.chkSpellNumber.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSpellNumber.Location = new System.Drawing.Point(14, 173);
-            this.chkSpellNumber.Name = "chkSpellNumber";
-            this.chkSpellNumber.Size = new System.Drawing.Size(186, 17);
-            this.chkSpellNumber.TabIndex = 20;
-            this.chkSpellNumber.Text = "Spell numbers when playing audio";
-            this.chkSpellNumber.UseVisualStyleBackColor = true;
-            this.chkSpellNumber.CheckedChanged += new System.EventHandler(this.OnSpellNumber);
-            // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(177, 120);
+            this.label10.Location = new System.Drawing.Point(177, 149);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(42, 13);
             this.label10.TabIndex = 19;
@@ -768,7 +850,7 @@ namespace Tobasa
             // 
             // numericUpDown
             // 
-            this.numericUpDown.Location = new System.Drawing.Point(127, 117);
+            this.numericUpDown.Location = new System.Drawing.Point(127, 146);
             this.numericUpDown.Maximum = new decimal(new int[] {
             60,
             0,
@@ -781,29 +863,17 @@ namespace Tobasa
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(11, 117);
+            this.label9.Location = new System.Drawing.Point(11, 146);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(109, 13);
             this.label9.TabIndex = 17;
             this.label9.Text = "Queue animation time";
             // 
-            // chkSetUnderscore
-            // 
-            this.chkSetUnderscore.AutoSize = true;
-            this.chkSetUnderscore.Checked = true;
-            this.chkSetUnderscore.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSetUnderscore.Location = new System.Drawing.Point(211, 174);
-            this.chkSetUnderscore.Name = "chkSetUnderscore";
-            this.chkSetUnderscore.Size = new System.Drawing.Size(205, 17);
-            this.chkSetUnderscore.TabIndex = 16;
-            this.chkSetUnderscore.Text = "Set number with underscore at startup";
-            this.chkSetUnderscore.UseVisualStyleBackColor = true;
-            // 
             // btnAnimationColor
             // 
-            this.btnAnimationColor.Location = new System.Drawing.Point(127, 90);
+            this.btnAnimationColor.Location = new System.Drawing.Point(127, 116);
             this.btnAnimationColor.Name = "btnAnimationColor";
-            this.btnAnimationColor.Size = new System.Drawing.Size(61, 20);
+            this.btnAnimationColor.Size = new System.Drawing.Size(61, 24);
             this.btnAnimationColor.TabIndex = 14;
             this.btnAnimationColor.Text = "...";
             this.btnAnimationColor.UseVisualStyleBackColor = true;
@@ -812,38 +882,11 @@ namespace Tobasa
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(11, 92);
+            this.label8.Location = new System.Drawing.Point(11, 118);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(113, 13);
             this.label8.TabIndex = 13;
             this.label8.Text = "Queue animation color";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(11, 67);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(74, 13);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "Audio location";
-            // 
-            // btnSetAudioFolder
-            // 
-            this.btnSetAudioFolder.Location = new System.Drawing.Point(322, 62);
-            this.btnSetAudioFolder.Name = "btnSetAudioFolder";
-            this.btnSetAudioFolder.Size = new System.Drawing.Size(31, 23);
-            this.btnSetAudioFolder.TabIndex = 11;
-            this.btnSetAudioFolder.Text = "...";
-            this.btnSetAudioFolder.UseVisualStyleBackColor = true;
-            this.btnSetAudioFolder.Click += new System.EventHandler(this.OnSetAudioFolder);
-            // 
-            // tbAudioFolder
-            // 
-            this.tbAudioFolder.Location = new System.Drawing.Point(87, 64);
-            this.tbAudioFolder.Name = "tbAudioFolder";
-            this.tbAudioFolder.Size = new System.Drawing.Size(229, 20);
-            this.tbAudioFolder.TabIndex = 9;
-            this.tbAudioFolder.Text = "\r\n        ";
             // 
             // tabPostOpt
             // 
@@ -977,13 +1020,13 @@ namespace Tobasa
             // 
             // tabPageRunText
             // 
-            this.tabPageRunText.Controls.Add(this.btnThemeOrange);
-            this.tabPageRunText.Controls.Add(this.btnThemeBlue);
-            this.tabPageRunText.Controls.Add(this.btnThemeRed);
-            this.tabPageRunText.Controls.Add(this.btnThemeDark);
-            this.tabPageRunText.Controls.Add(this.btnThemeGreen);
-            this.tabPageRunText.Controls.Add(this.btnThemeClassic);
-            this.tabPageRunText.Controls.Add(this.label11);
+            this.tabPageRunText.Controls.Add(this.label7);
+            this.tabPageRunText.Controls.Add(this.btnSetAudioFolder);
+            this.tabPageRunText.Controls.Add(this.tbAudioFolder);
+            this.tabPageRunText.Controls.Add(this.chkSetUnderscore);
+            this.tabPageRunText.Controls.Add(this.chkSpellNumber);
+            this.tabPageRunText.Controls.Add(this.chkPlaySimpleNotification);
+            this.tabPageRunText.Controls.Add(this.chkAudioLoketIDUseAlphabet);
             this.tabPageRunText.Controls.Add(this.txtRuntext1);
             this.tabPageRunText.Controls.Add(this.label53);
             this.tabPageRunText.Controls.Add(this.txtRuntext0);
@@ -996,84 +1039,84 @@ namespace Tobasa
             this.tabPageRunText.Text = "Running Text & Theme";
             this.tabPageRunText.UseVisualStyleBackColor = true;
             // 
-            // btnThemeOrange
+            // label7
             // 
-            this.btnThemeOrange.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeOrange.Location = new System.Drawing.Point(484, 92);
-            this.btnThemeOrange.Name = "btnThemeOrange";
-            this.btnThemeOrange.Size = new System.Drawing.Size(72, 23);
-            this.btnThemeOrange.TabIndex = 46;
-            this.btnThemeOrange.Text = "Orange";
-            this.btnThemeOrange.UseVisualStyleBackColor = true;
-            this.btnThemeOrange.Click += new System.EventHandler(this.OnThemeSelected);
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(11, 101);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(74, 13);
+            this.label7.TabIndex = 53;
+            this.label7.Text = "Audio location";
             // 
-            // btnThemeBlue
+            // btnSetAudioFolder
             // 
-            this.btnThemeBlue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeBlue.Location = new System.Drawing.Point(173, 92);
-            this.btnThemeBlue.Name = "btnThemeBlue";
-            this.btnThemeBlue.Size = new System.Drawing.Size(72, 23);
-            this.btnThemeBlue.TabIndex = 45;
-            this.btnThemeBlue.Text = "Blue";
-            this.btnThemeBlue.UseVisualStyleBackColor = true;
-            this.btnThemeBlue.Click += new System.EventHandler(this.OnThemeSelected);
+            this.btnSetAudioFolder.Location = new System.Drawing.Point(322, 96);
+            this.btnSetAudioFolder.Name = "btnSetAudioFolder";
+            this.btnSetAudioFolder.Size = new System.Drawing.Size(31, 23);
+            this.btnSetAudioFolder.TabIndex = 52;
+            this.btnSetAudioFolder.Text = "...";
+            this.btnSetAudioFolder.UseVisualStyleBackColor = true;
+            this.btnSetAudioFolder.Click += new System.EventHandler(this.OnSetAudioFolder);
             // 
-            // btnThemeRed
+            // tbAudioFolder
             // 
-            this.btnThemeRed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeRed.Location = new System.Drawing.Point(406, 92);
-            this.btnThemeRed.Name = "btnThemeRed";
-            this.btnThemeRed.Size = new System.Drawing.Size(72, 23);
-            this.btnThemeRed.TabIndex = 44;
-            this.btnThemeRed.Text = "Red";
-            this.btnThemeRed.UseVisualStyleBackColor = true;
-            this.btnThemeRed.Click += new System.EventHandler(this.OnThemeSelected);
+            this.tbAudioFolder.Location = new System.Drawing.Point(87, 98);
+            this.tbAudioFolder.Name = "tbAudioFolder";
+            this.tbAudioFolder.Size = new System.Drawing.Size(229, 20);
+            this.tbAudioFolder.TabIndex = 51;
+            this.tbAudioFolder.Text = "\r\n        ";
             // 
-            // btnThemeDark
+            // chkSetUnderscore
             // 
-            this.btnThemeDark.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeDark.Location = new System.Drawing.Point(329, 92);
-            this.btnThemeDark.Name = "btnThemeDark";
-            this.btnThemeDark.Size = new System.Drawing.Size(72, 23);
-            this.btnThemeDark.TabIndex = 43;
-            this.btnThemeDark.Text = "Dark";
-            this.btnThemeDark.UseVisualStyleBackColor = true;
-            this.btnThemeDark.Click += new System.EventHandler(this.OnThemeSelected);
+            this.chkSetUnderscore.AutoSize = true;
+            this.chkSetUnderscore.Checked = true;
+            this.chkSetUnderscore.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSetUnderscore.Location = new System.Drawing.Point(217, 128);
+            this.chkSetUnderscore.Name = "chkSetUnderscore";
+            this.chkSetUnderscore.Size = new System.Drawing.Size(205, 17);
+            this.chkSetUnderscore.TabIndex = 50;
+            this.chkSetUnderscore.Text = "Set number with underscore at startup";
+            this.chkSetUnderscore.UseVisualStyleBackColor = true;
             // 
-            // btnThemeGreen
+            // chkSpellNumber
             // 
-            this.btnThemeGreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeGreen.Location = new System.Drawing.Point(251, 92);
-            this.btnThemeGreen.Name = "btnThemeGreen";
-            this.btnThemeGreen.Size = new System.Drawing.Size(72, 23);
-            this.btnThemeGreen.TabIndex = 42;
-            this.btnThemeGreen.Text = "Green";
-            this.btnThemeGreen.UseVisualStyleBackColor = true;
-            this.btnThemeGreen.Click += new System.EventHandler(this.OnThemeSelected);
+            this.chkSpellNumber.AutoSize = true;
+            this.chkSpellNumber.Checked = true;
+            this.chkSpellNumber.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSpellNumber.Location = new System.Drawing.Point(217, 151);
+            this.chkSpellNumber.Name = "chkSpellNumber";
+            this.chkSpellNumber.Size = new System.Drawing.Size(186, 17);
+            this.chkSpellNumber.TabIndex = 49;
+            this.chkSpellNumber.Text = "Spell numbers when playing audio";
+            this.chkSpellNumber.UseVisualStyleBackColor = true;
             // 
-            // btnThemeClassic
+            // chkPlaySimpleNotification
             // 
-            this.btnThemeClassic.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeClassic.Location = new System.Drawing.Point(96, 92);
-            this.btnThemeClassic.Name = "btnThemeClassic";
-            this.btnThemeClassic.Size = new System.Drawing.Size(72, 23);
-            this.btnThemeClassic.TabIndex = 41;
-            this.btnThemeClassic.Text = "Classic";
-            this.btnThemeClassic.UseVisualStyleBackColor = true;
-            this.btnThemeClassic.Click += new System.EventHandler(this.OnThemeSelected);
+            this.chkPlaySimpleNotification.AutoSize = true;
+            this.chkPlaySimpleNotification.Checked = true;
+            this.chkPlaySimpleNotification.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkPlaySimpleNotification.Location = new System.Drawing.Point(13, 128);
+            this.chkPlaySimpleNotification.Name = "chkPlaySimpleNotification";
+            this.chkPlaySimpleNotification.Size = new System.Drawing.Size(164, 17);
+            this.chkPlaySimpleNotification.TabIndex = 48;
+            this.chkPlaySimpleNotification.Text = "Play simple sound notification";
+            this.chkPlaySimpleNotification.UseVisualStyleBackColor = true;
             // 
-            // label11
+            // chkAudioLoketIDUseAlphabet
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 96);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(40, 13);
-            this.label11.TabIndex = 40;
-            this.label11.Text = "Theme";
+            this.chkAudioLoketIDUseAlphabet.AutoSize = true;
+            this.chkAudioLoketIDUseAlphabet.Checked = true;
+            this.chkAudioLoketIDUseAlphabet.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAudioLoketIDUseAlphabet.Location = new System.Drawing.Point(13, 151);
+            this.chkAudioLoketIDUseAlphabet.Name = "chkAudioLoketIDUseAlphabet";
+            this.chkAudioLoketIDUseAlphabet.Size = new System.Drawing.Size(156, 17);
+            this.chkAudioLoketIDUseAlphabet.TabIndex = 47;
+            this.chkAudioLoketIDUseAlphabet.Text = "Counter audio use alphabet";
+            this.chkAudioLoketIDUseAlphabet.UseVisualStyleBackColor = true;
             // 
             // txtRuntext1
             // 
-            this.txtRuntext1.Location = new System.Drawing.Point(96, 43);
+            this.txtRuntext1.Location = new System.Drawing.Point(96, 48);
             this.txtRuntext1.Multiline = true;
             this.txtRuntext1.Name = "txtRuntext1";
             this.txtRuntext1.Size = new System.Drawing.Size(507, 30);
@@ -1083,7 +1126,7 @@ namespace Tobasa
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(10, 46);
+            this.label53.Location = new System.Drawing.Point(10, 51);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(80, 13);
             this.label53.TabIndex = 38;
@@ -1091,7 +1134,7 @@ namespace Tobasa
             // 
             // txtRuntext0
             // 
-            this.txtRuntext0.Location = new System.Drawing.Point(96, 9);
+            this.txtRuntext0.Location = new System.Drawing.Point(96, 12);
             this.txtRuntext0.Multiline = true;
             this.txtRuntext0.Name = "txtRuntext0";
             this.txtRuntext0.Size = new System.Drawing.Size(507, 28);
@@ -1101,7 +1144,7 @@ namespace Tobasa
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(10, 12);
+            this.label54.Location = new System.Drawing.Point(10, 15);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(80, 13);
             this.label54.TabIndex = 36;
@@ -1481,18 +1524,13 @@ namespace Tobasa
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TabPage tabMisc;
-        private System.Windows.Forms.Button btnSetAudioFolder;
-        private System.Windows.Forms.TextBox tbAudioFolder;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnAnimationColor;
         private System.Windows.Forms.TrackBar volSlider;
-        private System.Windows.Forms.CheckBox chkSetUnderscore;
         private System.Windows.Forms.CheckBox chkPlayVideoStartup;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.NumericUpDown numericUpDown;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.CheckBox chkSpellNumber;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.CheckBox chkShowLogo;
         private System.Windows.Forms.Label label29;
@@ -1509,13 +1547,11 @@ namespace Tobasa
         private System.Windows.Forms.Button btnSetLogoImg;
         private System.Windows.Forms.TextBox tbImgLogo;
         private System.Windows.Forms.CheckBox chkShowInfoTextTop0;
-        private System.Windows.Forms.CheckBox chkPlaySimpleNotification;
 		private System.Windows.Forms.TabPage tabPageRunText;
 		private System.Windows.Forms.TextBox txtRuntext1;
 		private System.Windows.Forms.Label label53;
 		private System.Windows.Forms.TextBox txtRuntext0;
 		private System.Windows.Forms.Label label54;
-		private System.Windows.Forms.CheckBox chkAudioLoketIDUseAlphabet;
 		private System.Windows.Forms.TabPage tabPostOpt;
 		private System.Windows.Forms.CheckBox chkPostVisible;
 		private System.Windows.Forms.CheckBox chkPostPlayAudio;
@@ -1533,13 +1569,24 @@ namespace Tobasa
 		private System.Windows.Forms.CheckBox chkShowRightPosts;
 		private System.Windows.Forms.CheckBox chkShowLeftPosts;
 		private System.Windows.Forms.CheckBox chkShowCenterMiddleDiv;
-        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button btnThemeOrange;
+        private System.Windows.Forms.Button btnThemeBlue;
+        private System.Windows.Forms.Button btnThemeRed;
+        private System.Windows.Forms.Button btnThemeDark;
         private System.Windows.Forms.Button btnThemeGreen;
         private System.Windows.Forms.Button btnThemeClassic;
-        private System.Windows.Forms.Button btnThemeDark;
-        private System.Windows.Forms.Button btnThemeRed;
-        private System.Windows.Forms.Button btnThemeBlue;
-        private System.Windows.Forms.Button btnThemeOrange;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.CheckBox chkSetUnderscore;
+        private System.Windows.Forms.CheckBox chkSpellNumber;
+        private System.Windows.Forms.CheckBox chkPlaySimpleNotification;
+        private System.Windows.Forms.CheckBox chkAudioLoketIDUseAlphabet;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnSetAudioFolder;
+        private System.Windows.Forms.TextBox tbAudioFolder;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button btnSetMainLogo;
+        private System.Windows.Forms.TextBox tbMainBrandingImage;
+        private System.Windows.Forms.CheckBox chkUseBrandingImageAsMainLogo;
     }
 }
 

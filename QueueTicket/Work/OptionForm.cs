@@ -26,8 +26,12 @@ namespace Tobasa
     public partial class OptionForm : Form
     {
         private PostPropertyCollection postProperties = new PostPropertyCollection();
-        public OptionForm()
+        private String displayTheme = "Classic";
+        private MainForm mainForm = null;
+        public OptionForm(MainForm mainForm)
         {
+            this.mainForm = mainForm;
+
             InitializeComponent();
 
             // Get POST Ids
@@ -80,6 +84,7 @@ namespace Tobasa
                 }
             }
         }
+        
         private void RestoreSettings()
         {
             tbServer.Text = Properties.Settings.Default.QueueServerHost;
@@ -93,10 +98,6 @@ namespace Tobasa
             txtRuntext0.Text = Properties.Settings.Default.RunningText0;
             txtRuntext1.Text = Properties.Settings.Default.RunningText1;
             txtPrintFooter.Text = Properties.Settings.Default.PrintFooter;
-
-            tbImgLogo.Text = Properties.Settings.Default.DisplayLogoImg;
-            tbImgHeader.Text = Properties.Settings.Default.DisplayHeaderImg;
-            tbImgBG.Text = Properties.Settings.Default.DisplayHeaderBg;
 
             chkButtonsWithLabel.Checked = Properties.Settings.Default.DrawLabelOnButtons;
             btnFontSizeChanger.Value = Properties.Settings.Default.ButtonLabelFontSize;
@@ -112,6 +113,26 @@ namespace Tobasa
             SetPostPropertiesControl(postId);
 
             SetRadioButtonMainMenuLabelState();
+
+            displayTheme = Properties.Settings.Default.Theme;
+            tbImgHeader.Text = Properties.Settings.Default.MainBrandingImage;
+            tbImgLogo.Text = Properties.Settings.Default.LogoImage;
+
+            bool useBrandingImage = Properties.Settings.Default.UseMainBrandingImage;
+
+            tbImgHeader.Enabled = useBrandingImage;
+            btnSetBrandingImage.Enabled = useBrandingImage;
+            tbLogoText.Enabled = !useBrandingImage;
+            tbImgLogo.Enabled = !useBrandingImage;
+            btnSetLogoImg.Enabled = !useBrandingImage;
+
+
+            chkUseBrandingImageAsMainLogo.Checked = Properties.Settings.Default.UseMainBrandingImage;
+            tbLogoText.Text = Tobasa.Properties.Settings.Default.MainLogoText;
+
+            RestoreButtonThemes();
+
+
         }
 
         private void SaveSettings()
@@ -125,9 +146,6 @@ namespace Tobasa
             Properties.Settings.Default.RunningText0 = txtRuntext0.Text;
             Properties.Settings.Default.RunningText1 = txtRuntext1.Text;
             Properties.Settings.Default.PrintFooter = txtPrintFooter.Text;
-            Properties.Settings.Default.DisplayLogoImg = tbImgLogo.Text;
-            Properties.Settings.Default.DisplayHeaderImg = tbImgHeader.Text;
-            Properties.Settings.Default.DisplayHeaderBg = tbImgBG.Text;
 
             Properties.Settings.Default.DrawLabelOnButtons = chkButtonsWithLabel.Checked;
             Properties.Settings.Default.ButtonLabelFontSize = (int) btnFontSizeChanger.Value;
@@ -155,7 +173,48 @@ namespace Tobasa
             }
             postProperties.SaveToConfiguration();
 
+            Properties.Settings.Default.Theme = displayTheme;
+            Properties.Settings.Default.MainBrandingImage = tbImgHeader.Text;
+            Properties.Settings.Default.UseMainBrandingImage = chkUseBrandingImageAsMainLogo.Checked;   
+            Properties.Settings.Default.MainLogoText = tbLogoText.Text;
+            Properties.Settings.Default.LogoImage = tbImgLogo.Text;
+
             Properties.Settings.Default.Save();
+        }
+
+        private void RestoreButtonThemes()
+        {
+            String themeName = Properties.Settings.Default.Theme;
+
+            if (themeName == "btnThemeClassic" || themeName == "Classic")
+            {
+                btnThemeClassic.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeBlue" || themeName == "Blue")
+            {
+                btnThemeBlue.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeGreen" || themeName == "Green")
+            {
+                btnThemeGreen.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeDark" || themeName == "Dark")
+            {
+                btnThemeDark.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeRed" || themeName == "Red")
+            {
+                btnThemeRed.BackColor = System.Drawing.Color.LightGreen;
+            }
+
+            if (themeName == "btnThemeOrange" || themeName == "Orange")
+            {
+                btnThemeOrange.BackColor = System.Drawing.Color.LightGreen;
+            }
         }
 
         private String GetMainMenuLabelAlignmentValue()
@@ -197,34 +256,6 @@ namespace Tobasa
             this.Close();
         }
 
-        private void OnBtnSetClick(object sender, EventArgs e)
-        {
-            OpenFileDialog fileDlg = new OpenFileDialog();
-
-            fileDlg.InitialDirectory = Util.ProcessDir;
-            fileDlg.Filter = "Image Files(*.PNG;*.JPG;*.BMP)|*.PNG;*.JPG;*.BMP|All files (*.*)|*.*";
-
-            DialogResult result = fileDlg.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                var postId = cbSelectPost.Text;
-                var postProperty = postProperties.FindById(postId);
-                if (postProperty != null)
-                {
-                    if ((Button)sender == btnPostImgOnSelect)
-                    {
-                        tbPostBtnImgOn.Text = fileDlg.FileName;
-                        postProperty.BtnImageOn = fileDlg.FileName;
-                    }
-                    else if ((Button)sender == btnPostImgOffSelect)
-                    {
-                        tbPostBtnImgOff.Text = fileDlg.FileName;
-                        postProperty.BtnImageOff = fileDlg.FileName;
-                    }
-                }
-            }
-        }
-
         private void OnPrintCopiesValueChanged(object sender, EventArgs e)
         {
             var postId = cbSelectPost.Text;
@@ -260,6 +291,57 @@ namespace Tobasa
             if (!chkShowRightMenu.Checked && !chkShowLeftMenu.Checked)
             {
                 chkShowLeftMenu.Checked = true;
+            }
+        }
+
+        private void OnThemeSelected(object sender, EventArgs e)
+        {
+            Button b = (Button)sender;
+
+            String themeName = b.Name;
+            String selectedTheme = mainForm.ApplyTheme(themeName);
+            displayTheme = selectedTheme;
+        }
+
+        private void OnBtnSetHeaderImage(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDlg = new OpenFileDialog();
+
+            fileDlg.InitialDirectory = Util.ProcessDir;
+            fileDlg.Filter = "Image Files(*.PNG;*.JPG;*.BMP)|*.PNG;*.JPG;*.BMP|All files (*.*)|*.*";
+
+            DialogResult result = fileDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                tbImgHeader.Text = fileDlg.FileName;
+                Tobasa.Properties.Settings.Default.MainBrandingImage = fileDlg.FileName;
+            }
+        }
+
+        private void OnUseBrandingImageChecked(object sender, EventArgs e)
+        {
+            bool useBranding = chkUseBrandingImageAsMainLogo.Checked;
+
+            tbImgHeader.Enabled         = useBranding;
+            btnSetBrandingImage.Enabled = useBranding;  
+
+            tbLogoText.Enabled      = !useBranding;
+            tbImgLogo.Enabled       = !useBranding;
+            btnSetLogoImg.Enabled   = !useBranding;
+        }
+
+        private void OnBtnSetLogoImage(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDlg = new OpenFileDialog();
+
+            fileDlg.InitialDirectory = Util.ProcessDir;
+            fileDlg.Filter = "Image Files(*.PNG;*.JPG;*.BMP)|*.PNG;*.JPG;*.BMP|All files (*.*)|*.*";
+
+            DialogResult result = fileDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                tbImgLogo.Text = fileDlg.FileName;
+                Tobasa.Properties.Settings.Default.LogoImage = fileDlg.FileName;
             }
         }
     }

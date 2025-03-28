@@ -53,6 +53,7 @@ namespace Tobasa
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Display));
             this.mainDiv = new System.Windows.Forms.TableLayoutPanel();
             this.bottomDiv = new System.Windows.Forms.TableLayoutPanel();
+            this.runningTextBottom = new Tobasa.RuntextLabel();
             this.topDiv = new System.Windows.Forms.TableLayoutPanel();
             this.leftDiv = new System.Windows.Forms.TableLayoutPanel();
             this.leftDivPost = new System.Windows.Forms.TableLayoutPanel();
@@ -168,7 +169,6 @@ namespace Tobasa
             this.timerPost7 = new System.Windows.Forms.Timer(this.components);
             this.timerPost8 = new System.Windows.Forms.Timer(this.components);
             this.timerPost9 = new System.Windows.Forms.Timer(this.components);
-            this.runningTextBottom = new Tobasa.RuntextLabel();
             this.mainDiv.SuspendLayout();
             this.bottomDiv.SuspendLayout();
             this.topDiv.SuspendLayout();
@@ -270,6 +270,21 @@ namespace Tobasa
             this.bottomDiv.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.bottomDiv.Size = new System.Drawing.Size(1008, 38);
             this.bottomDiv.TabIndex = 0;
+            // 
+            // runningTextBottom
+            // 
+            this.runningTextBottom.AutoSize = true;
+            this.runningTextBottom.BackColor = System.Drawing.Color.Transparent;
+            this.runningTextBottom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.runningTextBottom.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.runningTextBottom.ForeColor = System.Drawing.Color.Gold;
+            this.runningTextBottom.Location = new System.Drawing.Point(0, 0);
+            this.runningTextBottom.Margin = new System.Windows.Forms.Padding(0);
+            this.runningTextBottom.Name = "runningTextBottom";
+            this.runningTextBottom.Size = new System.Drawing.Size(1008, 38);
+            this.runningTextBottom.TabIndex = 0;
+            this.runningTextBottom.Text = "Aplikasi antrian Tobasa";
+            this.runningTextBottom.UseCompatibleTextRendering = true;
             // 
             // topDiv
             // 
@@ -2196,21 +2211,6 @@ namespace Tobasa
             // timerPost9
             // 
             this.timerPost9.Tick += new System.EventHandler(this.OnTimer);
-            // 
-            // runningTextBottom
-            // 
-            this.runningTextBottom.AutoSize = true;
-            this.runningTextBottom.BackColor = System.Drawing.Color.Transparent;
-            this.runningTextBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.runningTextBottom.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.runningTextBottom.ForeColor = System.Drawing.Color.Gold;
-            this.runningTextBottom.Location = new System.Drawing.Point(0, -494);
-            this.runningTextBottom.Margin = new System.Windows.Forms.Padding(0);
-            this.runningTextBottom.Name = "runningTextBottom";
-            this.runningTextBottom.Size = new System.Drawing.Size(1008, 38);
-            this.runningTextBottom.TabIndex = 0;
-            this.runningTextBottom.Text = "Aplikasi antrian Tobasa";
-            this.runningTextBottom.UseCompatibleTextRendering = true;
             // 
             // Display
             // 

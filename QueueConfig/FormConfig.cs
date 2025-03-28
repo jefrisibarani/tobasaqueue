@@ -35,6 +35,17 @@ namespace Tobasa
             connString = "Data Source=127.0.0.1,3306;User ID=antrian;Initial Catalog=antri;"
         };
 
+        private readonly SqlOptions pgsqlOptionsDefault = new SqlOptions()
+        {
+            hostAddr = "127.0.0.1",
+            tcpPort = "5432",
+            database = "antri",
+            username = "antrian",
+            password = "TOBASA",
+            passwordEnc = "ad7415644add93d6e719d2b593da6e6e",
+            connString = "Host=127.0.0.1;Username=antrian;Database=antri;Port=5432;"
+        };
+
         private readonly SqlOptions mssqlOptionsDefault = new SqlOptions()
         {
             hostAddr = "127.0.0.1",
@@ -66,10 +77,10 @@ namespace Tobasa
 
 
         // User options
-        private Options optionsUser;
-        private SqliteOptions sqliteOptionsUser;
-        private SqlOptions sqlOptionsUser;
-        private QueOptions queOptionsUser;
+        private Options         optionsUser;
+        private SqliteOptions   sqliteOptionsUser;
+        private SqlOptions      sqlOptionsUser;
+        private QueOptions      queOptionsUser;
 
         private bool startupcompleted = false;
 
@@ -83,14 +94,15 @@ namespace Tobasa
         {
             // set default security salt
             mysqlOptionsDefault.securitySalt = optionsDefault.securitySalt;
+            pgsqlOptionsDefault.securitySalt = optionsDefault.securitySalt;
             mssqlOptionsDefault.securitySalt = optionsDefault.securitySalt;
-            queOptionsDefault.securitySalt = optionsDefault.securitySalt;
+            queOptionsDefault.securitySalt   = optionsDefault.securitySalt;
 
             // user options gets default value first
-            optionsUser = optionsDefault;
-            sqliteOptionsUser = sqliteOptionsDefault;
-            sqlOptionsUser = mssqlOptionsDefault;
-            queOptionsUser = queOptionsDefault;
+            optionsUser         = optionsDefault;
+            sqliteOptionsUser   = sqliteOptionsDefault;
+            sqlOptionsUser      = mssqlOptionsDefault;
+            queOptionsUser      = queOptionsDefault;
 
             InitializeComponent();
 
@@ -115,13 +127,21 @@ namespace Tobasa
             _btnPostConfigList.Add(btnPost9);
 
 
-
             SetFormValuesForPost("POST0");
             _currentPostConfigCode = "POST0";
             btnPost0.BackColor = Color.LightGreen;
 
             startupcompleted = true;
+
+            ToolUsageInfo.ShowUsageInfo();
         }
+
+        private void showFirstInfoDialog()
+        {
+            String content = "";
+            MessageBox.Show(content, "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
 
         private void SetFormValuesFromSqlOptionsDefault()
         {
@@ -162,8 +182,11 @@ namespace Tobasa
             if (rbMYSQL.Checked)
                 sqlOptionsUser.providerType = "MYSQL";
 
+            if (rbPGSQL.Checked)
+                sqlOptionsUser.providerType = "PGSQL";
+
             sqlOptionsUser.hostAddr = tbSqlIPAddr.Text;
-            sqlOptionsUser.tcpPort = tbSqlTcp.Text;
+            sqlOptionsUser.tcpPort  = tbSqlTcp.Text;
             sqlOptionsUser.database = tbSqlDatabase.Text;
             sqlOptionsUser.username = tbSqlUserName.Text;
             sqlOptionsUser.password = tbSqlPwd.Text;
@@ -173,10 +196,10 @@ namespace Tobasa
 
         private void TransferFormValuesToQueOptionsUser()
         {
-            queOptionsUser.hostAddr = tbQueueIPAddr.Text;
-            queOptionsUser.tcpPort = tbQueueTcp.Text;
-            queOptionsUser.username = tbQueueUserName.Text;
-            queOptionsUser.password = tbQueuePwd.Text;
+            queOptionsUser.hostAddr     = tbQueueIPAddr.Text;
+            queOptionsUser.tcpPort      = tbQueueTcp.Text;
+            queOptionsUser.username     = tbQueueUserName.Text;
+            queOptionsUser.password     = tbQueuePwd.Text;
             queOptionsUser.securitySalt = optionsUser.securitySalt;
         }
 
@@ -199,7 +222,7 @@ namespace Tobasa
 
         private bool ValidateSqliteDb()
         {
-            if (rbMSSQL.Checked || rbMYSQL.Checked)
+            if (rbMSSQL.Checked || rbMYSQL.Checked || rbPGSQL.Checked)
                 return true;
 
             if (rbSQLITE.Checked)
@@ -224,7 +247,7 @@ namespace Tobasa
 
         private bool ValidateSqlPasswordInput()
         {
-            if (rbMSSQL.Checked || rbMYSQL.Checked)
+            if (rbMSSQL.Checked || rbMYSQL.Checked || rbPGSQL.Checked)
             {
                 if (chkSqlUseDefault.Checked)
                     return true;
@@ -340,6 +363,8 @@ namespace Tobasa
                 optionsUser.providerType = "MSSQL";
             else if (rbMYSQL.Checked)
                 optionsUser.providerType = "MYSQL";
+            else if (rbPGSQL.Checked)
+                optionsUser.providerType = "PGSQL";
             else if (rbSQLITE.Checked)
                 optionsUser.providerType = "SQLITE";
 
@@ -360,8 +385,12 @@ namespace Tobasa
                 sqlOptionsUser = mssqlOptionsDefault;
             else if (chkSqlUseDefault.Checked && rbMYSQL.Checked)
                 sqlOptionsUser = mysqlOptionsDefault;
+            else if (chkSqlUseDefault.Checked && rbPGSQL.Checked)
+                sqlOptionsUser = pgsqlOptionsDefault;
             else
                 TransferFormValuesToSqlOptionsUser();
+
+
 
 
             if (chkQueueUseDefault.Checked)
@@ -406,6 +435,14 @@ namespace Tobasa
                             else if (attrName != null && attrName.Value == "Tobasa.Properties.Settings.ConnectionString_MYSQL")
                             {
                                 if (attribut != null && rbMYSQL.Checked)
+                                {
+                                    attribut.Value = sqlOptionsUser.connString;
+                                    break;
+                                }
+                            }
+                            else if (attrName != null && attrName.Value == "Tobasa.Properties.Settings.ConnectionString_PGSQL")
+                            {
+                                if (attribut != null && rbPGSQL.Checked)
                                 {
                                     attribut.Value = sqlOptionsUser.connString;
                                     break;
@@ -463,7 +500,7 @@ namespace Tobasa
                             {
                                 var target = node.FirstChild;
 
-                                if (rbMSSQL.Checked || rbMYSQL.Checked)
+                                if (rbMSSQL.Checked || rbMYSQL.Checked || rbPGSQL.Checked)
                                     target.InnerText = sqlOptionsUser.passwordEnc;
                                 else
                                     target.InnerText = "";
@@ -795,7 +832,18 @@ namespace Tobasa
         private void OnSqlUseDefault(object sender, EventArgs e)
         {
             if (chkSqlUseDefault.Checked)
-                SetFormValuesFromSqlOptionsDefault();
+            {
+                //SetFormValuesFromSqlOptionsDefault();
+                String dbType = "";
+                if (rbMSSQL.Checked)
+                    dbType = "MYSQL";
+                if (rbMSSQL.Checked)
+                    dbType = "MSSQL";
+                if (rbPGSQL.Checked)
+                    dbType = "PGSQL";
+
+                SetDefaultSqlServerOptionForm(dbType);
+            }
 
             tbSqlIPAddr.Enabled = !chkSqlUseDefault.Checked;
             tbSqlTcp.Enabled = !chkSqlUseDefault.Checked;
@@ -851,6 +899,14 @@ namespace Tobasa
                 chkSqlUseDefault.Enabled = rbMYSQL.Checked;
                 SetDefaultSqlServerOptionForm("MYSQL");
             }
+            else if (radio == rbPGSQL)
+            {
+                if (rbPGSQL.Checked)
+                    groupBoxSqlServer.Text = "PostgreSQL Server Connnection Info";
+
+                chkSqlUseDefault.Enabled = rbPGSQL.Checked;
+                SetDefaultSqlServerOptionForm("PGSQL");
+            }
             else if (radio == rbSQLITE)
             {
                 chkSqliteUseDefault.Enabled = rbSQLITE.Checked;
@@ -876,6 +932,15 @@ namespace Tobasa
                 tbSqlUserName.Text = mssqlOptionsDefault.username;
                 tbSqlPwd.Text = mssqlOptionsDefault.password;
                 tbSqlPwdConfirm.Text = mssqlOptionsDefault.password;
+            }
+            else if (dbtype == "PGSQL")
+            {
+                tbSqlIPAddr.Text = pgsqlOptionsDefault.hostAddr;
+                tbSqlTcp.Text = pgsqlOptionsDefault.tcpPort;
+                tbSqlDatabase.Text = pgsqlOptionsDefault.database;
+                tbSqlUserName.Text = pgsqlOptionsDefault.username;
+                tbSqlPwd.Text = pgsqlOptionsDefault.password;
+                tbSqlPwdConfirm.Text = pgsqlOptionsDefault.password;
             }
         }
 
@@ -1041,6 +1106,11 @@ namespace Tobasa
                 else
                     button.BackColor = Button.DefaultBackColor;
             }
+        }
+
+        private void OnInfo(object sender, EventArgs e)
+        {
+            ToolUsageInfo.ShowUsageInfo();
         }
     }
 }

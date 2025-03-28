@@ -68,6 +68,7 @@
             this.chkUseSecuritySaltDefault = new System.Windows.Forms.CheckBox();
             this.rbMYSQL = new System.Windows.Forms.RadioButton();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.rbPGSQL = new System.Windows.Forms.RadioButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabServerAndDatabase = new System.Windows.Forms.TabPage();
             this.tabPostSettings = new System.Windows.Forms.TabPage();
@@ -106,6 +107,7 @@
             this.btnPost2 = new System.Windows.Forms.Button();
             this.btnPost1 = new System.Windows.Forms.Button();
             this.btnPost0 = new System.Windows.Forms.Button();
+            this.btnInfo = new System.Windows.Forms.Button();
             this.groupBoxSqlServer.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -527,6 +529,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.rbPGSQL);
             this.groupBox5.Controls.Add(this.rbMSSQL);
             this.groupBox5.Controls.Add(this.rbMYSQL);
             this.groupBox5.Controls.Add(this.rbSQLITE);
@@ -536,6 +539,18 @@
             this.groupBox5.TabIndex = 22;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Database type";
+            // 
+            // rbPGSQL
+            // 
+            this.rbPGSQL.AutoSize = true;
+            this.rbPGSQL.Location = new System.Drawing.Point(328, 31);
+            this.rbPGSQL.Name = "rbPGSQL";
+            this.rbPGSQL.Size = new System.Drawing.Size(116, 17);
+            this.rbPGSQL.TabIndex = 22;
+            this.rbPGSQL.TabStop = true;
+            this.rbPGSQL.Text = "PostgreSQL Server";
+            this.rbPGSQL.UseVisualStyleBackColor = true;
+            this.rbPGSQL.CheckedChanged += new System.EventHandler(this.OnDBTypeCheckedChanged);
             // 
             // tabControl1
             // 
@@ -967,11 +982,22 @@
             this.btnPost0.UseVisualStyleBackColor = true;
             this.btnPost0.Click += new System.EventHandler(this.OnBtnPostClick);
             // 
+            // btnInfo
+            // 
+            this.btnInfo.Location = new System.Drawing.Point(16, 525);
+            this.btnInfo.Name = "btnInfo";
+            this.btnInfo.Size = new System.Drawing.Size(63, 28);
+            this.btnInfo.TabIndex = 24;
+            this.btnInfo.Text = "&Info";
+            this.btnInfo.UseVisualStyleBackColor = true;
+            this.btnInfo.Click += new System.EventHandler(this.OnInfo);
+            // 
             // FormServerConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(562, 571);
+            this.Controls.Add(this.btnInfo);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnApplyConfig);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -1084,6 +1110,8 @@
         private System.Windows.Forms.Button btnPost2;
         private System.Windows.Forms.Button btnPost1;
         private System.Windows.Forms.Button btnPost0;
+        private System.Windows.Forms.RadioButton rbPGSQL;
+        private System.Windows.Forms.Button btnInfo;
     }
 }
 

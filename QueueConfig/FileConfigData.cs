@@ -51,6 +51,8 @@ namespace Tobasa
                     _connStr = $"Provider=SQLOLEDB;Data Source={hostAddr},{tcpPort};User ID={username};Initial Catalog={database};";
                 else if (providerType == "MYSQL")
                     _connStr = $"Data Source={hostAddr},{tcpPort};User ID={username};Initial Catalog={database};";
+                else if (providerType == "PGSQL")
+                    _connStr = $"Host={hostAddr};Username={username};Database={database};Port={tcpPort};";
 
                 return _connStr;
             }

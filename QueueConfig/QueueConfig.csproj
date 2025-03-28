@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="AppMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ToolUsageInfo.cs" />
     <Compile Include="Util.cs" />
     <EmbeddedResource Include="FormConfig.resx">
       <DependentUpon>FormConfig.cs</DependentUpon>

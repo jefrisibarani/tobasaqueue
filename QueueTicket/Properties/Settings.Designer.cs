@@ -421,42 +421,6 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\DisplayLogoImg.png")]
-        public string DisplayLogoImg {
-            get {
-                return ((string)(this["DisplayLogoImg"]));
-            }
-            set {
-                this["DisplayLogoImg"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\DisplayHeaderImg.png")]
-        public string DisplayHeaderImg {
-            get {
-                return ((string)(this["DisplayHeaderImg"]));
-            }
-            set {
-                this["DisplayHeaderImg"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\DisplayHeaderBg.png")]
-        public string DisplayHeaderBg {
-            get {
-                return ((string)(this["DisplayHeaderBg"]));
-            }
-            set {
-                this["DisplayHeaderBg"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Selamat Datang")]
         public string RunningText0 {
             get {
@@ -488,27 +452,6 @@ namespace Tobasa.Properties {
             }
             set {
                 this["PrintFooter"] = value;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-  <string>POST0</string>
-  <string>POST1</string>
-  <string>POST2</string>
-  <string>POST3</string>
-  <string>POST4</string>
-  <string>POST5</string>
-  <string>POST6</string>
-  <string>POST7</string>
-  <string>POST8</string>
-  <string>POST9</string>
-</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection UIPostList {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["UIPostList"]));
             }
         }
         
@@ -1370,6 +1313,87 @@ namespace Tobasa.Properties {
             }
             set {
                 this["ShowRightMenu"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Classic")]
+        public string Theme {
+            get {
+                return ((string)(this["Theme"]));
+            }
+            set {
+                this["Theme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\MainBrandingImage.png")]
+        public string MainBrandingImage {
+            get {
+                return ((string)(this["MainBrandingImage"]));
+            }
+            set {
+                this["MainBrandingImage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseMainBrandingImage {
+            get {
+                return ((bool)(this["UseMainBrandingImage"]));
+            }
+            set {
+                this["UseMainBrandingImage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Tobasa Queue System")]
+        public string MainLogoText {
+            get {
+                return ((string)(this["MainLogoText"]));
+            }
+            set {
+                this["MainLogoText"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\MainLogo.png")]
+        public string LogoImage {
+            get {
+                return ((string)(this["LogoImage"]));
+            }
+            set {
+                this["LogoImage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <string>POST0</string>
+  <string>POST1</string>
+  <string>POST2</string>
+  <string>POST3</string>
+  <string>POST4</string>
+  <string>POST5</string>
+  <string>POST6</string>
+  <string>POST7</string>
+  <string>POST8</string>
+  <string>POST9</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection UIPostList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["UIPostList"]));
             }
         }
     }

@@ -59,38 +59,6 @@ namespace Tobasa
         public virtual Color bottomDivForeColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#013150");     // fore color
     }
 
-    public class ThemeClassic : DisplayTheme
-    {
-        public override Color baseBackgroundColor { get; set; } = System.Drawing.Color.Transparent;
-        public override Color baseTextColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#014215");             // fore color
-        public override Color basetTextLightColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-        public override Color baseTextBrandLogoColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-
-        public override Color baseInfoTextBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#0F4C22");
-        public override Color basePostTextColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#444444");
-        public override Color textInfoStrip0BackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#14682E");
-        public override Color textInfoStrip1BackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#1A853C");
-        public override Color textInfoStrip0Color { get; set; } = System.Drawing.ColorTranslator.FromHtml("#014215");
-        public override Color textInfoStrip1Color { get; set; } = System.Drawing.ColorTranslator.FromHtml("#014215");
-
-        public override Color labelJobFinishedColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#444444");
-        public override Color centerMainInfoBoxColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#444444");
-        public override Color centerMainInfoBoxBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#DBF1FF");
-        public override Color centerMainInfoBoxCaptionBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#FFDE59");
-        public override Color labelFinishEvenRowBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-
-        public override Color leftRigthTopQueueNoColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-        public override Color leftRigthTopCounterColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-        public override Color postPanelBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-        public override Color postCaptionColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#014215");          // fore color
-        public override Color postCaptionBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#87D5A0");
-        public override Color postQueueNoBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-        public override Color postCounterNoBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#D2FADF");
-        public override Color postTotalQueueLabelBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#DBF1FF");
-        public override Color postTotalQueueValueBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#DBF1FF");
-        public override Color bottomDivBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#D2FADF");
-        public override Color bottomDivForeColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#014215");       // fore color
-    }
 
     // Green Theme
     public class ThemeGreen : DisplayTheme

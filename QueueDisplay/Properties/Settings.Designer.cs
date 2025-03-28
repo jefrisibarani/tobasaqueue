@@ -1219,7 +1219,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowCenterMiddleDiv {
             get {
                 return ((bool)(this["ShowCenterMiddleDiv"]));
@@ -1271,6 +1271,30 @@ namespace Tobasa.Properties {
             }
             set {
                 this["Theme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\img\\DisplayMainBrandingImage.png")]
+        public string DisplayMainBrandingImage {
+            get {
+                return ((string)(this["DisplayMainBrandingImage"]));
+            }
+            set {
+                this["DisplayMainBrandingImage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseMainBrandingImage {
+            get {
+                return ((bool)(this["UseMainBrandingImage"]));
+            }
+            set {
+                this["UseMainBrandingImage"] = value;
             }
         }
     }

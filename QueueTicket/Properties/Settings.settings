@@ -101,15 +101,6 @@
     <Setting Name="Post3BtnImgOff" Type="System.String" Scope="User">
       <Value Profile="(Default)">.\img\ButtonGreenOff.png</Value>
     </Setting>
-    <Setting Name="DisplayLogoImg" Type="System.String" Scope="User">
-      <Value Profile="(Default)">.\img\DisplayLogoImg.png</Value>
-    </Setting>
-    <Setting Name="DisplayHeaderImg" Type="System.String" Scope="User">
-      <Value Profile="(Default)">.\img\DisplayHeaderImg.png</Value>
-    </Setting>
-    <Setting Name="DisplayHeaderBg" Type="System.String" Scope="User">
-      <Value Profile="(Default)">.\img\DisplayHeaderBg.png</Value>
-    </Setting>
     <Setting Name="RunningText0" Type="System.String" Scope="User">
       <Value Profile="(Default)">Selamat Datang</Value>
     </Setting>
@@ -118,21 +109,6 @@
     </Setting>
     <Setting Name="PrintFooter" Type="System.String" Scope="User">
       <Value Profile="(Default)">TOBASA QUEUE</Value>
-    </Setting>
-    <Setting Name="UIPostList" Type="System.Collections.Specialized.StringCollection" Scope="Application">
-      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;string&gt;POST0&lt;/string&gt;
-  &lt;string&gt;POST1&lt;/string&gt;
-  &lt;string&gt;POST2&lt;/string&gt;
-  &lt;string&gt;POST3&lt;/string&gt;
-  &lt;string&gt;POST4&lt;/string&gt;
-  &lt;string&gt;POST5&lt;/string&gt;
-  &lt;string&gt;POST6&lt;/string&gt;
-  &lt;string&gt;POST7&lt;/string&gt;
-  &lt;string&gt;POST8&lt;/string&gt;
-  &lt;string&gt;POST9&lt;/string&gt;
-&lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="Post0PrintCopies" Type="System.Int16" Scope="User">
       <Value Profile="(Default)">1</Value>
@@ -349,6 +325,36 @@
     </Setting>
     <Setting Name="ShowRightMenu" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Theme" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Classic</Value>
+    </Setting>
+    <Setting Name="MainBrandingImage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\MainBrandingImage.png</Value>
+    </Setting>
+    <Setting Name="UseMainBrandingImage" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="MainLogoText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Tobasa Queue System</Value>
+    </Setting>
+    <Setting Name="LogoImage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\img\MainLogo.png</Value>
+    </Setting>
+    <Setting Name="UIPostList" Type="System.Collections.Specialized.StringCollection" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;string&gt;POST0&lt;/string&gt;
+  &lt;string&gt;POST1&lt;/string&gt;
+  &lt;string&gt;POST2&lt;/string&gt;
+  &lt;string&gt;POST3&lt;/string&gt;
+  &lt;string&gt;POST4&lt;/string&gt;
+  &lt;string&gt;POST5&lt;/string&gt;
+  &lt;string&gt;POST6&lt;/string&gt;
+  &lt;string&gt;POST7&lt;/string&gt;
+  &lt;string&gt;POST8&lt;/string&gt;
+  &lt;string&gt;POST9&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
     </Setting>
   </Settings>
 </SettingsFile>

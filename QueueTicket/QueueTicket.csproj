@@ -114,6 +114,7 @@
     <Compile Include="Work\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Work\ColorProfile.cs" />
     <Compile Include="Work\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
