@@ -63,6 +63,26 @@ namespace Tobasa.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ButtonBlueOff {
+            get {
+                object obj = ResourceManager.GetObject("ButtonBlueOff", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ButtonBlueOn {
+            get {
+                object obj = ResourceManager.GetObject("ButtonBlueOn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ButtonGreenOff {
             get {
                 object obj = ResourceManager.GetObject("ButtonGreenOff", resourceCulture);
@@ -83,9 +103,59 @@ namespace Tobasa.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap DisplayHeaderBg {
+        internal static System.Drawing.Bitmap ButtonOrangeOff {
             get {
-                object obj = ResourceManager.GetObject("DisplayHeaderBg", resourceCulture);
+                object obj = ResourceManager.GetObject("ButtonOrangeOff", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ButtonOrangeOn {
+            get {
+                object obj = ResourceManager.GetObject("ButtonOrangeOn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ButtonRedOff {
+            get {
+                object obj = ResourceManager.GetObject("ButtonRedOff", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ButtonRedOn {
+            get {
+                object obj = ResourceManager.GetObject("ButtonRedOn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ButtonYellowOff {
+            get {
+                object obj = ResourceManager.GetObject("ButtonYellowOff", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ButtonYellowOn {
+            get {
+                object obj = ResourceManager.GetObject("ButtonYellowOn", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +173,9 @@ namespace Tobasa.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MenuLabelBg {
+        internal static System.Drawing.Bitmap MainBrandingImage {
             get {
-                object obj = ResourceManager.GetObject("MenuLabelBg", resourceCulture);
+                object obj = ResourceManager.GetObject("MainBrandingImage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +183,19 @@ namespace Tobasa.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap QueueLogo150 {
+        internal static System.Drawing.Bitmap MainLogo {
             get {
-                object obj = ResourceManager.GetObject("QueueLogo150", resourceCulture);
+                object obj = ResourceManager.GetObject("MainLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MenuLabelBg {
+            get {
+                object obj = ResourceManager.GetObject("MenuLabelBg", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

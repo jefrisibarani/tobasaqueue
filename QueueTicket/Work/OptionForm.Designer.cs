@@ -57,6 +57,7 @@ namespace Tobasa
             this.btnClose = new System.Windows.Forms.Button();
             this.mainTab = new System.Windows.Forms.TabControl();
             this.tabPostOpt = new System.Windows.Forms.TabPage();
+            this.chkUseThemeButtonImage = new System.Windows.Forms.CheckBox();
             this.cbSelectPost = new System.Windows.Forms.ComboBox();
             this.label91 = new System.Windows.Forms.Label();
             this.tbPostTicketHeader = new System.Windows.Forms.TextBox();
@@ -97,6 +98,9 @@ namespace Tobasa
             this.txtRuntext0 = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.tabHeader = new System.Windows.Forms.TabPage();
+            this.label31 = new System.Windows.Forms.Label();
+            this.btnSetLogoImg = new System.Windows.Forms.Button();
+            this.tbImgLogo = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbLogoText = new System.Windows.Forms.TextBox();
             this.chkUseBrandingImageAsMainLogo = new System.Windows.Forms.CheckBox();
@@ -110,9 +114,14 @@ namespace Tobasa
             this.label21 = new System.Windows.Forms.Label();
             this.btnSetBrandingImage = new System.Windows.Forms.Button();
             this.tbImgHeader = new System.Windows.Forms.TextBox();
-            this.label31 = new System.Windows.Forms.Label();
-            this.btnSetLogoImg = new System.Windows.Forms.Button();
-            this.tbImgLogo = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbBlueThemeButton = new System.Windows.Forms.ComboBox();
+            this.cbGreenThemeButton = new System.Windows.Forms.ComboBox();
+            this.cbDarkThemeButton = new System.Windows.Forms.ComboBox();
+            this.cbRedThemeButton = new System.Windows.Forms.ComboBox();
+            this.cbOrangeThemeButton = new System.Windows.Forms.ComboBox();
+            this.btnLogoTextColor = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
             this.mainTab.SuspendLayout();
             this.tabPostOpt.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pickPostPrintCopies)).BeginInit();
@@ -266,6 +275,7 @@ namespace Tobasa
             // 
             // tabPostOpt
             // 
+            this.tabPostOpt.Controls.Add(this.chkUseThemeButtonImage);
             this.tabPostOpt.Controls.Add(this.cbSelectPost);
             this.tabPostOpt.Controls.Add(this.label91);
             this.tabPostOpt.Controls.Add(this.tbPostTicketHeader);
@@ -294,6 +304,19 @@ namespace Tobasa
             this.tabPostOpt.Text = "Post Options";
             this.tabPostOpt.UseVisualStyleBackColor = true;
             // 
+            // chkUseThemeButtonImage
+            // 
+            this.chkUseThemeButtonImage.AutoSize = true;
+            this.chkUseThemeButtonImage.Checked = true;
+            this.chkUseThemeButtonImage.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkUseThemeButtonImage.Location = new System.Drawing.Point(21, 123);
+            this.chkUseThemeButtonImage.Name = "chkUseThemeButtonImage";
+            this.chkUseThemeButtonImage.Size = new System.Drawing.Size(147, 17);
+            this.chkUseThemeButtonImage.TabIndex = 71;
+            this.chkUseThemeButtonImage.Text = "Use Theme Button Image";
+            this.chkUseThemeButtonImage.UseVisualStyleBackColor = true;
+            this.chkUseThemeButtonImage.CheckedChanged += new System.EventHandler(this.OnChkUseThemeButtonChanged);
+            // 
             // cbSelectPost
             // 
             this.cbSelectPost.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -317,7 +340,7 @@ namespace Tobasa
             // 
             // tbPostTicketHeader
             // 
-            this.tbPostTicketHeader.Location = new System.Drawing.Point(111, 108);
+            this.tbPostTicketHeader.Location = new System.Drawing.Point(111, 89);
             this.tbPostTicketHeader.MaxLength = 25;
             this.tbPostTicketHeader.Name = "tbPostTicketHeader";
             this.tbPostTicketHeader.Size = new System.Drawing.Size(219, 20);
@@ -326,7 +349,7 @@ namespace Tobasa
             // label84
             // 
             this.label84.AutoSize = true;
-            this.label84.Location = new System.Drawing.Point(18, 111);
+            this.label84.Location = new System.Drawing.Point(18, 92);
             this.label84.Name = "label84";
             this.label84.Size = new System.Drawing.Size(75, 13);
             this.label84.TabIndex = 66;
@@ -335,7 +358,7 @@ namespace Tobasa
             // label85
             // 
             this.label85.AutoSize = true;
-            this.label85.Location = new System.Drawing.Point(402, 111);
+            this.label85.Location = new System.Drawing.Point(402, 92);
             this.label85.Name = "label85";
             this.label85.Size = new System.Drawing.Size(63, 13);
             this.label85.TabIndex = 65;
@@ -343,7 +366,7 @@ namespace Tobasa
             // 
             // pickPostPrintCopies
             // 
-            this.pickPostPrintCopies.Location = new System.Drawing.Point(469, 109);
+            this.pickPostPrintCopies.Location = new System.Drawing.Point(469, 90);
             this.pickPostPrintCopies.Maximum = new decimal(new int[] {
             4,
             0,
@@ -366,6 +389,7 @@ namespace Tobasa
             this.btnPostImgOffSelect.TabIndex = 63;
             this.btnPostImgOffSelect.Text = "...";
             this.btnPostImgOffSelect.UseVisualStyleBackColor = true;
+            this.btnPostImgOffSelect.Click += new System.EventHandler(this.OnBtnImageOff);
             // 
             // tbPostBtnImgOff
             // 
@@ -401,6 +425,7 @@ namespace Tobasa
             this.btnPostImgOnSelect.TabIndex = 55;
             this.btnPostImgOnSelect.Text = "...";
             this.btnPostImgOnSelect.UseVisualStyleBackColor = true;
+            this.btnPostImgOnSelect.Click += new System.EventHandler(this.OnBtnImageOn);
             // 
             // tbPostBtnImgOn
             // 
@@ -415,7 +440,7 @@ namespace Tobasa
             this.chkPostVisible.AutoSize = true;
             this.chkPostVisible.Checked = true;
             this.chkPostVisible.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkPostVisible.Location = new System.Drawing.Point(405, 84);
+            this.chkPostVisible.Location = new System.Drawing.Point(405, 66);
             this.chkPostVisible.Name = "chkPostVisible";
             this.chkPostVisible.Size = new System.Drawing.Size(56, 17);
             this.chkPostVisible.TabIndex = 48;
@@ -424,7 +449,7 @@ namespace Tobasa
             // 
             // tbPostCaption
             // 
-            this.tbPostCaption.Location = new System.Drawing.Point(111, 82);
+            this.tbPostCaption.Location = new System.Drawing.Point(111, 64);
             this.tbPostCaption.Multiline = true;
             this.tbPostCaption.Name = "tbPostCaption";
             this.tbPostCaption.Size = new System.Drawing.Size(219, 20);
@@ -433,7 +458,7 @@ namespace Tobasa
             // label88
             // 
             this.label88.AutoSize = true;
-            this.label88.Location = new System.Drawing.Point(18, 85);
+            this.label88.Location = new System.Drawing.Point(18, 67);
             this.label88.Name = "label88";
             this.label88.Size = new System.Drawing.Size(43, 13);
             this.label88.TabIndex = 46;
@@ -444,7 +469,7 @@ namespace Tobasa
             this.chkPostEnabled.AutoSize = true;
             this.chkPostEnabled.Checked = true;
             this.chkPostEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkPostEnabled.Location = new System.Drawing.Point(405, 58);
+            this.chkPostEnabled.Location = new System.Drawing.Point(405, 42);
             this.chkPostEnabled.Name = "chkPostEnabled";
             this.chkPostEnabled.Size = new System.Drawing.Size(65, 17);
             this.chkPostEnabled.TabIndex = 45;
@@ -472,7 +497,7 @@ namespace Tobasa
             // 
             // tbPostName
             // 
-            this.tbPostName.Location = new System.Drawing.Point(111, 55);
+            this.tbPostName.Location = new System.Drawing.Point(111, 39);
             this.tbPostName.Name = "tbPostName";
             this.tbPostName.Size = new System.Drawing.Size(121, 20);
             this.tbPostName.TabIndex = 42;
@@ -480,7 +505,7 @@ namespace Tobasa
             // label90
             // 
             this.label90.AutoSize = true;
-            this.label90.Location = new System.Drawing.Point(18, 58);
+            this.label90.Location = new System.Drawing.Point(18, 42);
             this.label90.Name = "label90";
             this.label90.Size = new System.Drawing.Size(35, 13);
             this.label90.TabIndex = 41;
@@ -709,6 +734,14 @@ namespace Tobasa
             // 
             // tabHeader
             // 
+            this.tabHeader.Controls.Add(this.btnLogoTextColor);
+            this.tabHeader.Controls.Add(this.label8);
+            this.tabHeader.Controls.Add(this.cbOrangeThemeButton);
+            this.tabHeader.Controls.Add(this.cbRedThemeButton);
+            this.tabHeader.Controls.Add(this.cbDarkThemeButton);
+            this.tabHeader.Controls.Add(this.cbGreenThemeButton);
+            this.tabHeader.Controls.Add(this.cbBlueThemeButton);
+            this.tabHeader.Controls.Add(this.label2);
             this.tabHeader.Controls.Add(this.label31);
             this.tabHeader.Controls.Add(this.btnSetLogoImg);
             this.tabHeader.Controls.Add(this.tbImgLogo);
@@ -733,6 +766,33 @@ namespace Tobasa
             this.tabHeader.Text = "Header Images & Theme";
             this.tabHeader.UseVisualStyleBackColor = true;
             // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(9, 73);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(63, 13);
+            this.label31.TabIndex = 66;
+            this.label31.Text = "Logo Image";
+            // 
+            // btnSetLogoImg
+            // 
+            this.btnSetLogoImg.Location = new System.Drawing.Point(372, 68);
+            this.btnSetLogoImg.Name = "btnSetLogoImg";
+            this.btnSetLogoImg.Size = new System.Drawing.Size(31, 23);
+            this.btnSetLogoImg.TabIndex = 65;
+            this.btnSetLogoImg.Text = "...";
+            this.btnSetLogoImg.UseVisualStyleBackColor = true;
+            this.btnSetLogoImg.Click += new System.EventHandler(this.OnBtnSetLogoImage);
+            // 
+            // tbImgLogo
+            // 
+            this.tbImgLogo.Location = new System.Drawing.Point(97, 70);
+            this.tbImgLogo.Name = "tbImgLogo";
+            this.tbImgLogo.Size = new System.Drawing.Size(269, 20);
+            this.tbImgLogo.TabIndex = 64;
+            this.tbImgLogo.Text = "\r\n        ";
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -746,7 +806,7 @@ namespace Tobasa
             // 
             this.tbLogoText.Location = new System.Drawing.Point(97, 95);
             this.tbLogoText.Name = "tbLogoText";
-            this.tbLogoText.Size = new System.Drawing.Size(368, 20);
+            this.tbLogoText.Size = new System.Drawing.Size(269, 20);
             this.tbLogoText.TabIndex = 62;
             this.tbLogoText.Text = "Tobasa Queue system";
             // 
@@ -864,32 +924,118 @@ namespace Tobasa
             this.tbImgHeader.TabIndex = 27;
             this.tbImgHeader.Text = ".\\img\\MainBrandingImage.png\r\n        ";
             // 
-            // label31
+            // label2
             // 
-            this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(9, 73);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(63, 13);
-            this.label31.TabIndex = 66;
-            this.label31.Text = "Logo Image";
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(9, 160);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(106, 13);
+            this.label2.TabIndex = 67;
+            this.label2.Text = "Theme Buttons Color";
             // 
-            // btnSetLogoImg
+            // cbBlueThemeButton
             // 
-            this.btnSetLogoImg.Location = new System.Drawing.Point(372, 68);
-            this.btnSetLogoImg.Name = "btnSetLogoImg";
-            this.btnSetLogoImg.Size = new System.Drawing.Size(31, 23);
-            this.btnSetLogoImg.TabIndex = 65;
-            this.btnSetLogoImg.Text = "...";
-            this.btnSetLogoImg.UseVisualStyleBackColor = true;
-            this.btnSetLogoImg.Click += new System.EventHandler(this.OnBtnSetLogoImage);
+            this.cbBlueThemeButton.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbBlueThemeButton.FormattingEnabled = true;
+            this.cbBlueThemeButton.Items.AddRange(new object[] {
+            "Red",
+            "Green",
+            "Blue",
+            "Yellow",
+            "Orange"});
+            this.cbBlueThemeButton.Location = new System.Drawing.Point(130, 156);
+            this.cbBlueThemeButton.MaxLength = 10;
+            this.cbBlueThemeButton.Name = "cbBlueThemeButton";
+            this.cbBlueThemeButton.Size = new System.Drawing.Size(70, 21);
+            this.cbBlueThemeButton.TabIndex = 68;
+            this.cbBlueThemeButton.SelectedIndexChanged += new System.EventHandler(this.OnCbThemeButton);
             // 
-            // tbImgLogo
+            // cbGreenThemeButton
             // 
-            this.tbImgLogo.Location = new System.Drawing.Point(97, 70);
-            this.tbImgLogo.Name = "tbImgLogo";
-            this.tbImgLogo.Size = new System.Drawing.Size(269, 20);
-            this.tbImgLogo.TabIndex = 64;
-            this.tbImgLogo.Text = "\r\n        ";
+            this.cbGreenThemeButton.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbGreenThemeButton.FormattingEnabled = true;
+            this.cbGreenThemeButton.Items.AddRange(new object[] {
+            "Red",
+            "Green",
+            "Blue",
+            "Yellow",
+            "Orange"});
+            this.cbGreenThemeButton.Location = new System.Drawing.Point(209, 156);
+            this.cbGreenThemeButton.MaxLength = 10;
+            this.cbGreenThemeButton.Name = "cbGreenThemeButton";
+            this.cbGreenThemeButton.Size = new System.Drawing.Size(69, 21);
+            this.cbGreenThemeButton.TabIndex = 69;
+            this.cbGreenThemeButton.SelectedIndexChanged += new System.EventHandler(this.OnCbThemeButton);
+            // 
+            // cbDarkThemeButton
+            // 
+            this.cbDarkThemeButton.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbDarkThemeButton.FormattingEnabled = true;
+            this.cbDarkThemeButton.Items.AddRange(new object[] {
+            "Red",
+            "Green",
+            "Blue",
+            "Yellow",
+            "Orange"});
+            this.cbDarkThemeButton.Location = new System.Drawing.Point(285, 156);
+            this.cbDarkThemeButton.MaxLength = 10;
+            this.cbDarkThemeButton.Name = "cbDarkThemeButton";
+            this.cbDarkThemeButton.Size = new System.Drawing.Size(70, 21);
+            this.cbDarkThemeButton.TabIndex = 70;
+            this.cbDarkThemeButton.SelectedIndexChanged += new System.EventHandler(this.OnCbThemeButton);
+            // 
+            // cbRedThemeButton
+            // 
+            this.cbRedThemeButton.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbRedThemeButton.FormattingEnabled = true;
+            this.cbRedThemeButton.Items.AddRange(new object[] {
+            "Red",
+            "Green",
+            "Blue",
+            "Yellow",
+            "Orange"});
+            this.cbRedThemeButton.Location = new System.Drawing.Point(361, 156);
+            this.cbRedThemeButton.MaxLength = 10;
+            this.cbRedThemeButton.Name = "cbRedThemeButton";
+            this.cbRedThemeButton.Size = new System.Drawing.Size(70, 21);
+            this.cbRedThemeButton.TabIndex = 71;
+            this.cbRedThemeButton.SelectedIndexChanged += new System.EventHandler(this.OnCbThemeButton);
+            // 
+            // cbOrangeThemeButton
+            // 
+            this.cbOrangeThemeButton.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbOrangeThemeButton.FormattingEnabled = true;
+            this.cbOrangeThemeButton.Items.AddRange(new object[] {
+            "Red",
+            "Green",
+            "Blue",
+            "Yellow",
+            "Orange"});
+            this.cbOrangeThemeButton.Location = new System.Drawing.Point(438, 156);
+            this.cbOrangeThemeButton.MaxLength = 10;
+            this.cbOrangeThemeButton.Name = "cbOrangeThemeButton";
+            this.cbOrangeThemeButton.Size = new System.Drawing.Size(70, 21);
+            this.cbOrangeThemeButton.TabIndex = 72;
+            this.cbOrangeThemeButton.SelectedIndexChanged += new System.EventHandler(this.OnCbThemeButton);
+            // 
+            // btnLogoTextColor
+            // 
+            this.btnLogoTextColor.Location = new System.Drawing.Point(470, 92);
+            this.btnLogoTextColor.Name = "btnLogoTextColor";
+            this.btnLogoTextColor.Size = new System.Drawing.Size(38, 24);
+            this.btnLogoTextColor.TabIndex = 74;
+            this.btnLogoTextColor.Text = "...";
+            this.btnLogoTextColor.UseVisualStyleBackColor = true;
+            this.btnLogoTextColor.Click += new System.EventHandler(this.OnLogoTextColor);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(372, 98);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(81, 13);
+            this.label8.TabIndex = 73;
+            this.label8.Text = "Logo Text color";
             // 
             // OptionForm
             // 
@@ -1007,5 +1153,14 @@ namespace Tobasa
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.Button btnSetLogoImg;
         private System.Windows.Forms.TextBox tbImgLogo;
+        private System.Windows.Forms.CheckBox chkUseThemeButtonImage;
+        private System.Windows.Forms.ComboBox cbOrangeThemeButton;
+        private System.Windows.Forms.ComboBox cbRedThemeButton;
+        private System.Windows.Forms.ComboBox cbDarkThemeButton;
+        private System.Windows.Forms.ComboBox cbGreenThemeButton;
+        private System.Windows.Forms.ComboBox cbBlueThemeButton;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnLogoTextColor;
+        private System.Windows.Forms.Label label8;
     }
 }

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Tobasa Queue Ticket")]
 [assembly: AssemblyDescription("Tobasa Queue Ticket")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("www.mangapul.com")]
+[assembly: AssemblyCompany("Mangapul")]
 [assembly: AssemblyProduct("Tobasa Queue Ticket")]
 [assembly: AssemblyCopyright("Copyright © 2015-2025 Jefri Sibarani")]
 [assembly: AssemblyTrademark("")]

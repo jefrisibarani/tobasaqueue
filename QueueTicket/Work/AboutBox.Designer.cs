@@ -82,7 +82,7 @@ namespace Tobasa
             // logoPictureBox
             // 
             this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.logoPictureBox.Image = global::Tobasa.Properties.Resources.QueueLogo150;
+            this.logoPictureBox.Image = global::Tobasa.Properties.Resources.MainLogo;
             this.logoPictureBox.Location = new System.Drawing.Point(3, 3);
             this.logoPictureBox.Name = "logoPictureBox";
             this.tableLayoutPanel.SetRowSpan(this.logoPictureBox, 6);

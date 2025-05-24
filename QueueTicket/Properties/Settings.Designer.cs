@@ -1396,5 +1396,197 @@ namespace Tobasa.Properties {
                 return ((global::System.Collections.Specialized.StringCollection)(this["UIPostList"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post0UseThemeButton {
+            get {
+                return ((bool)(this["Post0UseThemeButton"]));
+            }
+            set {
+                this["Post0UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post1UseThemeButton {
+            get {
+                return ((bool)(this["Post1UseThemeButton"]));
+            }
+            set {
+                this["Post1UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post2UseThemeButton {
+            get {
+                return ((bool)(this["Post2UseThemeButton"]));
+            }
+            set {
+                this["Post2UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post3UseThemeButton {
+            get {
+                return ((bool)(this["Post3UseThemeButton"]));
+            }
+            set {
+                this["Post3UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post4UseThemeButton {
+            get {
+                return ((bool)(this["Post4UseThemeButton"]));
+            }
+            set {
+                this["Post4UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post5UseThemeButton {
+            get {
+                return ((bool)(this["Post5UseThemeButton"]));
+            }
+            set {
+                this["Post5UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post6UseThemeButton {
+            get {
+                return ((bool)(this["Post6UseThemeButton"]));
+            }
+            set {
+                this["Post6UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post7UseThemeButton {
+            get {
+                return ((bool)(this["Post7UseThemeButton"]));
+            }
+            set {
+                this["Post7UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post8UseThemeButton {
+            get {
+                return ((bool)(this["Post8UseThemeButton"]));
+            }
+            set {
+                this["Post8UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Post9UseThemeButton {
+            get {
+                return ((bool)(this["Post9UseThemeButton"]));
+            }
+            set {
+                this["Post9UseThemeButton"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Blue")]
+        public string ThemeRedButtonColor {
+            get {
+                return ((string)(this["ThemeRedButtonColor"]));
+            }
+            set {
+                this["ThemeRedButtonColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Green")]
+        public string ThemeOrangeButtonColor {
+            get {
+                return ((string)(this["ThemeOrangeButtonColor"]));
+            }
+            set {
+                this["ThemeOrangeButtonColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Yellow")]
+        public string ThemeDarkButtonColor {
+            get {
+                return ((string)(this["ThemeDarkButtonColor"]));
+            }
+            set {
+                this["ThemeDarkButtonColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Orange")]
+        public string ThemeGreenButtonColor {
+            get {
+                return ((string)(this["ThemeGreenButtonColor"]));
+            }
+            set {
+                this["ThemeGreenButtonColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Red")]
+        public string ThemeBlueButtonColor {
+            get {
+                return ((string)(this["ThemeBlueButtonColor"]));
+            }
+            set {
+                this["ThemeBlueButtonColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Gainsboro")]
+        public global::System.Drawing.Color LogoTextColor {
+            get {
+                return ((global::System.Drawing.Color)(this["LogoTextColor"]));
+            }
+            set {
+                this["LogoTextColor"] = value;
+            }
+        }
     }
 }

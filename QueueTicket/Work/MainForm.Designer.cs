@@ -189,7 +189,7 @@ namespace Tobasa
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picLogo.BackColor = System.Drawing.Color.Transparent;
             this.picLogo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.picLogo.Image = global::Tobasa.Properties.Resources.QueueLogo150;
+            this.picLogo.Image = global::Tobasa.Properties.Resources.MainLogo;
             this.picLogo.Location = new System.Drawing.Point(5, 5);
             this.picLogo.Margin = new System.Windows.Forms.Padding(5);
             this.picLogo.MinimumSize = new System.Drawing.Size(0, 100);
@@ -752,7 +752,8 @@ namespace Tobasa
             this.divBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.divBottom.Controls.Add(this.runningTextBottom, 0, 0);
             this.divBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.divBottom.Location = new System.Drawing.Point(3, 516);
+            this.divBottom.Location = new System.Drawing.Point(0, 516);
+            this.divBottom.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.divBottom.Name = "divBottom";
             this.divBottom.RowCount = 1;
             this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -763,14 +764,14 @@ namespace Tobasa
             this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
             this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
             this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
-            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.divBottom.Size = new System.Drawing.Size(778, 51);
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.divBottom.Size = new System.Drawing.Size(784, 51);
             this.divBottom.TabIndex = 13;
             // 
             // runningTextBottom
@@ -780,9 +781,10 @@ namespace Tobasa
             this.runningTextBottom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.runningTextBottom.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.runningTextBottom.ForeColor = System.Drawing.Color.Gold;
-            this.runningTextBottom.Location = new System.Drawing.Point(3, 193);
+            this.runningTextBottom.Location = new System.Drawing.Point(0, 40);
+            this.runningTextBottom.Margin = new System.Windows.Forms.Padding(0);
             this.runningTextBottom.Name = "runningTextBottom";
-            this.runningTextBottom.Size = new System.Drawing.Size(776, 51);
+            this.runningTextBottom.Size = new System.Drawing.Size(784, 51);
             this.runningTextBottom.TabIndex = 0;
             this.runningTextBottom.Text = "Selamat datang di Sistem Antrian Tobasa. Terimakasih";
             this.runningTextBottom.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

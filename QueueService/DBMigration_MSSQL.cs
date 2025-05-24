@@ -184,8 +184,8 @@ namespace Tobasa
         public static string cmd_insert_all_basic_data =
             @"
             INSERT INTO queue_logins(username,password,expired,active)   VALUES
-               ('tobasaqueue', 'A1410C6E07BDA0D774A76E644024801EB00175B27B85D0289469978603EBB9F4','2025-01-01 00:00:00.000',1),
-               ('admin',       '51C5FB67361F529DD9DDF96959FC5FA51960E0F7516560290BD7BFCF9421C6F6','2025-01-01 00:00:00.000',1);
+               ('tobasaqueue', 'A1410C6E07BDA0D774A76E644024801EB00175B27B85D0289469978603EBB9F4','2035-01-01 00:00:00.000',1),
+               ('admin',       '51C5FB67361F529DD9DDF96959FC5FA51960E0F7516560290BD7BFCF9421C6F6','2035-01-01 00:00:00.000',1);
 
             INSERT INTO queue_ipaccesslists VALUES 
                ('10.62.22.1',  1, 'Komputer devepoment'),

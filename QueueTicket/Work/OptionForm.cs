@@ -70,6 +70,13 @@ namespace Tobasa
                 tbPostBtnImgOff.Text = postProperty.BtnImageOff;
                 pickPostPrintCopies.Value = (decimal)postProperty.PrintCopies;
                 tbPostTicketHeader.Text = postProperty.PrintHeader;
+                chkUseThemeButtonImage.Checked = postProperty.UseThmeButtonImage;
+
+                btnPostImgOnSelect.Enabled = !postProperty.UseThmeButtonImage;
+                btnPostImgOffSelect.Enabled = !postProperty.UseThmeButtonImage;
+                tbPostBtnImgOn.ReadOnly = postProperty.UseThmeButtonImage;
+                tbPostBtnImgOff.ReadOnly = postProperty.UseThmeButtonImage;
+
 
                 if (postProperty.Index == 0 || postProperty.Index == 1 || postProperty.Index == 2 ||
                    postProperty.Index == 5 || postProperty.Index == 6 || postProperty.Index == 7)
@@ -132,7 +139,14 @@ namespace Tobasa
 
             RestoreButtonThemes();
 
+            cbBlueThemeButton.Text = Properties.Settings.Default.ThemeBlueButtonColor;
+            cbDarkThemeButton.Text = Properties.Settings.Default.ThemeDarkButtonColor;
+            cbGreenThemeButton.Text = Properties.Settings.Default.ThemeGreenButtonColor;
+            cbOrangeThemeButton.Text = Properties.Settings.Default.ThemeOrangeButtonColor;
+            cbRedThemeButton.Text = Properties.Settings.Default.ThemeRedButtonColor;
 
+            mainForm.SetLogoTextColor(Properties.Settings.Default.LogoTextColor);
+            btnLogoTextColor.BackColor = Properties.Settings.Default.LogoTextColor;
         }
 
         private void SaveSettings()
@@ -170,6 +184,7 @@ namespace Tobasa
                 prop.PrintHeader = tbPostTicketHeader.Text;
                 //prop.PrintFooter = tbPostTicketFooter.Text;
                 prop.PrintCopies = (short) pickPostPrintCopies.Value;
+                prop.UseThmeButtonImage = chkUseThemeButtonImage.Checked;
             }
             postProperties.SaveToConfiguration();
 
@@ -178,6 +193,14 @@ namespace Tobasa
             Properties.Settings.Default.UseMainBrandingImage = chkUseBrandingImageAsMainLogo.Checked;   
             Properties.Settings.Default.MainLogoText = tbLogoText.Text;
             Properties.Settings.Default.LogoImage = tbImgLogo.Text;
+
+            Properties.Settings.Default.ThemeBlueButtonColor = cbBlueThemeButton.Text;
+            Properties.Settings.Default.ThemeDarkButtonColor = cbDarkThemeButton.Text;
+            Properties.Settings.Default.ThemeGreenButtonColor = cbGreenThemeButton.Text;
+            Properties.Settings.Default.ThemeOrangeButtonColor = cbOrangeThemeButton.Text;
+            Properties.Settings.Default.ThemeRedButtonColor = cbRedThemeButton.Text;
+
+            Properties.Settings.Default.LogoTextColor = btnLogoTextColor.BackColor;
 
             Properties.Settings.Default.Save();
         }
@@ -328,6 +351,8 @@ namespace Tobasa
             tbLogoText.Enabled      = !useBranding;
             tbImgLogo.Enabled       = !useBranding;
             btnSetLogoImg.Enabled   = !useBranding;
+
+            //mainForm.SetupBranding(useBranding);
         }
 
         private void OnBtnSetLogoImage(object sender, EventArgs e)
@@ -342,6 +367,92 @@ namespace Tobasa
             {
                 tbImgLogo.Text = fileDlg.FileName;
                 Tobasa.Properties.Settings.Default.LogoImage = fileDlg.FileName;
+            }
+        }
+
+        private void OnBtnImageOn(object sender, EventArgs e)
+        {
+            var postId = cbSelectPost.Text;
+
+            OpenFileDialog fileDlg = new OpenFileDialog();
+
+            fileDlg.InitialDirectory = Util.ProcessDir;
+            fileDlg.Filter = "Image Files(*.PNG;*.JPG;*.BMP)|*.PNG;*.JPG;*.BMP|All files (*.*)|*.*";
+
+            DialogResult result = fileDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                tbPostBtnImgOn.Text = fileDlg.FileName;
+            }
+        }
+
+        private void OnBtnImageOff(object sender, EventArgs e)
+        {
+            var postId = cbSelectPost.Text;
+
+            OpenFileDialog fileDlg = new OpenFileDialog();
+
+            fileDlg.InitialDirectory = Util.ProcessDir;
+            fileDlg.Filter = "Image Files(*.PNG;*.JPG;*.BMP)|*.PNG;*.JPG;*.BMP|All files (*.*)|*.*";
+
+            DialogResult result = fileDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                tbPostBtnImgOff.Text = fileDlg.FileName;
+            }
+        }
+
+        private void OnChkUseThemeButtonChanged(object sender, EventArgs e)
+        {
+            btnPostImgOnSelect.Enabled = !chkUseThemeButtonImage.Checked;
+            btnPostImgOffSelect.Enabled = !chkUseThemeButtonImage.Checked;
+            tbPostBtnImgOn.ReadOnly = chkUseThemeButtonImage.Checked;
+            tbPostBtnImgOff.ReadOnly = chkUseThemeButtonImage.Checked;
+        }
+
+        private void OnCbThemeButton(object sender, EventArgs e)
+        {
+            var _settings = Tobasa.Properties.Settings.Default;
+
+            if (sender == cbBlueThemeButton )
+            {
+                _settings.ThemeBlueButtonColor = cbBlueThemeButton.Text;
+            }
+            else if (sender == cbRedThemeButton)
+            {
+                _settings.ThemeRedButtonColor = cbRedThemeButton.Text;
+            }
+            else if (sender == cbDarkThemeButton)
+            {
+                _settings.ThemeDarkButtonColor = cbDarkThemeButton.Text;
+            }
+            else if (sender == cbGreenThemeButton)
+            {
+                _settings.ThemeGreenButtonColor = cbGreenThemeButton.Text;
+            }
+            else if (sender == cbOrangeThemeButton)
+            {
+                _settings.ThemeOrangeButtonColor = cbOrangeThemeButton.Text;
+            }
+        }
+
+        private void OnLogoTextColor(object sender, EventArgs e)
+        {
+            var _settings = Tobasa.Properties.Settings.Default;
+
+            ColorDialog dlg = new ColorDialog();
+
+            dlg.AllowFullOpen = true;
+            dlg.FullOpen = true;
+
+            //dlg.ShowHelp = true;
+            dlg.Color = btnLogoTextColor.BackColor;
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                btnLogoTextColor.BackColor = dlg.Color;
+                _settings.LogoTextColor = dlg.Color;
+                mainForm.SetLogoTextColor(dlg.Color);
             }
         }
     }

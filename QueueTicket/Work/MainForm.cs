@@ -43,6 +43,8 @@ namespace Tobasa
         private DisplayTheme colorProfile = null;
         private Label lblBranding = null;
 
+        private bool useBrandingImageAsMainLogo = true;
+
         // Struct to save label data -label that need tobe resized automatically
         // See labelRecordList,RecordLabelSize(),OnLabelResize()
         // Set label Resize event handler to OnLabelResize()
@@ -124,13 +126,16 @@ namespace Tobasa
                 // we want to receive key event
                 KeyPreview = true;
 
-                InitImages();
+                
                 InitTexts();
                 InitButtonText();
                 AdaptDivMenuLayout();
                 AdaptLeftRightMenuLayout();
                 RecordLabelSize();
+
                 SetupTheme();
+
+                SetupButtonsImage();
 
                 if (_settings.StartDisplayFullScreen)
                     ToggleFullScreen();
@@ -296,26 +301,28 @@ namespace Tobasa
             if (File.Exists(Tobasa.Properties.Settings.Default.LogoImage))
                 picLogo.Image = new Bitmap(Tobasa.Properties.Settings.Default.LogoImage);
             else
-                picLogo.Image = Tobasa.Properties.Resources.QueueLogo150;
+                picLogo.Image = Tobasa.Properties.Resources.MainLogo;
 
-            InitBranding();
+            SetupBranding();
 
-            DoApplyTheme(Tobasa.Properties.Settings.Default.Theme);
+            if (Properties.Settings.Default.Theme != "Classic")
+            {
+                ApplyTheme(Properties.Settings.Default.Theme);
+            }
+            else
+            {
+                colorProfile = new DisplayTheme();
+            }
         }
 
-        public String ApplyTheme(String themeName)
-        {
-            //InitBranding();
-
-            return DoApplyTheme(themeName);
-        }
-
-        void InitBranding()
+        public void SetupBranding()
         {
             String mainBrandingImagePath = Tobasa.Properties.Settings.Default.MainBrandingImage;
             bool useBrandingImage = Tobasa.Properties.Settings.Default.UseMainBrandingImage;
+
             if (File.Exists(mainBrandingImagePath) && useBrandingImage)
             {
+                useBrandingImageAsMainLogo = true;
                 Bitmap mainBrandingImage = new Bitmap(mainBrandingImagePath);
                 pnlHeader.BackgroundImage = mainBrandingImage;
                 pnlHeader.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
@@ -323,6 +330,7 @@ namespace Tobasa
             }
             else
             {
+                useBrandingImageAsMainLogo = false;
                 pnlHeader.BackgroundImage = null;
                 picHeader.Image = null;
 
@@ -332,7 +340,10 @@ namespace Tobasa
                 lblBranding.AutoSize = true;
                 lblBranding.Dock = System.Windows.Forms.DockStyle.Fill;
                 lblBranding.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                lblBranding.ForeColor = System.Drawing.Color.Gainsboro;
+                
+                //lblBranding.ForeColor = System.Drawing.Color.Gainsboro;
+                lblBranding.ForeColor = _settings.LogoTextColor;
+
                 lblBranding.Location = new System.Drawing.Point(0, 0);
                 lblBranding.Margin = new System.Windows.Forms.Padding(0);
                 lblBranding.Name = "lblBranding";
@@ -347,143 +358,54 @@ namespace Tobasa
             }
         }
 
-        void InitImages()
+        public void SetLogoTextColor(Color newColor)
         {
-            // Header images
-            //if (File.Exists(_settings.DisplayHeaderBg))
-            //    displayHeaderBg = new Bitmap(_settings.DisplayHeaderBg);
-            //else
-            //    displayHeaderBg = Properties.Resources.DisplayHeaderBg;
+            if (!useBrandingImageAsMainLogo)
+                lblBranding.ForeColor = newColor;
+        }
 
-            //if (File.Exists(_settings.DisplayLogoImg))
-            //    dispLogoImg = new Bitmap(_settings.DisplayLogoImg);
-            //else
-            //    dispLogoImg = Properties.Resources.QueueLogo150;
-
-            //if (File.Exists(_settings.DisplayHeaderImg))
-            //    dispHeaderImg = new Bitmap(_settings.DisplayHeaderImg);
-            //else
-            //    dispHeaderImg = Properties.Resources.DisplayHeaderImg;
+        void SetupButtonsImage()
+        {
+            ButtonImage btn0 = GetButtonImage("POST0");
+            post0BtnImgOn = btn0.imageOn;
+            post0BtnImgOff = btn0.imageOff;
 
 
-            // POST#0 on
-            if (File.Exists(_settings.Post0BtnImgOn))
-                post0BtnImgOn = new Bitmap(_settings.Post0BtnImgOn);
-            else
-                post0BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#0 off
-            if (File.Exists(_settings.Post0BtnImgOff))
-                post0BtnImgOff = new Bitmap(_settings.Post0BtnImgOff);
-            else
-                post0BtnImgOff = Properties.Resources.ButtonGreenOff;
+            ButtonImage btn1 = GetButtonImage("POST1");
+            post1BtnImgOn = btn1.imageOn;
+            post1BtnImgOff = btn1.imageOff;
 
+            ButtonImage btn2 = GetButtonImage("POST2");
+            post2BtnImgOn = btn2.imageOn;
+            post2BtnImgOff = btn2.imageOff;
 
-            // POST#1 on
-            if (File.Exists(_settings.Post1BtnImgOn))
-                post1BtnImgOn = new Bitmap(_settings.Post1BtnImgOn);
-            else
-                post1BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#1 off
-            if (File.Exists(_settings.Post1BtnImgOff))
-                post1BtnImgOff = new Bitmap(_settings.Post1BtnImgOff);
-            else
-                post1BtnImgOff = Properties.Resources.ButtonGreenOff;
+            ButtonImage btn3 = GetButtonImage("POST3");
+            post3BtnImgOn = btn3.imageOn;
+            post3BtnImgOff = btn3.imageOff;
 
+            ButtonImage btn4 = GetButtonImage("POST4");
+            post4BtnImgOn = btn4.imageOn;
+            post4BtnImgOff = btn4.imageOff;
 
-            // POST#2 on
-            if (File.Exists(_settings.Post2BtnImgOn))
-                post2BtnImgOn = new Bitmap(_settings.Post2BtnImgOn);
-            else
-                post2BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#2 off
-            if (File.Exists(_settings.Post2BtnImgOff))
-                post2BtnImgOff = new Bitmap(_settings.Post2BtnImgOff);
-            else
-                post2BtnImgOff = Properties.Resources.ButtonGreenOff;
+            ButtonImage btn5 = GetButtonImage("POST5");
+            post5BtnImgOn = btn5.imageOn;
+            post5BtnImgOff = btn5.imageOff;
 
+            ButtonImage btn6 = GetButtonImage("POST6");
+            post6BtnImgOn = btn6.imageOn;
+            post6BtnImgOff = btn6.imageOff;
 
-            // POST#3 on
-            if (File.Exists(_settings.Post3BtnImgOn))
-                post3BtnImgOn = new Bitmap(_settings.Post3BtnImgOn);
-            else
-                post3BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#3 off
-            if (File.Exists(_settings.Post3BtnImgOff))
-                post3BtnImgOff = new Bitmap(_settings.Post3BtnImgOff);
-            else
-                post3BtnImgOff = Properties.Resources.ButtonGreenOff;
+            ButtonImage btn7 = GetButtonImage("POST7");
+            post7BtnImgOn = btn7.imageOn;
+            post7BtnImgOff = btn7.imageOff;
 
+            ButtonImage btn8 = GetButtonImage("POST8");
+            post8BtnImgOn = btn8.imageOn;
+            post8BtnImgOff = btn8.imageOff;
 
-            // POST#4 on
-            if (File.Exists(_settings.Post4BtnImgOn))
-                post4BtnImgOn = new Bitmap(_settings.Post4BtnImgOn);
-            else
-                post4BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#4 off
-            if (File.Exists(_settings.Post4BtnImgOff))
-                post4BtnImgOff = new Bitmap(_settings.Post4BtnImgOff);
-            else
-                post4BtnImgOff = Properties.Resources.ButtonGreenOff;
-
-
-            // POST#5 on
-            if (File.Exists(_settings.Post5BtnImgOn))
-                post5BtnImgOn = new Bitmap(_settings.Post5BtnImgOn);
-            else
-                post5BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#5 off
-            if (File.Exists(_settings.Post5BtnImgOff))
-                post5BtnImgOff = new Bitmap(_settings.Post5BtnImgOff);
-            else
-                post5BtnImgOff = Properties.Resources.ButtonGreenOff;
-
-
-            // POST#6 on
-            if (File.Exists(_settings.Post6BtnImgOn))
-                post6BtnImgOn = new Bitmap(_settings.Post6BtnImgOn);
-            else
-                post6BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#6 off
-            if (File.Exists(_settings.Post6BtnImgOff))
-                post6BtnImgOff = new Bitmap(_settings.Post6BtnImgOff);
-            else
-                post6BtnImgOff = Properties.Resources.ButtonGreenOff;
-
-
-            // POST#7 on
-            if (File.Exists(_settings.Post7BtnImgOn))
-                post7BtnImgOn = new Bitmap(_settings.Post7BtnImgOn);
-            else
-                post7BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#7 off
-            if (File.Exists(_settings.Post7BtnImgOff))
-                post7BtnImgOff = new Bitmap(_settings.Post7BtnImgOff);
-            else
-                post7BtnImgOff = Properties.Resources.ButtonGreenOff;
-
-
-            // POST#8 on
-            if (File.Exists(_settings.Post8BtnImgOn))
-                post8BtnImgOn = new Bitmap(_settings.Post8BtnImgOn);
-            else
-                post8BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#8 off
-            if (File.Exists(_settings.Post8BtnImgOff))
-                post8BtnImgOff = new Bitmap(_settings.Post8BtnImgOff);
-            else
-                post8BtnImgOff = Properties.Resources.ButtonGreenOff;
-
-
-            // POST#9 on
-            if (File.Exists(_settings.Post9BtnImgOn))
-                post9BtnImgOn = new Bitmap(_settings.Post9BtnImgOn);
-            else
-                post9BtnImgOn = Properties.Resources.ButtonGreenOn;
-            // POST#9 off
-            if (File.Exists(_settings.Post9BtnImgOff))
-                post9BtnImgOff = new Bitmap(_settings.Post9BtnImgOff);
-            else
-                post9BtnImgOff = Properties.Resources.ButtonGreenOff;
+            ButtonImage btn9 = GetButtonImage("POST9");
+            post9BtnImgOn = btn9.imageOn;
+            post9BtnImgOff = btn9.imageOff;
 
 
             picBtnPnl0.Enabled = _settings.Post0Enabled;
@@ -556,10 +478,6 @@ namespace Tobasa
                 post9BtnImgOn  = Util.MakeGrayscale3(post9BtnImgOn);
                 post9BtnImgOff = Util.MakeGrayscale3(post9BtnImgOff);
             }
-
-            //pnlHeader.BackgroundImage = displayHeaderBg;
-            //picLogo.Image = dispLogoImg;
-            //picHeader.Image = dispHeaderImg;
 
             picBtnPnl0.Image = post0BtnImgOff;
             picBtnPnl1.Image = post1BtnImgOff;
@@ -773,56 +691,53 @@ namespace Tobasa
             }
         }
 
-        private String DoApplyTheme(String themeName)
+        public String ApplyTheme(String themeName)
         {
 
+            string name = "Classic";
             if (themeName == "btnThemeClassic" || themeName == "Classic")
             {
-                return "Classic";
+                name =  "Classic";
             }
 
             if (themeName == "btnThemeBlue" || themeName == "Blue")
             {
-                DisplayTheme colorProfile = new DisplayTheme();
-                UpdateColor(colorProfile);
-                return "Blue";
+                colorProfile = new DisplayTheme();
+                name = "Blue";
             }
 
             if (themeName == "btnThemeGreen" || themeName == "Green")
             {
-                DisplayTheme colorProfile = new ThemeGreen();
-                UpdateColor(colorProfile);
-                return "Green";
+                colorProfile = new ThemeGreen();
+                name = "Green";
             }
 
             if (themeName == "btnThemeDark" || themeName == "Dark")
             {
-                DisplayTheme colorProfile = new ThemeDark();
-                UpdateColor(colorProfile);
-                return "Dark";
+                colorProfile = new ThemeDark();
+                name = "Dark";
             }
 
             if (themeName == "btnThemeRed" || themeName == "Red")
             {
-                DisplayTheme colorProfile = new ThemeRed();
-                UpdateColor(colorProfile);
-                return "Red";
+                colorProfile = new ThemeRed();
+                name = "Red";
             }
 
             if (themeName == "btnThemeOrange" || themeName == "Orange")
             {
-                DisplayTheme colorProfile = new ThemeOrange();
-                UpdateColor(colorProfile);
-                return "Orange";
+                colorProfile = new ThemeOrange();
+                name = "Orange";
             }
 
-            return "Classic";
+            UpdateColor(colorProfile);
+            SetupButtonsImage();
+
+            return name;
         }
 
         public void UpdateColor(DisplayTheme profile)
         {
-            colorProfile = profile;
-
             var baseBackgroundColor      = profile.baseBackgroundColor;
             var baseTextColor            = profile.baseTextColor;
             var basePostCaptionBackColor = profile.basePostCaptionBackColor;
@@ -862,6 +777,241 @@ namespace Tobasa
             lblPnl9.BackColor = basePostCaptionBackColor;
             lblPnl9.ForeColor = baseTextColor;
         }
+
+        ButtonImage GetButtonImage(string postName )
+        {
+            if (_settings.Theme == "Classic")
+            {
+                ButtonImage btn = new ButtonImage
+                {
+                    imageOn = Properties.Resources.ButtonGreenOn,
+                    imageOff = Properties.Resources.ButtonGreenOff
+                };
+                return btn;
+            }
+
+
+            ButtonImage buttonImage = new ButtonImage
+            { 
+                imageOn = colorProfile.postBtnImgOn,
+                imageOff = colorProfile.postBtnImgOn
+            };
+            
+            if (postName == "POST0")
+            {
+                if (_settings.Post0UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post0BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post0BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post0BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post0BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+
+            if (postName == "POST1")
+            {
+                if (_settings.Post1UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post1BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post1BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post1BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post1BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+            if (postName == "POST2")
+            {
+                if (_settings.Post2UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post2BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post2BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post2BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post2BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+            if (postName == "POST3")
+            {
+                if (_settings.Post3UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post3BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post3BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post3BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post3BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+            if (postName == "POST4")
+            {
+                if (_settings.Post4UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post4BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post4BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post4BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post4BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+            if (postName == "POST5")
+            {
+                if (_settings.Post5UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post5BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post5BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post5BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post5BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+            if (postName == "POST6")
+            {
+                if (_settings.Post6UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post6BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post6BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post6BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post6BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+
+            if (postName == "POST7")
+            {
+                if (_settings.Post7UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post7BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post7BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post7BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post7BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+            if (postName == "POST8")
+            {
+                if (_settings.Post8UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post8BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post8BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post8BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post8BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+            if (postName == "POST9")
+            {
+                if (_settings.Post9UseThemeButton)
+                {
+                    buttonImage.imageOn = colorProfile.postBtnImgOn;
+                    buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+                else
+                {
+                    if (File.Exists(_settings.Post9BtnImgOn))
+                        buttonImage.imageOn = new Bitmap(_settings.Post9BtnImgOn);
+                    else
+                        buttonImage.imageOn = colorProfile.postBtnImgOn;
+
+                    if (File.Exists(_settings.Post9BtnImgOff))
+                        buttonImage.imageOff = new Bitmap(_settings.Post9BtnImgOff);
+                    else
+                        buttonImage.imageOff = colorProfile.postBtnImgOff;
+                }
+            }
+
+            return buttonImage;
+        }
+
 
         #endregion
 

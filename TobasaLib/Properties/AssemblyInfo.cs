@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Tobasa Library")]
 [assembly: AssemblyDescription("Tobasa Library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("www.mangapul.com")]
+[assembly: AssemblyCompany("Mangapul")]
 [assembly: AssemblyProduct("Tobasa Library")]
 [assembly: AssemblyCopyright("Copyright © 2015-2025 Jefri Sibarani")]
 [assembly: AssemblyTrademark("")]

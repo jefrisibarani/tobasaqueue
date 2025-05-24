@@ -1,5 +1,5 @@
 # Tobasa Library
-http://www.mangapul.com/p/software-antrian-tobasa.html
+http://www.mangapul.net/p/software-antrian-tobasa.html
 
 A small library used by Software Antrian Tobasa
 

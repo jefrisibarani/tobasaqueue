@@ -152,6 +152,7 @@ namespace Tobasa
         public string PrintHeader { get; set; }
         public string PrintFooter { get; set; }
         public int PrintCopies { get; set; }
+        public bool UseThmeButtonImage { get; set; }
 
         private PostPropertyItem<TextBox, string> _ctlName;
         private PostPropertyItem<TextBox, string> _ctlCaption;
@@ -162,6 +163,7 @@ namespace Tobasa
         private PostPropertyItem<TextBox, string> _ctlPrintHeader;
         private PostPropertyItem<TextBox, string> _ctlPrintFooter;
         private PostPropertyItem<NumericUpDown, int> _ctlPrintCopies;
+        private PostPropertyItem<CheckBox, bool> _ctlUseThemeButtonImage;
 
         public PostProperty SetCtlName(string name, TextBox ctl)
         {
@@ -208,7 +210,11 @@ namespace Tobasa
             _ctlPrintCopies = new PostPropertyItem<NumericUpDown, int>(name, ctl);
             return this;
         }
-
+        public PostProperty SetCtlUseThemeButtonImage(string name, CheckBox ctl)
+        {
+            _ctlUseThemeButtonImage = new PostPropertyItem<CheckBox, bool>(name, ctl);
+            return this;
+        }
         public PostPropertyItem<TextBox, string> GetCtlName()
         {
             return _ctlName;
@@ -245,7 +251,10 @@ namespace Tobasa
         {
             return _ctlPrintCopies;
         }
-
+        public PostPropertyItem<CheckBox, bool> GetCtlUseThemeButtonImage()
+        {
+            return _ctlUseThemeButtonImage;
+        }
 
         public void SaveToConfiguration()
         {
@@ -262,6 +271,7 @@ namespace Tobasa
                 settings.Post0BtnImgOff = BtnImageOff;
                 settings.Post0PrintCopies = (short)PrintCopies;
                 settings.Post0PrintHeader = PrintHeader;
+                settings.Post0UseThemeButton = UseThmeButtonImage;
             }
             else if (Id == "POST1")
             {
@@ -274,6 +284,7 @@ namespace Tobasa
                 settings.Post1BtnImgOff = BtnImageOff;
                 settings.Post1PrintCopies = (short)PrintCopies;
                 settings.Post1PrintHeader = PrintHeader;
+                settings.Post1UseThemeButton = UseThmeButtonImage;
             }
             else if (Id == "POST2")
             {
@@ -286,6 +297,7 @@ namespace Tobasa
                 settings.Post2BtnImgOff = BtnImageOff;
                 settings.Post2PrintCopies = (short)PrintCopies;
                 settings.Post2PrintHeader = PrintHeader;
+                settings.Post2UseThemeButton = UseThmeButtonImage;
             }
             else if (Id == "POST3")
             {
@@ -298,6 +310,7 @@ namespace Tobasa
                 settings.Post3BtnImgOff = BtnImageOff;
                 settings.Post3PrintCopies = (short)PrintCopies;
                 settings.Post3PrintHeader = PrintHeader;
+                settings.Post3UseThemeButton = UseThmeButtonImage;
             }
             else if (Id == "POST4")
             {
@@ -310,6 +323,7 @@ namespace Tobasa
                 settings.Post4BtnImgOff = BtnImageOff;
                 settings.Post4PrintCopies = (short)PrintCopies;
                 settings.Post4PrintHeader = PrintHeader;
+                settings.Post4UseThemeButton = UseThmeButtonImage;
             }
             else if (Id == "POST5")
             {
@@ -322,6 +336,7 @@ namespace Tobasa
                 settings.Post5BtnImgOff = BtnImageOff;
                 settings.Post5PrintCopies = (short)PrintCopies;
                 settings.Post5PrintHeader = PrintHeader;
+                settings.Post5UseThemeButton = UseThmeButtonImage;
             }
             else if(Id == "POST6")
             {
@@ -334,6 +349,7 @@ namespace Tobasa
                 settings.Post6BtnImgOff = BtnImageOff;
                 settings.Post6PrintCopies = (short)PrintCopies;
                 settings.Post6PrintHeader = PrintHeader;
+                settings.Post6UseThemeButton = UseThmeButtonImage;
             }
             else if (Id == "POST7")
             {
@@ -346,6 +362,7 @@ namespace Tobasa
                 settings.Post7BtnImgOff = BtnImageOff;
                 settings.Post7PrintCopies = (short)PrintCopies;
                 settings.Post7PrintHeader = PrintHeader;
+                settings.Post7UseThemeButton = UseThmeButtonImage;
             }
             else if (Id == "POST8")
             {
@@ -358,6 +375,7 @@ namespace Tobasa
                 settings.Post8BtnImgOff = BtnImageOff;
                 settings.Post8PrintCopies = (short)PrintCopies;
                 settings.Post8PrintHeader = PrintHeader;
+                settings.Post8UseThemeButton = UseThmeButtonImage;
             }
             else if (Id == "POST9")
             {
@@ -370,6 +388,7 @@ namespace Tobasa
                 settings.Post9BtnImgOff = BtnImageOff;
                 settings.Post9PrintCopies = (short)PrintCopies;
                 settings.Post9PrintHeader = PrintHeader;
+                settings.Post9UseThemeButton = UseThmeButtonImage;
             }
         }
         public void LoadFromConfiguration()
@@ -388,6 +407,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post0BtnImgOff;
                 PrintCopies = (int)settings.Post0PrintCopies;
                 PrintHeader = settings.Post0PrintHeader;
+                UseThmeButtonImage = settings.Post0UseThemeButton;
             }
             else if (Id == "POST1")
             {
@@ -401,6 +421,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post1BtnImgOff;
                 PrintCopies = (int)settings.Post1PrintCopies;
                 PrintHeader = settings.Post1PrintHeader;
+                UseThmeButtonImage = settings.Post1UseThemeButton;
             }
             else if (Id == "POST2")
             {
@@ -414,6 +435,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post2BtnImgOff;
                 PrintCopies = (int)settings.Post2PrintCopies;
                 PrintHeader = settings.Post2PrintHeader;
+                UseThmeButtonImage = settings.Post2UseThemeButton;
             }
             else if (Id == "POST3")
             {
@@ -427,6 +449,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post3BtnImgOff;
                 PrintCopies = (int)settings.Post3PrintCopies;
                 PrintHeader = settings.Post3PrintHeader;
+                UseThmeButtonImage = settings.Post3UseThemeButton;
             }
             else if (Id == "POST4")
             {
@@ -440,6 +463,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post4BtnImgOff;
                 PrintCopies = (int)settings.Post4PrintCopies;
                 PrintHeader = settings.Post4PrintHeader;
+                UseThmeButtonImage = settings.Post4UseThemeButton;
             }
             else if (Id == "POST5")
             {
@@ -453,6 +477,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post5BtnImgOff;
                 PrintCopies = (int)settings.Post5PrintCopies;
                 PrintHeader = settings.Post5PrintHeader;
+                UseThmeButtonImage = settings.Post5UseThemeButton;
             }
             else if (Id == "POST6")
             {
@@ -466,6 +491,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post6BtnImgOff;
                 PrintCopies = (int)settings.Post6PrintCopies;
                 PrintHeader = settings.Post6PrintHeader;
+                UseThmeButtonImage = settings.Post6UseThemeButton;
             }
             else if (Id == "POST7")
             {
@@ -479,6 +505,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post7BtnImgOff;
                 PrintCopies = (int)settings.Post7PrintCopies;
                 PrintHeader = settings.Post7PrintHeader;
+                UseThmeButtonImage = settings.Post7UseThemeButton;
             }
             else if (Id == "POST8")
             {
@@ -492,6 +519,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post8BtnImgOff;
                 PrintCopies = (int)settings.Post8PrintCopies;
                 PrintHeader = settings.Post8PrintHeader;
+                UseThmeButtonImage = settings.Post8UseThemeButton;
             }
             else if (Id == "POST9")
             {
@@ -505,6 +533,7 @@ namespace Tobasa
                 BtnImageOff = settings.Post9BtnImgOff;
                 PrintCopies = (int)settings.Post9PrintCopies;
                 PrintHeader = settings.Post9PrintHeader;
+                UseThmeButtonImage = settings.Post9UseThemeButton;
             }
         }
     };

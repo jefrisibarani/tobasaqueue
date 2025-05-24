@@ -641,6 +641,7 @@ namespace Tobasa
             var postId = cbSelectPost.Text;
             SetPostPropertiesControl(postId);
 
+            displayTheme = _settings.Theme;
             RestoreButtonThemes();
         }
 

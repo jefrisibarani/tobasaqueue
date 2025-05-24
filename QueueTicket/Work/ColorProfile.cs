@@ -25,6 +25,13 @@ using System.Drawing;
 namespace Tobasa
 {
 
+    public class ButtonImage
+    {
+        public Bitmap imageOn;
+        public Bitmap imageOff;
+    };
+
+
     // Light Blue Theme
     public class DisplayTheme
     { 
@@ -34,6 +41,69 @@ namespace Tobasa
         public virtual Color basePostCaptionBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
         public virtual Color bottomDivBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#CFEAFA");
         public virtual Color bottomDivForeColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#013150");     // fore color
+
+        public virtual Bitmap postBtnImgOn { get; set; } = DisplayTheme.GetButtonImage("Blue", "ON");
+        public virtual Bitmap postBtnImgOff { get; set; } = DisplayTheme.GetButtonImage("Blue", "OFF");
+
+        public static Bitmap GetButtonImage(string themeName, string mode)
+        {
+            string buttonColor = "Green";
+
+            if (themeName == "Red")
+                buttonColor = Properties.Settings.Default.ThemeRedButtonColor;
+            else if (themeName == "Green")
+                buttonColor = Properties.Settings.Default.ThemeGreenButtonColor;
+            else if (themeName == "Blue")
+                buttonColor = Properties.Settings.Default.ThemeBlueButtonColor;
+            else if (themeName == "Dark")
+                buttonColor = Properties.Settings.Default.ThemeDarkButtonColor;
+            else if (themeName == "Orange")
+                buttonColor = Properties.Settings.Default.ThemeOrangeButtonColor;
+
+
+
+            if (buttonColor == "Red")
+            {
+                if (mode == "ON")
+                    return Properties.Resources.ButtonRedOn;
+                else
+                    return Properties.Resources.ButtonRedOff;
+            }
+            else if (buttonColor == "Green")
+            {
+                if (mode == "ON")
+                    return Properties.Resources.ButtonGreenOn;
+                else
+                    return Properties.Resources.ButtonGreenOff;
+            }
+            else if (buttonColor == "Blue")
+            {
+                if (mode == "ON")
+                    return Properties.Resources.ButtonBlueOn;
+                else
+                    return Properties.Resources.ButtonBlueOff;
+            }
+            else if (buttonColor == "Orange")
+            {
+                if (mode == "ON")
+                    return Properties.Resources.ButtonOrangeOn;
+                else
+                    return Properties.Resources.ButtonOrangeOff;
+
+            }
+            else if (buttonColor == "Yellow")
+            {
+                if (mode == "ON")
+                    return Properties.Resources.ButtonYellowOn;
+                else
+                    return Properties.Resources.ButtonYellowOff;
+            }
+
+
+            return Properties.Resources.ButtonGreenOff;
+        }
+
+
     }
 
     // Green Theme
@@ -45,6 +115,9 @@ namespace Tobasa
         public override Color basePostCaptionBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
         public override Color bottomDivBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#D2FADF");
         public override Color bottomDivForeColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#014215");       // fore color
+
+        public override Bitmap postBtnImgOn { get; set; } = DisplayTheme.GetButtonImage("Green", "ON");
+        public override Bitmap postBtnImgOff { get; set; } = DisplayTheme.GetButtonImage("Green", "OFF");
     }
 
     // Dark Theme
@@ -56,6 +129,9 @@ namespace Tobasa
         public override Color basePostCaptionBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#302F2E");
         public override Color bottomDivBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#272727");
         public override Color bottomDivForeColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
+
+        public override Bitmap postBtnImgOn { get; set; } = DisplayTheme.GetButtonImage("Dark", "ON");
+        public override Bitmap postBtnImgOff { get; set; } = DisplayTheme.GetButtonImage("Dark", "OFF");
     }
 
     public class ThemeRed : DisplayTheme
@@ -64,8 +140,11 @@ namespace Tobasa
         public override Color baseTextColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#9D0506");
         public override Color basetTextLightColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
         public override Color basePostCaptionBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-        public override Color bottomDivBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#FFECED");
+        public override Color bottomDivBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#feeaea");
         public override Color bottomDivForeColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#9D0506");
+
+        public override Bitmap postBtnImgOn { get; set; } = DisplayTheme.GetButtonImage("Red", "ON");
+        public override Bitmap postBtnImgOff { get; set; } = DisplayTheme.GetButtonImage("Red", "OFF");
     }
 
     public class ThemeOrange : DisplayTheme
@@ -74,8 +153,10 @@ namespace Tobasa
         public override Color baseTextColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#764802");
         public override Color basetTextLightColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
         public override Color basePostCaptionBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#ffffff");
-        public override Color bottomDivBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#FFF0DB");
-        public override Color bottomDivForeColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#764802");
+        public override Color bottomDivBackColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#fef5e6");
+        public override Color bottomDivForeColor { get; set; } = System.Drawing.ColorTranslator.FromHtml("#013150");
+        public override Bitmap postBtnImgOn { get; set; } = DisplayTheme.GetButtonImage("Orange", "ON");
+        public override Bitmap postBtnImgOff { get; set; } = DisplayTheme.GetButtonImage("Orange", "OFF");
     }
 
 }

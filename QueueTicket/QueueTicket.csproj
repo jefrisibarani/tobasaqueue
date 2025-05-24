@@ -108,6 +108,12 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="Work\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,14 +141,9 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="Work\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -184,6 +185,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="queue.ico" />
+    <None Include="Resources\MainLogo.png" />
+    <None Include="Resources\MainBrandingImage.png" />
+    <None Include="Resources\ButtonYellowOn.png" />
+    <None Include="Resources\ButtonYellowOff.png" />
+    <None Include="Resources\ButtonRedOn.png" />
+    <None Include="Resources\ButtonRedOff.png" />
+    <None Include="Resources\ButtonOrangeOn.png" />
+    <None Include="Resources\ButtonOrangeOff.png" />
+    <None Include="Resources\ButtonBlueOn.png" />
+    <None Include="Resources\ButtonBlueOff.png" />
     <None Include="Resources\MenuLabelBg.png" />
     <None Include="Resources\DisplayHeaderBg.png" />
     <None Include="Resources\QueueLogo150.png" />
@@ -207,8 +218,8 @@ IF NOT EXIST $(TargetDir)img                                                    
 COPY /Y $(TargetDir)$(TargetFileName)                 $(SolutionDir)_OUTPUT\$(ProjectName)\
 COPY /Y $(TargetDir)Libtobasa.dll                           $(SolutionDir)_OUTPUT\$(ProjectName)\
 COPY /Y $(TargetDir)$(TargetFileName).config     $(SolutionDir)_OUTPUT\$(ProjectName)\
-COPY /Y $(ProjectDir)img\*.*                                   $(SolutionDir)_OUTPUT\$(ProjectName)\img\
-COPY /Y $(ProjectDir)img\*.*                                   $(TargetDir)img\</PostBuildEvent>
+COPY /Y $(ProjectDir)Resources\*.*                        $(SolutionDir)_OUTPUT\$(ProjectName)\img\
+COPY /Y $(ProjectDir)Resources\*.*                        $(TargetDir)img\</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>IF EXIST $(SolutionDir)_OUTPUT\$(ProjectName)   rmdir /q /s $(SolutionDir)_OUTPUT\$(ProjectName)</PreBuildEvent>

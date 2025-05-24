@@ -61,10 +61,11 @@ namespace Tobasa
                     </ul>
                 Setelah menggunakan tool ini,<br/>
                 hapus semua file/folder konfigurasi yang mungkin sudah ada yang ada di dalam folder<br/>
-                <b><a href='#' onclick='openFolder()'>%HOMEPATH%\AppData\Local\www.mangapul.com,</a></b></br/>
+                <b><a href='#' onclick='openFolder()'>%HOMEPATH%\AppData\Local\Mangapul,</a></b></br/>
+                <b><a href='#' onclick='openFolder()'>%HOMEPATH%\AppData\Roaming\Mangapul,</a></b></br/>
                 agar aplikasi Antrian Tobasa menggunakan file-file konfigurasi yang baru.
                 </p>
-                <p>Untuk info lebih lanjut buka <a href='#' onclick='openBrowser()'>www.mangapul.com</a></p>
+                <p>Untuk info lebih lanjut buka <a href='#' onclick='openBrowser()'>www.mangapul.net</a></p>
             </body>
             </html>";
 
@@ -97,7 +98,7 @@ namespace Tobasa
         public void OpenFolder()
         {
             // Resolve environment variable %HOMEPATH%
-            string homePath = Environment.ExpandEnvironmentVariables("C:%HOMEPATH%\\AppData\\Local\\www.mangapul.com");
+            string homePath = Environment.ExpandEnvironmentVariables("C:%HOMEPATH%\\AppData\\Local\\Mangapul");
 
             if (Directory.Exists(homePath))
             {
@@ -113,7 +114,7 @@ namespace Tobasa
         {
             try
             {
-                Process.Start("www.mangapul.com");
+                Process.Start("www.mangapul.net");
             }
             catch (Exception ex)
             {

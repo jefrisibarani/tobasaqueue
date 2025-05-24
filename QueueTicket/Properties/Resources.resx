@@ -118,20 +118,44 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="DisplayHeaderImg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DisplayHeaderImg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ButtonGreenOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\buttonGreenOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ButtonGreenOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\buttonGreenOff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="QueueLogo150" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\QueueLogo150.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ButtonBlueOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonBlueOff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DisplayHeaderBg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DisplayHeaderBg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ButtonBlueOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonBlueOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ButtonOrangeOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonOrangeOff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ButtonOrangeOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonOrangeOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ButtonRedOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonRedOff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ButtonRedOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonRedOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ButtonYellowOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonYellowOff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ButtonYellowOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonYellowOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DisplayHeaderImg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DisplayHeaderImg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MainBrandingImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MainBrandingImage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MainLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MainLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="MenuLabelBg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\MenuLabelBg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
