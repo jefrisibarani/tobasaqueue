@@ -1588,5 +1588,17 @@ namespace Tobasa.Properties {
                 this["LogoTextColor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowInfoDialog {
+            get {
+                return ((bool)(this["ShowInfoDialog"]));
+            }
+            set {
+                this["ShowInfoDialog"] = value;
+            }
+        }
     }
 }

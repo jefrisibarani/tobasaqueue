@@ -157,8 +157,8 @@ namespace Tobasa
             // dtExpired
             // 
             this.dtExpired.Location = new System.Drawing.Point(120, 105);
-            this.dtExpired.MaxDate = new System.DateTime(2030, 12, 31, 0, 0, 0, 0);
-            this.dtExpired.MinDate = new System.DateTime(2014, 1, 1, 0, 0, 0, 0);
+            this.dtExpired.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
+            this.dtExpired.MinDate = new System.DateTime(2010, 1, 1, 0, 0, 0, 0);
             this.dtExpired.Name = "dtExpired";
             this.dtExpired.Size = new System.Drawing.Size(200, 20);
             this.dtExpired.TabIndex = 4;

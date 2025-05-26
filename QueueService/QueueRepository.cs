@@ -136,7 +136,12 @@ namespace Tobasa
                             string user = reader.GetString(0).Trim();
                             string pwd = reader.GetString(1).Trim();
                             DateTime expired = reader.GetDateTime(2);
-                            bool active = Convert.ToBoolean(reader.GetInt32(3));
+
+                            bool active = false;
+                            if (Database.Me.ProviderType == DatabaseProviderType.PGSQL)
+                                active = reader.GetBoolean(3);
+                            else 
+                                active = Convert.ToBoolean(reader.GetInt32(3));
 
                             if (!active)
                             {
@@ -241,47 +246,24 @@ namespace Tobasa
                 {
                     string sql = "";
                     if (insertData)
-                        sql = $"INSERT INTO {Tbl.runningtexts} (station_name, sticky, active, running_text) VALUES (?,?,?,?)";
+                        sql = $"INSERT INTO {Tbl.runningtexts} (station_name, sticky, active, running_text) VALUES (@staname, @sticky, @active, @runtext)";
                     else
-                        sql = $"UPDATE {Tbl.runningtexts} SET station_name = ? , sticky = ? , active = ?, running_text = ? WHERE id = ?";
+                        sql = $"UPDATE {Tbl.runningtexts} SET station_name = @staname , sticky = @sticky , active = @active, running_text = @runtext WHERE id = @id";
 
                     Database.Me.OpenConnection();
                     using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                     {
                         cmd.CommandText = sql;
 
-                        DbParameter param = cmd.CreateParameter();
-                        param.ParameterName = "station_name";
-                        param.Value = runningText.StationName;
-                        param.DbType = System.Data.DbType.String;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "sticky";
-                        param.Value = runningText.Sticky;
-                        param.DbType = System.Data.DbType.Boolean;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "active";
-                        param.Value = runningText.Active;
-                        param.DbType = System.Data.DbType.Boolean;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "running_text";
-                        param.Value = runningText.Text;
-                        param.DbType = System.Data.DbType.String;
-                        cmd.Parameters.Add(param);
+                        Database.Me.AddParameter(cmd, "staname", runningText.StationName, DbType.String);
+                        Database.Me.AddParameter(cmd, "sticky", runningText.Sticky, DbType.Boolean);
+                        Database.Me.AddParameter(cmd, "active", runningText.Active, DbType.Boolean);
+                        Database.Me.AddParameter(cmd, "runtext", runningText.Text, DbType.String);
 
                         if (!insertData)
                         {
                             // UPDATE
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "id";
-                            param.Value = runningText.Id;
-                            param.DbType = System.Data.DbType.Int32;
-                            cmd.Parameters.Add(param);
+                            Database.Me.AddParameter(cmd, "id", runningText.Id, DbType.Int32);
                         }
 
                         affected = cmd.ExecuteNonQuery();
@@ -315,41 +297,23 @@ namespace Tobasa
                 {
                     string sql = "";
                     if (insertData)
-                        sql = $"INSERT INTO {Tbl.ipaccesslists} (ipaddress,allowed,keterangan) VALUES (?,?,?)";
+                        sql = $"INSERT INTO {Tbl.ipaccesslists} (ipaddress,allowed,keterangan) VALUES (@ip, @allow, @ket)";
                     else
-                        sql = $"UPDATE {Tbl.ipaccesslists} SET ipaddress = ? , allowed = ? , keterangan = ? WHERE ipaddress = ?";
+                        sql = $"UPDATE {Tbl.ipaccesslists} SET ipaddress = @ip , allowed = @allow , keterangan = @ket WHERE ipaddress = @ip2";
 
                     Database.Me.OpenConnection();
                     using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                     {
                         cmd.CommandText = sql;
 
-                        DbParameter param = cmd.CreateParameter();
-                        param.ParameterName = "ipaddress";
-                        param.Value = accessList.IpAddress;
-                        param.DbType = System.Data.DbType.String;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "allowed";
-                        param.Value = accessList.Allowed;
-                        param.DbType = System.Data.DbType.Boolean;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "keterangan";
-                        param.Value = accessList.Keterangan;
-                        param.DbType = System.Data.DbType.String;
-                        cmd.Parameters.Add(param);
+                        Database.Me.AddParameter(cmd, "ip", accessList.IpAddress, DbType.String);
+                        Database.Me.AddParameter(cmd, "allow", accessList.Allowed, DbType.Boolean);
+                        Database.Me.AddParameter(cmd, "ket", accessList.Keterangan, DbType.String);
 
                         if (!insertData)
                         {
                             // UPDATE
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "ipaddressW";
-                            param.Value = accessList.IpAddressOld;
-                            param.DbType = System.Data.DbType.String;
-                            cmd.Parameters.Add(param);
+                            Database.Me.AddParameter(cmd, "ip2", accessList.IpAddressOld, DbType.String);
                         }
 
                         affected = cmd.ExecuteNonQuery();
@@ -441,53 +405,25 @@ namespace Tobasa
                 {
                     string sql = "";
                     if (insertData)
-                        sql = $"INSERT INTO {Tbl.posts} (name, numberprefix, keterangan, quota0, quota1) VALUES (?,?,?,?,?)";
+                        sql = $"INSERT INTO {Tbl.posts} (name, numberprefix, keterangan, quota0, quota1) VALUES (@name, @prefix, @ket, @quota, @quota1)";
                     else
-                        sql = $"UPDATE {Tbl.posts} SET name = ? , numberprefix = ?, keterangan = ? , quota0 = ?, quota1 = ? WHERE name = ?";
+                        sql = $"UPDATE {Tbl.posts} SET name = @name , numberprefix = @prefix, keterangan = @ket , quota0 = @quota, quota1 = @quota1 WHERE name = @name1";
 
                     Database.Me.OpenConnection();
                     using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                     {
                         cmd.CommandText = sql;
 
-                        DbParameter param = cmd.CreateParameter();
-                        param.ParameterName = "name";
-                        param.Value = post.Name;
-                        param.DbType = System.Data.DbType.String;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "numberprefix";
-                        param.Value = post.NumberPrefix;
-                        param.DbType = System.Data.DbType.String;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "keterangan";
-                        param.Value = post.Keterangan;
-                        param.DbType = System.Data.DbType.String;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "quota0";
-                        param.Value = post.Quota0;
-                        param.DbType = System.Data.DbType.Int32;
-                        cmd.Parameters.Add(param);
-
-                        param = cmd.CreateParameter();
-                        param.ParameterName = "quota1";
-                        param.Value = post.Quota1;
-                        param.DbType = System.Data.DbType.Int32;
-                        cmd.Parameters.Add(param);
+                        Database.Me.AddParameter(cmd, "name",   post.Name,         DbType.String);
+                        Database.Me.AddParameter(cmd, "prefix", post.NumberPrefix, DbType.String);
+                        Database.Me.AddParameter(cmd, "ket",    post.Keterangan,   DbType.String);
+                        Database.Me.AddParameter(cmd, "quota",  post.Quota0,       DbType.Int32);
+                        Database.Me.AddParameter(cmd, "quota1", post.Quota1,       DbType.Int32);
 
                         if (!insertData)
                         {
                             // UPDATE
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "nameW";
-                            param.Value = post.NameOld;
-                            param.DbType = System.Data.DbType.String;
-                            cmd.Parameters.Add(param);
+                            Database.Me.AddParameter(cmd, "name1", post.NameOld, DbType.String);
                         }
 
                         affected = cmd.ExecuteNonQuery();
@@ -527,25 +463,19 @@ namespace Tobasa
                             throw new Exception("You can not use empty user name");
                         if (login.Username.Length < 3)
                             throw new Exception("Minimum user name length is 3 characters");
-                        //if (string.IsNullOrWhiteSpace(login.Password))
-                        //    throw new Exception("You can not use empty password");
-                        //if (login.Password.Length < 5)
-                        //    throw new Exception("Minimum password length is 5 characters");
                     }
 
                     if (command == "INSERT")
                     {
-                        //newPasswordHash = Util.GetPasswordHash(newClearPass, newuserName);
-                        sql = $"INSERT INTO {Tbl.logins} (username, password, expired, active) VALUES (?,?,?,?)";
+                        sql = $"INSERT INTO {Tbl.logins} (username, password, expired, active) VALUES (@username, @pwd, @exp, @active)";
                     }
                     else if(command == "UPDATE_PASSWORD")
                     {
-                        //newPasswordHash = Util.GetPasswordHash(newClearPass, newuserName);
-                        sql = $"UPDATE {Tbl.logins} SET username = ? , password = ? , expired = ?, active = ? WHERE username = ?";
+                        sql = $"UPDATE {Tbl.logins} SET username = @username , password = @pwd , expired = @exp, active = @active WHERE username = @username2";
                     }
                     else 
                     {
-                        sql = $"UPDATE {Tbl.logins} SET expired = ?, active = ? WHERE username = ?";
+                        sql = $"UPDATE {Tbl.logins} SET expired = @exp, active = @active WHERE username = @username";
                     }
 
                     Database.Me.OpenConnection();
@@ -558,81 +488,24 @@ namespace Tobasa
                             if (login.Expired.Date == DateTime.Now.Date)
                                 newExp = DateTime.Now.AddYears(2);
 
-                            DbParameter param = cmd.CreateParameter();
-                            param.ParameterName = "username";
-                            param.Value = login.Username;
-                            param.DbType = System.Data.DbType.String;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "password";
-                            param.Value = login.Password;
-                            param.DbType = System.Data.DbType.String;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "expired";
-                            param.Value = newExp;
-                            param.DbType = System.Data.DbType.Date;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "active";
-                            param.Value = login.Active;
-                            param.DbType = System.Data.DbType.Boolean;
-                            cmd.Parameters.Add(param);
+                            Database.Me.AddParameter(cmd, "username", login.Username, DbType.String);
+                            Database.Me.AddParameter(cmd, "pwd",      login.Password, DbType.String);
+                            Database.Me.AddParameter(cmd, "exp",      newExp,         DbType.Date);
+                            Database.Me.AddParameter(cmd, "active",   login.Active,   DbType.Boolean);
                         }
                         else if (command == "UPDATE_PASSWORD")
                         {
-                            DbParameter param = cmd.CreateParameter();
-                            param.ParameterName = "username";
-                            param.Value = login.Username;
-                            param.DbType = System.Data.DbType.String;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "password";
-                            param.Value = login.Password;
-                            param.DbType = System.Data.DbType.String;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "expired";
-                            param.Value = login.Expired;
-                            param.DbType = System.Data.DbType.Date;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "active";
-                            param.Value = login.Active;
-                            param.DbType = System.Data.DbType.Boolean;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "usernameW";
-                            param.Value = login.UsernameOld;
-                            param.DbType = System.Data.DbType.String;
-                            cmd.Parameters.Add(param);
+                            Database.Me.AddParameter(cmd, "username",  login.Username,    DbType.String);
+                            Database.Me.AddParameter(cmd, "pwd",       login.Password,    DbType.String);
+                            Database.Me.AddParameter(cmd, "exp",       login.Expired,     DbType.Date);
+                            Database.Me.AddParameter(cmd, "active",    login.Active,      DbType.Boolean);
+                            Database.Me.AddParameter(cmd, "username2", login.UsernameOld, DbType.String);
                         }
                         else
                         {
-                            DbParameter param = cmd.CreateParameter();
-                            param.ParameterName = "expired";
-                            param.Value = login.Expired;
-                            param.DbType = System.Data.DbType.Date;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "active";
-                            param.Value = login.Active;
-                            param.DbType = System.Data.DbType.Boolean;
-                            cmd.Parameters.Add(param);
-
-                            param = cmd.CreateParameter();
-                            param.ParameterName = "username";
-                            param.Value = login.UsernameOld;
-                            param.DbType = System.Data.DbType.String;
-                            cmd.Parameters.Add(param);
+                            Database.Me.AddParameter(cmd, "exp",       login.Expired,     DbType.Date);
+                            Database.Me.AddParameter(cmd, "active",    login.Active,      DbType.Boolean);
+                            Database.Me.AddParameter(cmd, "username",  login.UsernameOld, DbType.String);
                         }
 
                         affected = cmd.ExecuteNonQuery();
@@ -716,18 +589,15 @@ namespace Tobasa
 
             try
             {
-                string sql = $"DELETE FROM {Tbl.runningtexts} WHERE id = ?";
+                string sql = $"DELETE FROM {Tbl.runningtexts} WHERE id = @id";
 
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
                     cmd.CommandText = sql;
 
-                    DbParameter param = cmd.CreateParameter();
-                    param.ParameterName = "id";
-                    param.Value = id;
-                    param.DbType = System.Data.DbType.Int32;
-                    cmd.Parameters.Add(param);
+                    var id_ = Convert.ToInt32(id);
+                    Database.Me.AddParameter(cmd, "id", id_, DbType.Int32);
 
                     affected = cmd.ExecuteNonQuery();
                     return affected > 0;
@@ -749,18 +619,14 @@ namespace Tobasa
 
             try
             {
-                string sql = $"DELETE FROM {Tbl.ipaccesslists} WHERE ipaddress = ?";
+                string sql = $"DELETE FROM {Tbl.ipaccesslists} WHERE ipaddress = @ip";
 
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
                     cmd.CommandText = sql;
 
-                    DbParameter param = cmd.CreateParameter();
-                    param.ParameterName = "ipaddress";
-                    param.Value = ipaddress.Trim();
-                    param.DbType = System.Data.DbType.String;
-                    cmd.Parameters.Add(param);
+                    Database.Me.AddParameter(cmd, "ip", ipaddress.Trim(), DbType.String);
 
                     affected = cmd.ExecuteNonQuery();
                     return affected > 0;
@@ -811,18 +677,13 @@ namespace Tobasa
 
             try
             {
-                string sql = $"DELETE FROM {Tbl.posts} WHERE name = ?";
+                string sql = $"DELETE FROM {Tbl.posts} WHERE name = @name";
 
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
                     cmd.CommandText = sql;
-
-                    DbParameter param = cmd.CreateParameter();
-                    param.ParameterName = "name";
-                    param.Value = postName.Trim();
-                    param.DbType = DbType.String;
-                    cmd.Parameters.Add(param);
+                    Database.Me.AddParameter(cmd, "name", postName.Trim(), DbType.String);
 
                     affected = cmd.ExecuteNonQuery();
                     return affected > 0;
@@ -1153,7 +1014,6 @@ namespace Tobasa
                 throw new AppException("GetJob, " + ex.Message);
             }
         }
-
         
         public static string GetQueueSummary(Dictionary<string, string> parameter)
         {
@@ -1319,7 +1179,17 @@ namespace Tobasa
                 string sqlDelete = "";
                 int affectedRows = 0;
 
-                if (number == (Properties.Settings.Default.MaxQueueNumber - 1))
+
+                // Get Post data
+                Dto.Post postData = GetPost(post);
+                if (postData == null) {
+                    throw new AppException($"Invalid post {post} data");
+                }
+
+                var maxNumber = Properties.Settings.Default.MaxQueueNumber;
+                var maxQueueNumber = (postData.Quota0 > maxNumber) ? maxNumber : postData.Quota0;
+
+                if (number == (maxQueueNumber - 1))
                 {
                     // max_number-1 reached, delete all processed number for this post
                     sqlDelete = $"DELETE FROM {Tbl.sequences} WHERE status = 'PROCESS' AND number < @number AND post = @post";
@@ -1327,7 +1197,7 @@ namespace Tobasa
                     using (DbCommand cmdDelete = Database.Me.Connection.CreateCommand())
                     {
                         cmdDelete.CommandText = sqlDelete;
-                        int maxNumber = Properties.Settings.Default.MaxQueueNumber;
+
                         Database.Me.AddParameter(cmdDelete, "number", maxNumber, DbType.Int32);
                         Database.Me.AddParameter(cmdDelete, "post",   station,   DbType.String);
                             
@@ -1752,8 +1622,9 @@ namespace Tobasa
 
                     if (newNumberInt > 0)
                     {
-                        //if (newNumberInt == Properties.Settings.Default.MaxQueueNumber)
-                        if (newNumberInt > postData.Quota0)
+                        var maxNumber = Properties.Settings.Default.MaxQueueNumber;
+                        var maxQueueNumber = (postData.Quota0 > maxNumber) ? maxNumber : postData.Quota0;
+                        if (newNumberInt > maxQueueNumber )
                         {
                             // max queue number for the post reached, reset back to 1
                             Database.Me.AddParameter(cmdInsert, "number", 1, DbType.Int32);
@@ -1858,12 +1729,18 @@ namespace Tobasa
 
             try
             {
-                string sql = $@"SELECT station_name, sticky, active, running_text FROM {Tbl.runningtexts} WHERE active=1 AND station_name = @station_name";
+                string sql = $@"SELECT station_name, sticky, active, running_text FROM {Tbl.runningtexts} WHERE active=@active AND station_name = @station_name";
 
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
                     cmd.CommandText = sql;
+                    
+                    if (Database.Me.ProviderType == DatabaseProviderType.PGSQL)
+                        Database.Me.AddParameter(cmd, "active", true, DbType.Boolean);
+                    else
+                        Database.Me.AddParameter(cmd, "active", 1, DbType.Int32);
+
                     Database.Me.AddParameter(cmd, "station_name", station, DbType.String);
 
                     using (DbDataReader reader = cmd.ExecuteReader())

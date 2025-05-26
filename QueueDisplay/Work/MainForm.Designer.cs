@@ -90,6 +90,7 @@ namespace Tobasa
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.tabMisc = new System.Windows.Forms.TabPage();
+            this.chkShowFinishedQueue = new System.Windows.Forms.CheckBox();
             this.chkUseBrandingImageAsMainLogo = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.btnSetMainLogo = new System.Windows.Forms.Button();
@@ -131,6 +132,7 @@ namespace Tobasa
             this.tbPostName = new System.Windows.Forms.TextBox();
             this.label60 = new System.Windows.Forms.Label();
             this.tabPageRunText = new System.Windows.Forms.TabPage();
+            this.chkAudioUseLoket = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.btnSetAudioFolder = new System.Windows.Forms.Button();
             this.tbAudioFolder = new System.Windows.Forms.TextBox();
@@ -269,7 +271,7 @@ namespace Tobasa
             this.tabControl.Location = new System.Drawing.Point(0, 5);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(625, 224);
+            this.tabControl.Size = new System.Drawing.Size(625, 257);
             this.tabControl.TabIndex = 2;
             // 
             // tabVideoClip
@@ -284,7 +286,7 @@ namespace Tobasa
             this.tabVideoClip.Location = new System.Drawing.Point(4, 22);
             this.tabVideoClip.Name = "tabVideoClip";
             this.tabVideoClip.Padding = new System.Windows.Forms.Padding(3);
-            this.tabVideoClip.Size = new System.Drawing.Size(617, 198);
+            this.tabVideoClip.Size = new System.Drawing.Size(617, 231);
             this.tabVideoClip.TabIndex = 0;
             this.tabVideoClip.Text = "Video Clip File";
             // 
@@ -354,7 +356,7 @@ namespace Tobasa
             this.tabVideoDevice.Location = new System.Drawing.Point(4, 22);
             this.tabVideoDevice.Name = "tabVideoDevice";
             this.tabVideoDevice.Padding = new System.Windows.Forms.Padding(3);
-            this.tabVideoDevice.Size = new System.Drawing.Size(617, 198);
+            this.tabVideoDevice.Size = new System.Drawing.Size(617, 231);
             this.tabVideoDevice.TabIndex = 1;
             this.tabVideoDevice.Text = "Video Device";
             this.tabVideoDevice.UseVisualStyleBackColor = true;
@@ -370,9 +372,9 @@ namespace Tobasa
             this.gbVideo.Controls.Add(this.radTuner);
             this.gbVideo.Controls.Add(this.label1);
             this.gbVideo.Controls.Add(this.cbDevice);
-            this.gbVideo.Location = new System.Drawing.Point(4, 10);
+            this.gbVideo.Location = new System.Drawing.Point(4, 22);
             this.gbVideo.Name = "gbVideo";
-            this.gbVideo.Size = new System.Drawing.Size(399, 146);
+            this.gbVideo.Size = new System.Drawing.Size(607, 170);
             this.gbVideo.TabIndex = 5;
             this.gbVideo.TabStop = false;
             this.gbVideo.Text = "Video input control";
@@ -485,7 +487,7 @@ namespace Tobasa
             this.tabOptions.Location = new System.Drawing.Point(4, 22);
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOptions.Size = new System.Drawing.Size(617, 198);
+            this.tabOptions.Size = new System.Drawing.Size(617, 231);
             this.tabOptions.TabIndex = 2;
             this.tabOptions.Text = "Connection";
             this.tabOptions.UseVisualStyleBackColor = true;
@@ -496,7 +498,7 @@ namespace Tobasa
             this.cbPost.FormattingEnabled = true;
             this.cbPost.Items.AddRange(new object[] {
             "POST0"});
-            this.cbPost.Location = new System.Drawing.Point(84, 34);
+            this.cbPost.Location = new System.Drawing.Point(84, 44);
             this.cbPost.MaxLength = 10;
             this.cbPost.Name = "cbPost";
             this.cbPost.Size = new System.Drawing.Size(110, 21);
@@ -508,7 +510,7 @@ namespace Tobasa
             this.chkConnectAtStart.Checked = true;
             this.chkConnectAtStart.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkConnectAtStart.Enabled = false;
-            this.chkConnectAtStart.Location = new System.Drawing.Point(84, 107);
+            this.chkConnectAtStart.Location = new System.Drawing.Point(84, 117);
             this.chkConnectAtStart.Name = "chkConnectAtStart";
             this.chkConnectAtStart.Size = new System.Drawing.Size(113, 17);
             this.chkConnectAtStart.TabIndex = 21;
@@ -517,7 +519,7 @@ namespace Tobasa
             // 
             // tbPort
             // 
-            this.tbPort.Location = new System.Drawing.Point(84, 81);
+            this.tbPort.Location = new System.Drawing.Point(84, 91);
             this.tbPort.Name = "tbPort";
             this.tbPort.Size = new System.Drawing.Size(110, 20);
             this.tbPort.TabIndex = 20;
@@ -525,7 +527,7 @@ namespace Tobasa
             // 
             // tbServer
             // 
-            this.tbServer.Location = new System.Drawing.Point(84, 59);
+            this.tbServer.Location = new System.Drawing.Point(84, 69);
             this.tbServer.Name = "tbServer";
             this.tbServer.Size = new System.Drawing.Size(110, 20);
             this.tbServer.TabIndex = 19;
@@ -534,7 +536,7 @@ namespace Tobasa
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 84);
+            this.label4.Location = new System.Drawing.Point(8, 94);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(26, 13);
             this.label4.TabIndex = 18;
@@ -543,7 +545,7 @@ namespace Tobasa
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 62);
+            this.label5.Location = new System.Drawing.Point(8, 72);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(38, 13);
             this.label5.TabIndex = 17;
@@ -551,9 +553,9 @@ namespace Tobasa
             // 
             // btnSaveOpt
             // 
-            this.btnSaveOpt.Location = new System.Drawing.Point(67, 135);
+            this.btnSaveOpt.Location = new System.Drawing.Point(11, 145);
             this.btnSaveOpt.Name = "btnSaveOpt";
-            this.btnSaveOpt.Size = new System.Drawing.Size(130, 21);
+            this.btnSaveOpt.Size = new System.Drawing.Size(186, 21);
             this.btnSaveOpt.TabIndex = 16;
             this.btnSaveOpt.Text = "&Save and Reconnect";
             this.btnSaveOpt.UseVisualStyleBackColor = true;
@@ -561,7 +563,7 @@ namespace Tobasa
             // 
             // tbStation
             // 
-            this.tbStation.Location = new System.Drawing.Point(84, 11);
+            this.tbStation.Location = new System.Drawing.Point(84, 21);
             this.tbStation.Name = "tbStation";
             this.tbStation.Size = new System.Drawing.Size(110, 20);
             this.tbStation.TabIndex = 15;
@@ -570,7 +572,7 @@ namespace Tobasa
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 36);
+            this.label3.Location = new System.Drawing.Point(8, 46);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(28, 13);
             this.label3.TabIndex = 14;
@@ -579,7 +581,7 @@ namespace Tobasa
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 14);
+            this.label6.Location = new System.Drawing.Point(8, 24);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(69, 13);
             this.label6.TabIndex = 13;
@@ -587,6 +589,7 @@ namespace Tobasa
             // 
             // tabMisc
             // 
+            this.tabMisc.Controls.Add(this.chkShowFinishedQueue);
             this.tabMisc.Controls.Add(this.chkUseBrandingImageAsMainLogo);
             this.tabMisc.Controls.Add(this.label12);
             this.tabMisc.Controls.Add(this.btnSetMainLogo);
@@ -617,10 +620,20 @@ namespace Tobasa
             this.tabMisc.Location = new System.Drawing.Point(4, 22);
             this.tabMisc.Name = "tabMisc";
             this.tabMisc.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMisc.Size = new System.Drawing.Size(617, 198);
+            this.tabMisc.Size = new System.Drawing.Size(617, 231);
             this.tabMisc.TabIndex = 3;
-            this.tabMisc.Text = "Appearance";
+            this.tabMisc.Text = "Appearance & Themes";
             this.tabMisc.UseVisualStyleBackColor = true;
+            // 
+            // chkShowFinishedQueue
+            // 
+            this.chkShowFinishedQueue.AutoSize = true;
+            this.chkShowFinishedQueue.Location = new System.Drawing.Point(392, 102);
+            this.chkShowFinishedQueue.Name = "chkShowFinishedQueue";
+            this.chkShowFinishedQueue.Size = new System.Drawing.Size(125, 17);
+            this.chkShowFinishedQueue.TabIndex = 58;
+            this.chkShowFinishedQueue.Text = "Show finished queue";
+            this.chkShowFinishedQueue.UseVisualStyleBackColor = true;
             // 
             // chkUseBrandingImageAsMainLogo
             // 
@@ -663,7 +676,7 @@ namespace Tobasa
             // btnThemeOrange
             // 
             this.btnThemeOrange.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeOrange.Location = new System.Drawing.Point(444, 168);
+            this.btnThemeOrange.Location = new System.Drawing.Point(444, 193);
             this.btnThemeOrange.Name = "btnThemeOrange";
             this.btnThemeOrange.Size = new System.Drawing.Size(72, 23);
             this.btnThemeOrange.TabIndex = 53;
@@ -674,7 +687,7 @@ namespace Tobasa
             // btnThemeBlue
             // 
             this.btnThemeBlue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeBlue.Location = new System.Drawing.Point(133, 168);
+            this.btnThemeBlue.Location = new System.Drawing.Point(133, 193);
             this.btnThemeBlue.Name = "btnThemeBlue";
             this.btnThemeBlue.Size = new System.Drawing.Size(72, 23);
             this.btnThemeBlue.TabIndex = 52;
@@ -685,7 +698,7 @@ namespace Tobasa
             // btnThemeRed
             // 
             this.btnThemeRed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeRed.Location = new System.Drawing.Point(366, 168);
+            this.btnThemeRed.Location = new System.Drawing.Point(366, 193);
             this.btnThemeRed.Name = "btnThemeRed";
             this.btnThemeRed.Size = new System.Drawing.Size(72, 23);
             this.btnThemeRed.TabIndex = 51;
@@ -696,7 +709,7 @@ namespace Tobasa
             // btnThemeDark
             // 
             this.btnThemeDark.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeDark.Location = new System.Drawing.Point(289, 168);
+            this.btnThemeDark.Location = new System.Drawing.Point(289, 193);
             this.btnThemeDark.Name = "btnThemeDark";
             this.btnThemeDark.Size = new System.Drawing.Size(72, 23);
             this.btnThemeDark.TabIndex = 50;
@@ -707,7 +720,7 @@ namespace Tobasa
             // btnThemeGreen
             // 
             this.btnThemeGreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeGreen.Location = new System.Drawing.Point(211, 168);
+            this.btnThemeGreen.Location = new System.Drawing.Point(211, 193);
             this.btnThemeGreen.Name = "btnThemeGreen";
             this.btnThemeGreen.Size = new System.Drawing.Size(72, 23);
             this.btnThemeGreen.TabIndex = 49;
@@ -718,7 +731,7 @@ namespace Tobasa
             // btnThemeClassic
             // 
             this.btnThemeClassic.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThemeClassic.Location = new System.Drawing.Point(56, 168);
+            this.btnThemeClassic.Location = new System.Drawing.Point(56, 193);
             this.btnThemeClassic.Name = "btnThemeClassic";
             this.btnThemeClassic.Size = new System.Drawing.Size(72, 23);
             this.btnThemeClassic.TabIndex = 48;
@@ -729,7 +742,7 @@ namespace Tobasa
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(11, 173);
+            this.label11.Location = new System.Drawing.Point(10, 198);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(40, 13);
             this.label11.TabIndex = 47;
@@ -738,17 +751,18 @@ namespace Tobasa
             // chkShowCenterMiddleDiv
             // 
             this.chkShowCenterMiddleDiv.AutoSize = true;
-            this.chkShowCenterMiddleDiv.Location = new System.Drawing.Point(392, 83);
+            this.chkShowCenterMiddleDiv.Location = new System.Drawing.Point(392, 81);
             this.chkShowCenterMiddleDiv.Name = "chkShowCenterMiddleDiv";
             this.chkShowCenterMiddleDiv.Size = new System.Drawing.Size(150, 17);
             this.chkShowCenterMiddleDiv.TabIndex = 38;
-            this.chkShowCenterMiddleDiv.Text = "Show Center Midle Layout";
+            this.chkShowCenterMiddleDiv.Text = "Show center middle layout";
             this.chkShowCenterMiddleDiv.UseVisualStyleBackColor = true;
+            this.chkShowCenterMiddleDiv.CheckedChanged += new System.EventHandler(this.OnChkShowCenterMiddleLayout);
             // 
             // chkShowRightPosts
             // 
             this.chkShowRightPosts.AutoSize = true;
-            this.chkShowRightPosts.Location = new System.Drawing.Point(392, 129);
+            this.chkShowRightPosts.Location = new System.Drawing.Point(392, 145);
             this.chkShowRightPosts.Name = "chkShowRightPosts";
             this.chkShowRightPosts.Size = new System.Drawing.Size(104, 17);
             this.chkShowRightPosts.TabIndex = 37;
@@ -758,7 +772,7 @@ namespace Tobasa
             // chkShowLeftPosts
             // 
             this.chkShowLeftPosts.AutoSize = true;
-            this.chkShowLeftPosts.Location = new System.Drawing.Point(392, 106);
+            this.chkShowLeftPosts.Location = new System.Drawing.Point(392, 124);
             this.chkShowLeftPosts.Name = "chkShowLeftPosts";
             this.chkShowLeftPosts.Size = new System.Drawing.Size(98, 17);
             this.chkShowLeftPosts.TabIndex = 36;
@@ -768,7 +782,7 @@ namespace Tobasa
             // chkShowInfoTextTop1
             // 
             this.chkShowInfoTextTop1.AutoSize = true;
-            this.chkShowInfoTextTop1.Location = new System.Drawing.Point(392, 60);
+            this.chkShowInfoTextTop1.Location = new System.Drawing.Point(392, 59);
             this.chkShowInfoTextTop1.Name = "chkShowInfoTextTop1";
             this.chkShowInfoTextTop1.Size = new System.Drawing.Size(196, 17);
             this.chkShowInfoTextTop1.TabIndex = 35;
@@ -778,7 +792,7 @@ namespace Tobasa
             // chkShowInfoTextTop0
             // 
             this.chkShowInfoTextTop0.AutoSize = true;
-            this.chkShowInfoTextTop0.Location = new System.Drawing.Point(392, 39);
+            this.chkShowInfoTextTop0.Location = new System.Drawing.Point(392, 38);
             this.chkShowInfoTextTop0.Name = "chkShowInfoTextTop0";
             this.chkShowInfoTextTop0.Size = new System.Drawing.Size(221, 17);
             this.chkShowInfoTextTop0.TabIndex = 32;
@@ -842,7 +856,7 @@ namespace Tobasa
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(177, 149);
+            this.label10.Location = new System.Drawing.Point(177, 160);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(42, 13);
             this.label10.TabIndex = 19;
@@ -850,7 +864,7 @@ namespace Tobasa
             // 
             // numericUpDown
             // 
-            this.numericUpDown.Location = new System.Drawing.Point(127, 146);
+            this.numericUpDown.Location = new System.Drawing.Point(127, 157);
             this.numericUpDown.Maximum = new decimal(new int[] {
             60,
             0,
@@ -863,7 +877,7 @@ namespace Tobasa
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(11, 146);
+            this.label9.Location = new System.Drawing.Point(11, 157);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(109, 13);
             this.label9.TabIndex = 17;
@@ -871,7 +885,7 @@ namespace Tobasa
             // 
             // btnAnimationColor
             // 
-            this.btnAnimationColor.Location = new System.Drawing.Point(127, 116);
+            this.btnAnimationColor.Location = new System.Drawing.Point(127, 129);
             this.btnAnimationColor.Name = "btnAnimationColor";
             this.btnAnimationColor.Size = new System.Drawing.Size(61, 24);
             this.btnAnimationColor.TabIndex = 14;
@@ -882,7 +896,7 @@ namespace Tobasa
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(11, 118);
+            this.label8.Location = new System.Drawing.Point(11, 131);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(113, 13);
             this.label8.TabIndex = 13;
@@ -905,7 +919,7 @@ namespace Tobasa
             this.tabPostOpt.Location = new System.Drawing.Point(4, 22);
             this.tabPostOpt.Name = "tabPostOpt";
             this.tabPostOpt.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPostOpt.Size = new System.Drawing.Size(617, 198);
+            this.tabPostOpt.Size = new System.Drawing.Size(617, 231);
             this.tabPostOpt.TabIndex = 18;
             this.tabPostOpt.Text = "Post Options";
             this.tabPostOpt.UseVisualStyleBackColor = true;
@@ -1020,6 +1034,7 @@ namespace Tobasa
             // 
             // tabPageRunText
             // 
+            this.tabPageRunText.Controls.Add(this.chkAudioUseLoket);
             this.tabPageRunText.Controls.Add(this.label7);
             this.tabPageRunText.Controls.Add(this.btnSetAudioFolder);
             this.tabPageRunText.Controls.Add(this.tbAudioFolder);
@@ -1034,15 +1049,27 @@ namespace Tobasa
             this.tabPageRunText.Location = new System.Drawing.Point(4, 22);
             this.tabPageRunText.Name = "tabPageRunText";
             this.tabPageRunText.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRunText.Size = new System.Drawing.Size(617, 198);
+            this.tabPageRunText.Size = new System.Drawing.Size(617, 231);
             this.tabPageRunText.TabIndex = 17;
-            this.tabPageRunText.Text = "Running Text & Theme";
+            this.tabPageRunText.Text = "Miscellaneous";
             this.tabPageRunText.UseVisualStyleBackColor = true;
+            // 
+            // chkAudioUseLoket
+            // 
+            this.chkAudioUseLoket.AutoSize = true;
+            this.chkAudioUseLoket.Checked = true;
+            this.chkAudioUseLoket.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAudioUseLoket.Location = new System.Drawing.Point(13, 200);
+            this.chkAudioUseLoket.Name = "chkAudioUseLoket";
+            this.chkAudioUseLoket.Size = new System.Drawing.Size(184, 17);
+            this.chkAudioUseLoket.TabIndex = 54;
+            this.chkAudioUseLoket.Text = "Use \"Loket\" instead of \"Counter\"";
+            this.chkAudioUseLoket.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(11, 101);
+            this.label7.Location = new System.Drawing.Point(11, 110);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(74, 13);
             this.label7.TabIndex = 53;
@@ -1050,7 +1077,7 @@ namespace Tobasa
             // 
             // btnSetAudioFolder
             // 
-            this.btnSetAudioFolder.Location = new System.Drawing.Point(322, 96);
+            this.btnSetAudioFolder.Location = new System.Drawing.Point(331, 104);
             this.btnSetAudioFolder.Name = "btnSetAudioFolder";
             this.btnSetAudioFolder.Size = new System.Drawing.Size(31, 23);
             this.btnSetAudioFolder.TabIndex = 52;
@@ -1060,7 +1087,7 @@ namespace Tobasa
             // 
             // tbAudioFolder
             // 
-            this.tbAudioFolder.Location = new System.Drawing.Point(87, 98);
+            this.tbAudioFolder.Location = new System.Drawing.Point(96, 106);
             this.tbAudioFolder.Name = "tbAudioFolder";
             this.tbAudioFolder.Size = new System.Drawing.Size(229, 20);
             this.tbAudioFolder.TabIndex = 51;
@@ -1071,7 +1098,7 @@ namespace Tobasa
             this.chkSetUnderscore.AutoSize = true;
             this.chkSetUnderscore.Checked = true;
             this.chkSetUnderscore.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSetUnderscore.Location = new System.Drawing.Point(217, 128);
+            this.chkSetUnderscore.Location = new System.Drawing.Point(217, 154);
             this.chkSetUnderscore.Name = "chkSetUnderscore";
             this.chkSetUnderscore.Size = new System.Drawing.Size(205, 17);
             this.chkSetUnderscore.TabIndex = 50;
@@ -1083,7 +1110,7 @@ namespace Tobasa
             this.chkSpellNumber.AutoSize = true;
             this.chkSpellNumber.Checked = true;
             this.chkSpellNumber.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSpellNumber.Location = new System.Drawing.Point(217, 151);
+            this.chkSpellNumber.Location = new System.Drawing.Point(217, 177);
             this.chkSpellNumber.Name = "chkSpellNumber";
             this.chkSpellNumber.Size = new System.Drawing.Size(186, 17);
             this.chkSpellNumber.TabIndex = 49;
@@ -1095,7 +1122,7 @@ namespace Tobasa
             this.chkPlaySimpleNotification.AutoSize = true;
             this.chkPlaySimpleNotification.Checked = true;
             this.chkPlaySimpleNotification.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkPlaySimpleNotification.Location = new System.Drawing.Point(13, 128);
+            this.chkPlaySimpleNotification.Location = new System.Drawing.Point(13, 154);
             this.chkPlaySimpleNotification.Name = "chkPlaySimpleNotification";
             this.chkPlaySimpleNotification.Size = new System.Drawing.Size(164, 17);
             this.chkPlaySimpleNotification.TabIndex = 48;
@@ -1107,16 +1134,16 @@ namespace Tobasa
             this.chkAudioLoketIDUseAlphabet.AutoSize = true;
             this.chkAudioLoketIDUseAlphabet.Checked = true;
             this.chkAudioLoketIDUseAlphabet.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAudioLoketIDUseAlphabet.Location = new System.Drawing.Point(13, 151);
+            this.chkAudioLoketIDUseAlphabet.Location = new System.Drawing.Point(13, 177);
             this.chkAudioLoketIDUseAlphabet.Name = "chkAudioLoketIDUseAlphabet";
-            this.chkAudioLoketIDUseAlphabet.Size = new System.Drawing.Size(156, 17);
+            this.chkAudioLoketIDUseAlphabet.Size = new System.Drawing.Size(188, 17);
             this.chkAudioLoketIDUseAlphabet.TabIndex = 47;
-            this.chkAudioLoketIDUseAlphabet.Text = "Counter audio use alphabet";
+            this.chkAudioLoketIDUseAlphabet.Text = "Counter audio/visual use alphabet";
             this.chkAudioLoketIDUseAlphabet.UseVisualStyleBackColor = true;
             // 
             // txtRuntext1
             // 
-            this.txtRuntext1.Location = new System.Drawing.Point(96, 48);
+            this.txtRuntext1.Location = new System.Drawing.Point(96, 53);
             this.txtRuntext1.Multiline = true;
             this.txtRuntext1.Name = "txtRuntext1";
             this.txtRuntext1.Size = new System.Drawing.Size(507, 30);
@@ -1126,7 +1153,7 @@ namespace Tobasa
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(10, 51);
+            this.label53.Location = new System.Drawing.Point(10, 56);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(80, 13);
             this.label53.TabIndex = 38;
@@ -1134,7 +1161,7 @@ namespace Tobasa
             // 
             // txtRuntext0
             // 
-            this.txtRuntext0.Location = new System.Drawing.Point(96, 12);
+            this.txtRuntext0.Location = new System.Drawing.Point(96, 17);
             this.txtRuntext0.Multiline = true;
             this.txtRuntext0.Name = "txtRuntext0";
             this.txtRuntext0.Size = new System.Drawing.Size(507, 28);
@@ -1144,7 +1171,7 @@ namespace Tobasa
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(10, 15);
+            this.label54.Location = new System.Drawing.Point(10, 20);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(80, 13);
             this.label54.TabIndex = 36;
@@ -1306,7 +1333,7 @@ namespace Tobasa
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(524, 235);
+            this.btnSave.Location = new System.Drawing.Point(527, 268);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(94, 23);
             this.btnSave.TabIndex = 11;
@@ -1339,7 +1366,7 @@ namespace Tobasa
             this.groupBox1.Controls.Add(this.btnSwitchDisplay);
             this.groupBox1.Location = new System.Drawing.Point(399, 34);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(238, 183);
+            this.groupBox1.Size = new System.Drawing.Size(238, 152);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display";
@@ -1349,9 +1376,9 @@ namespace Tobasa
             this.btnShowDisplay.BackColor = System.Drawing.Color.PaleGreen;
             this.btnShowDisplay.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.btnShowDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnShowDisplay.Location = new System.Drawing.Point(18, 106);
+            this.btnShowDisplay.Location = new System.Drawing.Point(18, 87);
             this.btnShowDisplay.Name = "btnShowDisplay";
-            this.btnShowDisplay.Size = new System.Drawing.Size(202, 62);
+            this.btnShowDisplay.Size = new System.Drawing.Size(202, 52);
             this.btnShowDisplay.TabIndex = 1;
             this.btnShowDisplay.Text = "Show/Hide  Display - F9";
             this.btnShowDisplay.UseVisualStyleBackColor = false;
@@ -1363,9 +1390,9 @@ namespace Tobasa
             this.btnSwitchDisplay.Enabled = false;
             this.btnSwitchDisplay.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.btnSwitchDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSwitchDisplay.Location = new System.Drawing.Point(18, 32);
+            this.btnSwitchDisplay.Location = new System.Drawing.Point(18, 25);
             this.btnSwitchDisplay.Name = "btnSwitchDisplay";
-            this.btnSwitchDisplay.Size = new System.Drawing.Size(202, 62);
+            this.btnSwitchDisplay.Size = new System.Drawing.Size(202, 52);
             this.btnSwitchDisplay.TabIndex = 0;
             this.btnSwitchDisplay.Text = "Switch  Display  - F8";
             this.btnSwitchDisplay.UseVisualStyleBackColor = false;
@@ -1388,11 +1415,11 @@ namespace Tobasa
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlMore.Controls.Add(this.tabControl);
             this.pnlMore.Controls.Add(this.btnSave);
-            this.pnlMore.Location = new System.Drawing.Point(12, 223);
+            this.pnlMore.Location = new System.Drawing.Point(12, 192);
             this.pnlMore.Margin = new System.Windows.Forms.Padding(3, 3, 3, 15);
             this.pnlMore.MinimumSize = new System.Drawing.Size(625, 229);
             this.pnlMore.Name = "pnlMore";
-            this.pnlMore.Size = new System.Drawing.Size(625, 263);
+            this.pnlMore.Size = new System.Drawing.Size(625, 294);
             this.pnlMore.TabIndex = 16;
             // 
             // lblStatus
@@ -1587,6 +1614,8 @@ namespace Tobasa
         private System.Windows.Forms.Button btnSetMainLogo;
         private System.Windows.Forms.TextBox tbMainBrandingImage;
         private System.Windows.Forms.CheckBox chkUseBrandingImageAsMainLogo;
+        private System.Windows.Forms.CheckBox chkShowFinishedQueue;
+        private System.Windows.Forms.CheckBox chkAudioUseLoket;
     }
 }
 

@@ -71,7 +71,7 @@ namespace Tobasa
         {
             if (!_insertMode && _initialData.Count > 0)
             {
-                bool canConnnect        = Convert.ToBoolean(Convert.ToInt32(_initialData["allowed"]));
+                bool canConnnect        = Util.StrToBool(_initialData["allowed"]);
                 txtIPAddress.Text       = _initialData["ipaddress"];
                 txtRemark.Text          = _initialData["remark"];
                 rbCanConnect.Checked    = canConnnect;
@@ -81,7 +81,6 @@ namespace Tobasa
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            //_mainForm.MessageReceived -= ProcessMessage;
         }
 
         #endregion
@@ -114,9 +113,9 @@ namespace Tobasa
                 Dto.IpAccessList ipAccess = new Dto.IpAccessList()
                 {
                     IpAddressOld = ipOld_,
-                    IpAddress = ipaddress,
-                    Allowed = allowed,
-                    Keterangan = remark
+                    IpAddress    = ipaddress,
+                    Allowed      = allowed,
+                    Keterangan   = remark
                 };
 
                 string jsonA = JsonConvert.SerializeObject(ipAccess, Formatting.None);

@@ -54,7 +54,7 @@ namespace Tobasa
             username = "antrian",
             password = "TOBASA",
             passwordEnc = "ad7415644add93d6e719d2b593da6e6e",
-            connString = "Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antri;"
+            connString = "Server=127.0.0.1,1433;Database=antri;User ID=antrian;Trusted_Connection=False;"
         };
 
         private readonly QueOptions queOptionsDefault = new QueOptions()
@@ -135,13 +135,6 @@ namespace Tobasa
 
             ToolUsageInfo.ShowUsageInfo();
         }
-
-        private void showFirstInfoDialog()
-        {
-            String content = "";
-            MessageBox.Show(content, "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
 
         private void SetFormValuesFromSqlOptionsDefault()
         {
@@ -267,7 +260,6 @@ namespace Tobasa
             }
             else
             {
-                //if (chkSqliteUseDefault.Checked)
                 return true;
             }
         }
@@ -833,8 +825,7 @@ namespace Tobasa
         {
             if (chkSqlUseDefault.Checked)
             {
-                //SetFormValuesFromSqlOptionsDefault();
-                String dbType = "";
+                string dbType = "";
                 if (rbMSSQL.Checked)
                     dbType = "MYSQL";
                 if (rbMSSQL.Checked)

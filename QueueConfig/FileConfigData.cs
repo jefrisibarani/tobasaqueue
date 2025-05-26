@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Tobasa
 {
@@ -48,7 +47,7 @@ namespace Tobasa
             get
             {
                 if (providerType == "MSSQL")
-                    _connStr = $"Provider=SQLOLEDB;Data Source={hostAddr},{tcpPort};User ID={username};Initial Catalog={database};";
+                    _connStr = $"Server={hostAddr},{tcpPort};Database={database};User ID={username};Trusted_Connection=False";
                 else if (providerType == "MYSQL")
                     _connStr = $"Data Source={hostAddr},{tcpPort};User ID={username};Initial Catalog={database};";
                 else if (providerType == "PGSQL")

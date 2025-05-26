@@ -106,6 +106,8 @@ namespace Tobasa
         public bool isFullScreen;
         bool startUpCompleted;
 
+        Properties.Settings _settings = Properties.Settings.Default;
+
         private DisplayTheme colorProfile = null;
 
         // Our DirectShow engine
@@ -115,6 +117,8 @@ namespace Tobasa
         {
             get { return dsEngine; }
         }
+
+        private MainForm _mainForm = null;
 
         #endregion
 
@@ -234,16 +238,16 @@ namespace Tobasa
         private bool ContinueProcessDisplayPost(string post)
         {
             // If matching panel/div is hidden, stop.
-            string post0Name = Properties.Settings.Default.Post0Post;
-            string post1Name = Properties.Settings.Default.Post1Post;
-            string post2Name = Properties.Settings.Default.Post2Post;
-            string post3Name = Properties.Settings.Default.Post3Post;
-            string post4Name = Properties.Settings.Default.Post4Post;
-            string post5Name = Properties.Settings.Default.Post5Post;
-            string post6Name = Properties.Settings.Default.Post6Post;
-            string post7Name = Properties.Settings.Default.Post7Post;
-            string post8Name = Properties.Settings.Default.Post8Post;
-            string post9Name = Properties.Settings.Default.Post9Post;
+            string post0Name = _settings.Post0Post;
+            string post1Name = _settings.Post1Post;
+            string post2Name = _settings.Post2Post;
+            string post3Name = _settings.Post3Post;
+            string post4Name = _settings.Post4Post;
+            string post5Name = _settings.Post5Post;
+            string post6Name = _settings.Post6Post;
+            string post7Name = _settings.Post7Post;
+            string post8Name = _settings.Post8Post;
+            string post9Name = _settings.Post9Post;
 
             // main left posts visible?
             if ((post.Equals(post0Name) || post.Equals(post1Name) || post.Equals(post2Name) || post.Equals(post3Name) || post.Equals(post4Name))
@@ -256,13 +260,13 @@ namespace Tobasa
                 return false;
 
             // right/left div,  two bottom posts visible?
-            if (post.Equals(post3Name) && !Properties.Settings.Default.Post3Visible)
+            if (post.Equals(post3Name) && !_settings.Post3Visible)
                 return false;
-            else if (post.Equals(post4Name) && !Properties.Settings.Default.Post4Visible)
+            else if (post.Equals(post4Name) && !_settings.Post4Visible)
                 return false;
-            else if (post.Equals(post8Name) && !Properties.Settings.Default.Post8Visible)
+            else if (post.Equals(post8Name) && !_settings.Post8Visible)
                 return false;
-            else if (post.Equals(post9Name) && !Properties.Settings.Default.Post9Visible)
+            else if (post.Equals(post9Name) && !_settings.Post9Visible)
                 return false;
 
             return true;
@@ -292,35 +296,35 @@ namespace Tobasa
         {
             string stationId = station.Substring(station.IndexOf('#') + 1);
 
-            string post0Name = Properties.Settings.Default.Post0Post;
-            string post1Name = Properties.Settings.Default.Post1Post;
-            string post2Name = Properties.Settings.Default.Post2Post;
-            string post3Name = Properties.Settings.Default.Post3Post;
-            string post4Name = Properties.Settings.Default.Post4Post;
-            string post5Name = Properties.Settings.Default.Post5Post;
-            string post6Name = Properties.Settings.Default.Post6Post;
-            string post7Name = Properties.Settings.Default.Post7Post;
-            string post8Name = Properties.Settings.Default.Post8Post;
-            string post9Name = Properties.Settings.Default.Post9Post;
+            string post0Name = _settings.Post0Post;
+            string post1Name = _settings.Post1Post;
+            string post2Name = _settings.Post2Post;
+            string post3Name = _settings.Post3Post;
+            string post4Name = _settings.Post4Post;
+            string post5Name = _settings.Post5Post;
+            string post6Name = _settings.Post6Post;
+            string post7Name = _settings.Post7Post;
+            string post8Name = _settings.Post8Post;
+            string post9Name = _settings.Post9Post;
 
             // Posts info strip prefix, shown in lblTopText0
-            string post0RunText = Properties.Settings.Default.Post0RunText;
-            string post1RunText = Properties.Settings.Default.Post1RunText;
-            string post2RunText = Properties.Settings.Default.Post2RunText;
-            string post3RunText = Properties.Settings.Default.Post3RunText;
-            string post4RunText = Properties.Settings.Default.Post4RunText;
-            string post5RunText = Properties.Settings.Default.Post5RunText;
-            string post6RunText = Properties.Settings.Default.Post6RunText;
-            string post7RunText = Properties.Settings.Default.Post7RunText;
-            string post8RunText = Properties.Settings.Default.Post8RunText;
-            string post9RunText = Properties.Settings.Default.Post9RunText;
+            string post0RunText = _settings.Post0RunText;
+            string post1RunText = _settings.Post1RunText;
+            string post2RunText = _settings.Post2RunText;
+            string post3RunText = _settings.Post3RunText;
+            string post4RunText = _settings.Post4RunText;
+            string post5RunText = _settings.Post5RunText;
+            string post6RunText = _settings.Post6RunText;
+            string post7RunText = _settings.Post7RunText;
+            string post8RunText = _settings.Post8RunText;
+            string post9RunText = _settings.Post9RunText;
 
             string postMainCaption = "";
             bool playAudio = false;
 
             // Loket or Counter
             string textCounterOrLabel;
-            if (Properties.Settings.Default.AudioUseLoket)
+            if (_settings.AudioUseLoket)
                 textCounterOrLabel = "Loket";
             else
                 textCounterOrLabel = "Counter";
@@ -339,8 +343,8 @@ namespace Tobasa
 
                 topTextPost0 = String.Format("{0} : Nomor {1} di {2} {3}  ", post0RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post0PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post0Caption;
+                playAudio = _settings.Post0PlayAudio;
+                postMainCaption = _settings.Post0Caption;
             }
             else if (post.Equals(post1Name))
             {
@@ -355,8 +359,8 @@ namespace Tobasa
 
                 topTextPost1 = String.Format("{0} : Nomor {1} di {2} {3}  ", post1RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post1PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post1Caption;
+                playAudio = _settings.Post1PlayAudio;
+                postMainCaption = _settings.Post1Caption;
             }
             else if (post.Equals(post2Name))
             {
@@ -371,8 +375,8 @@ namespace Tobasa
 
                 topTextPost2 = String.Format("{0} : Nomor {1} di {2} {3}  ", post2RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post2PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post2Caption;
+                playAudio = _settings.Post2PlayAudio;
+                postMainCaption = _settings.Post2Caption;
             }
             else if (post.Equals(post3Name))
             {
@@ -387,8 +391,8 @@ namespace Tobasa
 
                 topTextPost3 = String.Format("{0} : Nomor {1} di {2} {3}  ", post3RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post3PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post3Caption;
+                playAudio = _settings.Post3PlayAudio;
+                postMainCaption = _settings.Post3Caption;
             }
             else if (post.Equals(post4Name))
             {
@@ -403,8 +407,8 @@ namespace Tobasa
 
                 topTextPost4 = String.Format("{0} : Nomor {1} di {2} {3}  ", post4RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post4PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post4Caption;
+                playAudio = _settings.Post4PlayAudio;
+                postMainCaption = _settings.Post4Caption;
             }
             else if (post.Equals(post5Name))
             {
@@ -419,8 +423,8 @@ namespace Tobasa
 
                 topTextPost5 = String.Format("{0} : Nomor {1} di {2} {3}  ", post5RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post5PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post5Caption;
+                playAudio = _settings.Post5PlayAudio;
+                postMainCaption = _settings.Post5Caption;
             }
             else if (post.Equals(post6Name))
             {
@@ -435,8 +439,8 @@ namespace Tobasa
 
                 topTextPost6 = String.Format("{0} : Nomor {1} di {2} {3}  ", post6RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post6PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post6Caption;
+                playAudio = _settings.Post6PlayAudio;
+                postMainCaption = _settings.Post6Caption;
             }
             else if (post.Equals(post7Name))
             {
@@ -451,8 +455,8 @@ namespace Tobasa
 
                 topTextPost7 = String.Format("{0} : Nomor {1} di {2} {3}  ", post7RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post7PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post7Caption;
+                playAudio = _settings.Post7PlayAudio;
+                postMainCaption = _settings.Post7Caption;
             }
             else if (post.Equals(post8Name))
             {
@@ -467,8 +471,8 @@ namespace Tobasa
 
                 topTextPost8 = String.Format("{0} : Nomor {1} di {2} {3}  ", post8RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post8PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post8Caption;
+                playAudio = _settings.Post8PlayAudio;
+                postMainCaption = _settings.Post8Caption;
             }
             else if (post.Equals(post9Name))
             {
@@ -483,24 +487,24 @@ namespace Tobasa
 
                 topTextPost9 = String.Format("{0} : Nomor {1} di {2} {3}  ", post9RunText, prefix + number, textCounterOrLabel, stationId);
 
-                playAudio = Properties.Settings.Default.Post9PlayAudio;
-                postMainCaption = Properties.Settings.Default.Post9Caption;
+                playAudio = _settings.Post9PlayAudio;
+                postMainCaption = _settings.Post9Caption;
             }
 
             // Main Post Current number display
-            if (post == Properties.Settings.Default.StationPost || Properties.Settings.Default.UpdateNumberFromOtherPost)
+            if (post == _settings.StationPost || _settings.UpdateNumberFromOtherPost)
             {
                 lblPostNumber.Text = prefix + number;
                 lblPostCounter.Text = " " + textCounterOrLabel + " " + GetStationIdAsChar(stationId);
 
-                if (Tobasa.Properties.Settings.Default.MainPostCounterText.Length > 0)
-                    lblPostCounter.Text = Tobasa.Properties.Settings.Default.MainPostCounterText + " " + GetStationIdAsChar(stationId);
+                if (_settings.MainPostCounterText.Length > 0)
+                    lblPostCounter.Text = _settings.MainPostCounterText + " " + GetStationIdAsChar(stationId);
 
                 lblPostNameCaption.Text = postMainCaption;
             }
 
             // Only play audio if source post equal this display post
-            if (post == Properties.Settings.Default.StationPost)
+            if (post == _settings.StationPost)
                 PlayAudio(prefix, number, stationId);
             else if (playAudio)
                 PlayAudio(prefix, number, stationId);
@@ -512,36 +516,36 @@ namespace Tobasa
             string post     = qmessage.PayloadValues["post"];
             string message  = qmessage.PayloadValues["info"];
 
-            string post0Name = Properties.Settings.Default.Post0Post;
-            string post1Name = Properties.Settings.Default.Post1Post;
-            string post2Name = Properties.Settings.Default.Post2Post;
-            string post3Name = Properties.Settings.Default.Post3Post;
-            string post4Name = Properties.Settings.Default.Post4Post;
-            string post5Name = Properties.Settings.Default.Post5Post;
-            string post6Name = Properties.Settings.Default.Post6Post;
-            string post7Name = Properties.Settings.Default.Post7Post;
-            string post8Name = Properties.Settings.Default.Post8Post;
-            string post9Name = Properties.Settings.Default.Post9Post;
+            string post0Name = _settings.Post0Post;
+            string post1Name = _settings.Post1Post;
+            string post2Name = _settings.Post2Post;
+            string post3Name = _settings.Post3Post;
+            string post4Name = _settings.Post4Post;
+            string post5Name = _settings.Post5Post;
+            string post6Name = _settings.Post6Post;
+            string post7Name = _settings.Post7Post;
+            string post8Name = _settings.Post8Post;
+            string post9Name = _settings.Post9Post;
 
-            string post0RunText = Properties.Settings.Default.Post0RunText;
-            string post1RunText = Properties.Settings.Default.Post1RunText;
-            string post2RunText = Properties.Settings.Default.Post2RunText;
-            string post3RunText = Properties.Settings.Default.Post3RunText;
-            string post4RunText = Properties.Settings.Default.Post4RunText;
-            string post5RunText = Properties.Settings.Default.Post5RunText;
-            string post6RunText = Properties.Settings.Default.Post6RunText;
-            string post7RunText = Properties.Settings.Default.Post7RunText;
-            string post8RunText = Properties.Settings.Default.Post8RunText;
-            string post9RunText = Properties.Settings.Default.Post9RunText;
+            string post0RunText = _settings.Post0RunText;
+            string post1RunText = _settings.Post1RunText;
+            string post2RunText = _settings.Post2RunText;
+            string post3RunText = _settings.Post3RunText;
+            string post4RunText = _settings.Post4RunText;
+            string post5RunText = _settings.Post5RunText;
+            string post6RunText = _settings.Post6RunText;
+            string post7RunText = _settings.Post7RunText;
+            string post8RunText = _settings.Post8RunText;
+            string post9RunText = _settings.Post9RunText;
 
             // if panel POST#3/POST#4/POST#8/POST#9 is hidden, stop process
-            if (post.Equals(post3Name) && !Properties.Settings.Default.Post3Visible)
+            if (post.Equals(post3Name) && !_settings.Post3Visible)
                 return;
-            else if (post.Equals(post4Name) && !Properties.Settings.Default.Post4Visible)
+            else if (post.Equals(post4Name) && !_settings.Post4Visible)
                 return;
-            else if (post.Equals(post8Name) && !Properties.Settings.Default.Post8Visible)
+            else if (post.Equals(post8Name) && !_settings.Post8Visible)
                 return;
-            else if (post.Equals(post9Name) && !Properties.Settings.Default.Post9Visible)
+            else if (post.Equals(post9Name) && !_settings.Post9Visible)
                 return;
             else
             {
@@ -652,22 +656,22 @@ namespace Tobasa
                 queueNo = prefix + number;
             }
 
-            string post0Name = Properties.Settings.Default.Post0Post;
-            string post1Name = Properties.Settings.Default.Post1Post;
-            string post2Name = Properties.Settings.Default.Post2Post;
-            string post3Name = Properties.Settings.Default.Post3Post;
-            string post4Name = Properties.Settings.Default.Post4Post;
-            string post5Name = Properties.Settings.Default.Post5Post;
-            string post6Name = Properties.Settings.Default.Post6Post;
-            string post7Name = Properties.Settings.Default.Post7Post;
-            string post8Name = Properties.Settings.Default.Post8Post;
-            string post9Name = Properties.Settings.Default.Post9Post;
+            string post0Name = _settings.Post0Post;
+            string post1Name = _settings.Post1Post;
+            string post2Name = _settings.Post2Post;
+            string post3Name = _settings.Post3Post;
+            string post4Name = _settings.Post4Post;
+            string post5Name = _settings.Post5Post;
+            string post6Name = _settings.Post6Post;
+            string post7Name = _settings.Post7Post;
+            string post8Name = _settings.Post8Post;
+            string post9Name = _settings.Post9Post;
             
             string postMainCaption = "";
 
             // Loket or Counter
             string textCounterOrLabel;
-            if (Properties.Settings.Default.AudioUseLoket)
+            if (_settings.AudioUseLoket)
                 textCounterOrLabel = "Loket";
             else
                 textCounterOrLabel = "Counter";
@@ -677,80 +681,80 @@ namespace Tobasa
                 lblPost0JumAnVal.Text = numberleft;
                 lblPost0No.Text = queueNo;
                 lblPost0CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post0Caption;
+                postMainCaption = _settings.Post0Caption;
             }
             else if (post == post1Name)
             {
                 lblPost1JumAnVal.Text = numberleft;
                 lblPost1No.Text = queueNo;
                 lblPost1CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post1Caption;
+                postMainCaption = _settings.Post1Caption;
             }
             else if (post == post2Name)
             {
                 lblPost2JumAnVal.Text = numberleft;
                 lblPost2No.Text = queueNo;
                 lblPost2CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post2Caption;
+                postMainCaption = _settings.Post2Caption;
             }
             else if (post == post3Name)
             {
                 lblPost3JumAnVal.Text = numberleft;
                 lblPost3No.Text = queueNo;
                 lblPost3CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post3Caption;
+                postMainCaption = _settings.Post3Caption;
             }
             else if (post == post4Name)
             {
                 lblPost4JumAnVal.Text = numberleft;
                 lblPost4No.Text = queueNo;
                 lblPost4CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post4Caption;
+                postMainCaption = _settings.Post4Caption;
             }
             else if (post == post5Name)
             {
                 lblPost5JumAnVal.Text = numberleft;
                 lblPost5No.Text = queueNo;
                 lblPost5CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post5Caption;
+                postMainCaption = _settings.Post5Caption;
             }
             else if (post == post6Name)
             {
                 lblPost6JumAnVal.Text = numberleft;
                 lblPost6No.Text = queueNo;
                 lblPost6CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post6Caption;
+                postMainCaption = _settings.Post6Caption;
             }
             else if (post == post7Name)
             {
                 lblPost7JumAnVal.Text = numberleft;
                 lblPost7No.Text = queueNo;
                 lblPost7CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post7Caption;
+                postMainCaption = _settings.Post7Caption;
             }
             else if (post == post8Name)
             {
                 lblPost8JumAnVal.Text = numberleft;
                 lblPost8No.Text = queueNo;
                 lblPost8CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post8Caption;
+                postMainCaption = _settings.Post8Caption;
             }
             else if (post == post9Name)
             {
                 lblPost9JumAnVal.Text = numberleft;
                 lblPost9No.Text = queueNo;
                 lblPost9CounterNo.Text = stationId;
-                postMainCaption = Properties.Settings.Default.Post9Caption;
+                postMainCaption = _settings.Post9Caption;
             }
 
             // Main Post Current number display
-            if (post == Properties.Settings.Default.StationPost || Properties.Settings.Default.UpdateNumberFromOtherPost)
+            if (post == _settings.StationPost || _settings.UpdateNumberFromOtherPost)
             {
                 lblPostNumber.Text = queueNo;
                 lblPostCounter.Text = " " + textCounterOrLabel + " " + stationId;
 
-                if (Tobasa.Properties.Settings.Default.MainPostCounterText.Length > 0)
-                    lblPostCounter.Text = Tobasa.Properties.Settings.Default.MainPostCounterText + " " + stationId;
+                if (_settings.MainPostCounterText.Length > 0)
+                    lblPostCounter.Text = _settings.MainPostCounterText + " " + stationId;
 
                 lblPostNameCaption.Text = postMainCaption;
             }
@@ -775,16 +779,17 @@ namespace Tobasa
 
         private void OnPlayAudioCompleted()
         {
-            dsEngine.SetVolume(Properties.Settings.Default.DSEngineVolumeLevel);
+            dsEngine.SetVolume(_settings.DSEngineVolumeLevel);
         }
 
         #endregion
 
         #region Constructor / Destructor
-        public Display()
+        public Display(MainForm mainForm)
         {
             try
             {
+                _mainForm = mainForm;
 
                 startUpCompleted = false;
                 labelRecordList = new ArrayList();
@@ -807,19 +812,19 @@ namespace Tobasa
                 AdaptRightDivPostLayout();
                 AdaptMainLeftAndRightLayout();
 
-                if (Properties.Settings.Default.StartNumberWithUnderscore)
+                if (_settings.StartNumberWithUnderscore)
                     ResetDisplayNumbers();
 
                 // set two built in runnning text
-                AddRunningText(Properties.Settings.Default.RunningText0);
-                AddRunningText(Properties.Settings.Default.RunningText1);
+                AddRunningText(_settings.RunningText0);
+                AddRunningText(_settings.RunningText1);
 
                 dsEngine = new DSEngine(this.centerPanelVideo, this.Handle);
 
                 // Set location to another screen if available
                 ShowToSecondScreen();
 
-                if (Properties.Settings.Default.StartDisplayFullScreen)
+                if (_settings.StartDisplayFullScreen)
                     SetFullScreen();
                 else
                     DontFullScreen();
@@ -828,15 +833,19 @@ namespace Tobasa
 
                 startUpCompleted = true;
 
-                if (Properties.Settings.Default.Theme != "Classic")
+                if (_settings.Theme != "Classic")
                 {
-                    ApplyTheme(Properties.Settings.Default.Theme);
+                    ApplyTheme(_settings.Theme);
                 }
                 else
                 {
                     colorProfile = new DisplayTheme();
                     colorProfile.basePostTextColor = Color.Gold;
                 }
+
+                if (_settings.ShowInfoDialog)
+                    ToolUsageInfo.ShowUsageInfo();
+
             }
             catch (Exception e)
             {
@@ -992,8 +1001,8 @@ namespace Tobasa
 
         private void StartTimers()
         {
-            bool topInfoStrip0Visible = Properties.Settings.Default.ShowInfoTextTop0;
-            bool topInfoStrip1Visible = Properties.Settings.Default.ShowInfoTextTop1;
+            bool topInfoStrip0Visible = _settings.ShowInfoTextTop0;
+            bool topInfoStrip1Visible = _settings.ShowInfoTextTop1;
 
             timerClock = new Timer();
             timerClock.Interval = 1000;
@@ -1168,8 +1177,8 @@ namespace Tobasa
             // animate label
             if (lblNo.ForeColor == colorProfile.basePostTextColor)
             {
-                lblNo.ForeColor  = Properties.Settings.Default.NumberAnimationColor;
-                lblCtr.ForeColor = Properties.Settings.Default.NumberAnimationColor;
+                lblNo.ForeColor  = _settings.NumberAnimationColor;
+                lblCtr.ForeColor = _settings.NumberAnimationColor;
             }
             else
             {
@@ -1180,7 +1189,7 @@ namespace Tobasa
             /// stops the timer after specified limit(seconds) in settings
             /// hardcoded max limit is 60 seconds
             int maxlimit = 120;
-            int limit = Properties.Settings.Default.QueueAnimationTimeInSecond;
+            int limit = _settings.QueueAnimationTimeInSecond;
             if (limit > 0 && limit < maxlimit)
             {
                 if (sw.ElapsedMilliseconds / 1000 > limit)
@@ -1245,7 +1254,7 @@ namespace Tobasa
 
         private String GetStationIdAsChar(string id)
         {
-            if (Tobasa.Properties.Settings.Default.AudioLoketIDUseAlphabet)
+            if (_settings.AudioLoketIDUseAlphabet)
             {
                 // ASCII characters: 65 to 90
                 // we use 1 = A = 65 ,  2 = B = 66
@@ -1265,8 +1274,8 @@ namespace Tobasa
 
         public void InitLogo()
         {
-            String displayMainBrandingImagePath = Properties.Settings.Default.DisplayMainBrandingImage;
-            bool useMainBrandingImage = Properties.Settings.Default.UseMainBrandingImage;
+            String displayMainBrandingImagePath = _settings.DisplayMainBrandingImage;
+            bool useMainBrandingImage = _settings.UseMainBrandingImage;
             if (File.Exists(displayMainBrandingImagePath) && useMainBrandingImage)
             {
                 displayMainBrandingImage = new Bitmap(displayMainBrandingImagePath);
@@ -1289,13 +1298,13 @@ namespace Tobasa
             }
             else
             {
-                if (File.Exists(Properties.Settings.Default.DisplayLogoImg))
-                    displayLogoImg = new Bitmap(Properties.Settings.Default.DisplayLogoImg);
+                if (File.Exists(_settings.DisplayLogoImg))
+                    displayLogoImg = new Bitmap(_settings.DisplayLogoImg);
                 else
                     displayLogoImg = Properties.Resources.QueueLogo150;
 
                 pictureBoxLogo.Image = displayLogoImg;
-                lblBranding.Text = Properties.Settings.Default.DisplayLogoText;
+                lblBranding.Text = _settings.DisplayLogoText;
             }
         }
 
@@ -1350,10 +1359,10 @@ namespace Tobasa
 
         private void AdaptLeftDivPostLayout()
         {
-            bool visible3 = Properties.Settings.Default.Post3Visible;
+            bool visible3 = _settings.Post3Visible;
             pnlPost3.Visible = visible3;
 
-            bool visible4 = Properties.Settings.Default.Post4Visible;
+            bool visible4 = _settings.Post4Visible;
             pnlPost4.Visible = visible4;
 
             if (visible3 && visible4)
@@ -1392,10 +1401,10 @@ namespace Tobasa
 
         private void AdaptRightDivPostLayout()
         {
-            bool visible8 = Properties.Settings.Default.Post8Visible;
+            bool visible8 = _settings.Post8Visible;
             pnlPost8.Visible = visible8;
 
-            bool visible9 = Properties.Settings.Default.Post9Visible;
+            bool visible9 = _settings.Post9Visible;
             pnlPost9.Visible = visible9;
 
             if (visible8 && visible9)
@@ -1434,8 +1443,8 @@ namespace Tobasa
 
         private void AdaptMainLeftAndRightLayout()
         {
-            bool rightDivVisible = Properties.Settings.Default.ShowRightPosts;
-            bool leftDivVisible   = Properties.Settings.Default.ShowLeftPosts;
+            bool rightDivVisible = _settings.ShowRightPosts;
+            bool leftDivVisible   = _settings.ShowLeftPosts;
 
             if (rightDivVisible == false && leftDivVisible == true)
             {
@@ -1459,10 +1468,10 @@ namespace Tobasa
 
         private void AdaptCenterLayout()
         {
-            bool logoVisible          = Properties.Settings.Default.ShowLogo;
-            bool topInfoStrip0Visible = Properties.Settings.Default.ShowInfoTextTop0;
-            bool topInfoStrip1Visible = Properties.Settings.Default.ShowInfoTextTop1;
-            bool centerMiddleVisible  = Properties.Settings.Default.ShowCenterMiddleDiv;
+            bool logoVisible          = _settings.ShowLogo;
+            bool topInfoStrip0Visible = _settings.ShowInfoTextTop0;
+            bool topInfoStrip1Visible = _settings.ShowInfoTextTop1;
+            bool centerMiddleVisible  = _settings.ShowCenterMiddleDiv;
             
             if (!logoVisible && topInfoStrip0Visible && topInfoStrip1Visible && centerMiddleVisible)
             {
@@ -1577,7 +1586,7 @@ namespace Tobasa
                 centerDiv.RowStyles[5].Height = 50F;  // video panel
             }
 
-            if (Properties.Settings.Default.BasicQueueMode)
+            if (! _settings.ShowFinishedQueue)
             {
                 pnlAntrianFinished.Visible = false;
                 centerMiddleDiv.ColumnStyles[0].Width = 0F;
@@ -1652,14 +1661,14 @@ namespace Tobasa
 
         private void SetLoketOrCounterText()
         {
-            if (Tobasa.Properties.Settings.Default.AudioUseLoket)
+            if (_settings.AudioUseLoket)
             {
                 lblCounterLeft.Text = TEXT_LOKET;
                 lblCounterRight.Text = TEXT_LOKET;
                 lblPostCounter.Text = TEXT_LOKET;
 
                 // unknown bug, in win 7 32 bit, we need to swap label position
-                if (Tobasa.Properties.Settings.Default.SwapCounterNoumberLabelPosition)
+                if (_settings.SwapCounterNumberLabelPosition)
                 {
                     lblNomorLeft.Text = TEXT_LOKET;
                     lblNomorRight.Text = TEXT_LOKET;
@@ -1671,7 +1680,7 @@ namespace Tobasa
                 lblCounterRight.Text = TEXT_COUNTER;
                 lblPostCounter.Text = TEXT_COUNTER;
 
-                if (Tobasa.Properties.Settings.Default.SwapCounterNoumberLabelPosition)
+                if (_settings.SwapCounterNumberLabelPosition)
                 {
                     lblNomorLeft.Text = TEXT_COUNTER;
                     lblNomorRight.Text = TEXT_COUNTER;
@@ -1681,7 +1690,7 @@ namespace Tobasa
             lblNomorLeft.Text = TEXT_NOMOR;
             lblNomorRight.Text = TEXT_NOMOR;
 
-            if (Tobasa.Properties.Settings.Default.SwapCounterNoumberLabelPosition)
+            if (_settings.SwapCounterNumberLabelPosition)
             {
                 lblCounterLeft.Text = TEXT_NOMOR;
                 lblCounterRight.Text = TEXT_NOMOR;
@@ -1690,18 +1699,18 @@ namespace Tobasa
 
         private void SetPostCaptions()
         {
-            lblPost0Caption.Text = Properties.Settings.Default.Post0Caption;
-            lblPost1Caption.Text = Properties.Settings.Default.Post1Caption;
-            lblPost2Caption.Text = Properties.Settings.Default.Post2Caption;
-            lblPost3Caption.Text = Properties.Settings.Default.Post3Caption;
-            lblPost4Caption.Text = Properties.Settings.Default.Post4Caption;
-            lblPost5Caption.Text = Properties.Settings.Default.Post5Caption;
-            lblPost6Caption.Text = Properties.Settings.Default.Post6Caption;
-            lblPost7Caption.Text = Properties.Settings.Default.Post7Caption;
-            lblPost8Caption.Text = Properties.Settings.Default.Post8Caption;
-            lblPost9Caption.Text = Properties.Settings.Default.Post9Caption;
+            lblPost0Caption.Text = _settings.Post0Caption;
+            lblPost1Caption.Text = _settings.Post1Caption;
+            lblPost2Caption.Text = _settings.Post2Caption;
+            lblPost3Caption.Text = _settings.Post3Caption;
+            lblPost4Caption.Text = _settings.Post4Caption;
+            lblPost5Caption.Text = _settings.Post5Caption;
+            lblPost6Caption.Text = _settings.Post6Caption;
+            lblPost7Caption.Text = _settings.Post7Caption;
+            lblPost8Caption.Text = _settings.Post8Caption;
+            lblPost9Caption.Text = _settings.Post9Caption;
 
-            lblPostNameCaption.Text = Properties.Settings.Default.Post0Caption;
+            lblPostNameCaption.Text = _settings.Post0Caption;
         }
 
         #endregion
@@ -1797,6 +1806,17 @@ namespace Tobasa
                             {
                                 Application.Exit();
                             }
+                        }
+                        break;
+                    }
+                case Keys.O:
+                    {
+                        // Ctrl + O
+                        if (e.Control)
+                        {
+                            _mainForm.WindowState = FormWindowState.Normal;
+                            _mainForm.BringToFront();
+                            _mainForm.ShowOption();
                         }
                         break;
                     }

@@ -81,8 +81,7 @@ namespace Tobasa.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Provider=SQLOLEDB;Data Source=127.0.0.1,1433;User ID=antrian;Initial Catalog=antr" +
-            "i;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Server=127.0.0.1,1433;Database=antri;User ID=antrian;Trusted_Connection=False;")]
         public string ConnectionString_MSSQL {
             get {
                 return ((string)(this["ConnectionString_MSSQL"]));
@@ -111,7 +110,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SQLITE")]
+        [global::System.Configuration.DefaultSettingValueAttribute("MYSQL")]
         public string ProviderType {
             get {
                 return ((string)(this["ProviderType"]));

@@ -110,17 +110,44 @@ namespace Tobasa
 
         public static string v_queue_posts_summary =
             @"
-            CREATE VIEW v_queue_posts_summary
-            AS 
-            SELECT p.name, p.numberprefix, p.keterangan
-            ,( SELECT MAX(NUMBER)   FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = date('now','localtime') ) AS called_last
-            ,( SELECT COUNT(number) FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = date('now','localtime') ) AS called_total
-            ,( SELECT MIN(number)   FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_first
-            ,( SELECT MAX(number)   FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_last
-            ,( SELECT COUNT(number) FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_total
-            ,( SELECT station       FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = date('now','localtime') AND number=called_last) AS last_station
+            CREATE VIEW v_queue_posts_summary AS 
+            SELECT p.name, p.numberprefix, p.keterangan,
+              ( SELECT MAX(number)   FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = date('now','localtime') ) AS called_last,
+              ( SELECT COUNT(number) FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = date('now','localtime') ) AS called_total,
+              ( SELECT MIN(number)   FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_first,
+              ( SELECT MAX(number)   FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_last,
+              ( SELECT COUNT(number) FROM queue_sequences WHERE status = 'WAITING' AND post = p.name AND date = date('now','localtime') ) AS waiting_total,
+              ( SELECT station       FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = date('now','localtime')
+                  AND number = ( SELECT MAX(number) FROM queue_sequences WHERE status = 'PROCESS' AND post = p.name AND date = date('now','localtime') )
+              ) AS last_station
             FROM queue_posts p;
             ";
+
+        public static string v_queue_posts_summary_a =
+            @"
+            CREATE VIEW v_queue_posts_summary_a AS
+            WITH 
+            today_sequences AS ( SELECT * FROM queue_sequences WHERE date = date('now', 'localtime') ),
+            per_post_stats AS (
+              SELECT post,
+                MAX(CASE WHEN status = 'PROCESS' THEN number END) AS called_last,
+                COUNT(CASE WHEN status = 'PROCESS' THEN 1 END) AS called_total,
+                MIN(CASE WHEN status = 'WAITING' THEN number END) AS waiting_first,
+                MAX(CASE WHEN status = 'WAITING' THEN number END) AS waiting_last,
+                COUNT(CASE WHEN status = 'WAITING' THEN 1 END) AS waiting_total
+              FROM today_sequences GROUP BY post
+            ),
+            last_station_info AS (
+              SELECT post, station FROM today_sequences WHERE status = 'PROCESS' AND (post, number) 
+              IN ( SELECT post, MAX(number) FROM today_sequences WHERE status = 'PROCESS' GROUP BY post )
+            )
+            SELECT  p.name, p.numberprefix, p.keterangan, s.called_last, s.called_total, s.waiting_first,
+              s.waiting_last, s.waiting_total, l.station AS last_station
+            FROM queue_posts p
+            LEFT JOIN per_post_stats s ON s.post = p.name
+            LEFT JOIN last_station_info l ON l.post = p.name;
+            ";
+
 
         public static string v_queue_sequences =
             @"
@@ -421,6 +448,7 @@ namespace Tobasa
                 , t_queue_sequences
                 , t_queue_stations
                 , v_queue_posts_summary
+                , v_queue_posts_summary_a
                 , v_queue_sequences
                 , tr_queue_update_jobs
             };

@@ -41,7 +41,6 @@ namespace Tobasa
         public FormLogin(MainForm form, Dictionary<string, string> data)
         {
             _mainForm = form;
-            //_mainForm.MessageReceived += new MessageReceived(ProcessMessage);
 
             _initialData = data;
             InitializeComponent();
@@ -55,7 +54,6 @@ namespace Tobasa
         public FormLogin(MainForm form)
         {
             _mainForm = form;
-            //_mainForm.MessageReceived += new MessageReceived(ProcessMessage);
 
             _insertMode = true;
             InitializeComponent();
@@ -72,9 +70,17 @@ namespace Tobasa
             {
                 txtUser.Text        = _initialData["username"];
                 txtPassword.Text    = _initialData["password"];
-                //curPassword       = _initialData["password"];   // save current password
-                dtExpired.Value     = Convert.ToDateTime(_initialData["expired"]);
-                chkActive.Checked   = Convert.ToBoolean(Convert.ToInt32(_initialData["active"]));
+
+                var expiredDate = Convert.ToDateTime(_initialData["expired"]);
+                if (expiredDate >= dtExpired.MinDate && expiredDate <= dtExpired.MaxDate)
+                {
+                    dtExpired.Value = expiredDate;
+                }
+                else {
+                    MessageBox.Show("The selected date is out of range.\nDisplaying today's date instead");
+                }
+
+                chkActive.Checked   = Util.StrToBool(_initialData["active"]);
             }
             else if (_insertMode)
             {
@@ -88,7 +94,6 @@ namespace Tobasa
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            //_mainForm.MessageReceived -= ProcessMessage;
         }
 
         #endregion
@@ -126,7 +131,6 @@ namespace Tobasa
 
                 Dto.Login login = new Dto.Login()
                 {
-                    //Id       = Convert.ToInt32(_initialData["id"]),
                     UsernameOld = userOld_,
                     Username = username,
                     Password = password,

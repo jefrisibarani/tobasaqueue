@@ -74,7 +74,7 @@ namespace Tobasa
 
             if (!_insertMode && _initialData.Count > 0)
             {
-                bool canlogin = Convert.ToBoolean(Convert.ToInt32(_initialData["canlogin"]));
+                bool canlogin = Util.StrToBool(_initialData["canlogin"]);
 
                 txtStation.Text         = _initialData["name"];
                 cbPost.Text             = _initialData["post"];

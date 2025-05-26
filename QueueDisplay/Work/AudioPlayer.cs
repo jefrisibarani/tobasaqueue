@@ -121,7 +121,7 @@ namespace Tobasa
                     }
 
                     // Play "di counter/loket"
-                    if( Tobasa.Properties.Settings.Default.AudioUseLoket)
+                    if ( Properties.Settings.Default.AudioUseLoket)
                         audioFile = _soundDir + "loket.wav";
                     else
                         audioFile = _soundDir + "counter.wav";
@@ -129,7 +129,7 @@ namespace Tobasa
                     new SoundPlayer(audioFile).PlaySync();
 
                     // Play nomor counter/loket
-                    if (Tobasa.Properties.Settings.Default.AudioLoketIDUseAlphabet)
+                    if (Properties.Settings.Default.AudioLoketIDUseAlphabet)
                     {
                         // ASCII characters: 65 to 90
                         // we use 1 = A = 65
@@ -239,6 +239,25 @@ namespace Tobasa
                 if (nRest > 0 )
                 {
                     cWords = cWords + " " + NumToWords( nRest );
+                }
+            }
+            else if (nNumber < 10000)
+            {
+                int nThousandsPlace = (int)(nNumber / 1000);
+
+                int nRest = (int)(nNumber % 1000);
+
+                if (nThousandsPlace == 1)
+                    cWords = "seribu";
+                else
+                {
+                    cWords = NumToWords(nThousandsPlace);
+                    cWords = cWords + "ribu";
+                }
+
+                if (nRest > 0)
+                {
+                    cWords = cWords + " " + NumToWords(nRest);
                 }
             }
 

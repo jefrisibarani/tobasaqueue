@@ -37,6 +37,7 @@ namespace Tobasa
 
         Properties.Settings _settings = Properties.Settings.Default;
         private PostPropertyCollection _postProperties = new PostPropertyCollection();
+        
         private TCPClient _client = null;
 
         private System.Timers.Timer _keepConnectedTimer;
@@ -44,6 +45,7 @@ namespace Tobasa
         private bool _formIsClosing = false;
 
         private bool _autoConnectToServer = true;
+        
         private String displayTheme = "Classic";
         #endregion
 
@@ -451,58 +453,65 @@ namespace Tobasa
 
         public MainForm()
         {
-            InitializeComponent();
-            // we want to receive key event
-            KeyPreview = true;
-            this.WindowState = FormWindowState.Minimized;
-            
-            AutoSize = true;
-            AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            pnlMore.Visible = false;
-
-            InitDeviceList();
-
-            mDisplay = new Display();
-            mDisplay.DSEngine.Notified += new Action<NotifyEventArgs>(DSEngine_Notified);
-            mDisplay.DSEngine.PlayerStarted += new Action<EventArgs>(DSEngine_PlayerStarted);
-
-            // Get POST Ids
-            string[] postIds = new string[_settings.UIPostList.Count];
-            _settings.UIPostList.CopyTo(postIds, 0);
-
-            // Populate PostPropertyCollection
-            foreach (string id in postIds)
+            try
             {
-                _postProperties.Add(id, new PostProperty(id));
+                InitializeComponent();
+                // we want to receive key event
+                KeyPreview = true;
+                this.WindowState = FormWindowState.Minimized;
+
+                AutoSize = true;
+                AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+                pnlMore.Visible = false;
+
+                InitDeviceList();
+
+                mDisplay = new Display(this);
+                mDisplay.DSEngine.Notified += new Action<NotifyEventArgs>(DSEngine_Notified);
+                mDisplay.DSEngine.PlayerStarted += new Action<EventArgs>(DSEngine_PlayerStarted);
+
+                // Get POST Ids
+                string[] postIds = new string[_settings.UIPostList.Count];
+                _settings.UIPostList.CopyTo(postIds, 0);
+
+                // Populate PostPropertyCollection
+                foreach (string id in postIds)
+                {
+                    _postProperties.Add(id, new PostProperty(id));
+                }
+
+                // Populate cbPost
+                cbPost.Items.Clear();
+                cbPost.Items.AddRange(postIds);
+
+                // Populate cbSelectPost
+                cbSelectPost.Items.Clear();
+                cbSelectPost.Items.AddRange(postIds);
+
+                // Check Screen Count
+                Screen[] screens = Screen.AllScreens;
+                if (screens.Length > 1)
+                    btnSwitchDisplay.Enabled = true;
+
+                RestoreSettings();
+
+                if (_settings.PlayVideoAtStartup)
+                    OnOpenCloseVideo(this, EventArgs.Empty);
+
+                // start tcp client
+                StartClient();
+
+                InitKeepConnectedTimer();
+
+                //mDisplay.TopMost = true;
+                mDisplay.Focus();
+                mDisplay.Show();
+                startupComplete = true;
             }
-
-            // Populate cbPost
-            cbPost.Items.Clear();
-            cbPost.Items.AddRange(postIds);
-
-            // Populate cbSelectPost
-            cbSelectPost.Items.Clear();
-            cbSelectPost.Items.AddRange(postIds);
-
-            // Check Screen Count
-            Screen[] screens = Screen.AllScreens;
-            if (screens.Length > 1)
-                btnSwitchDisplay.Enabled = true;
-
-            RestoreSettings();
-
-            if (_settings.PlayVideoAtStartup)
-                OnOpenCloseVideo(this, EventArgs.Empty);
-
-            // start tcp client
-            StartClient();
-
-            InitKeepConnectedTimer();
-
-            //mDisplay.TopMost = true;
-            mDisplay.Focus();
-            mDisplay.Show();
-            startupComplete = true;
+            catch (Exception e)
+            {
+                MessageBox.Show("Error during start up: " + e.Message + "\n" + e.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         #endregion
@@ -596,6 +605,7 @@ namespace Tobasa
             chkShowInfoTextTop0.Checked = _settings.ShowInfoTextTop0;
             chkShowInfoTextTop1.Checked = _settings.ShowInfoTextTop1;
             chkShowCenterMiddleDiv.Checked = _settings.ShowCenterMiddleDiv;
+            chkShowFinishedQueue.Checked = _settings.ShowFinishedQueue;
             chkShowLeftPosts.Checked = _settings.ShowLeftPosts;
             chkShowRightPosts.Checked = _settings.ShowRightPosts;
 
@@ -624,6 +634,7 @@ namespace Tobasa
                 tbAudioFolder.Text = _soundDir;
 
             chkAudioLoketIDUseAlphabet.Checked = _settings.AudioLoketIDUseAlphabet;
+            chkAudioUseLoket.Checked = _settings.AudioUseLoket;
 
             txtRuntext0.Text = _settings.RunningText0;
             txtRuntext1.Text = _settings.RunningText1;
@@ -648,6 +659,7 @@ namespace Tobasa
         private void SaveSettings()
         {
             _settings.AudioLoketIDUseAlphabet = chkAudioLoketIDUseAlphabet.Checked;
+            _settings.AudioUseLoket = chkAudioUseLoket.Checked; 
             _settings.QueueAnimationTimeInSecond = (int)numericUpDown.Value;
             _settings.PlayVideoAtStartup = chkPlayVideoStartup.Checked;
             _settings.StartNumberWithUnderscore = chkSetUnderscore.Checked;
@@ -660,6 +672,7 @@ namespace Tobasa
             _settings.ShowInfoTextTop0 = chkShowInfoTextTop0.Checked;
             _settings.ShowInfoTextTop1 = chkShowInfoTextTop1.Checked;
             _settings.ShowCenterMiddleDiv = chkShowCenterMiddleDiv.Checked;
+            _settings.ShowFinishedQueue = chkShowFinishedQueue.Checked;
             _settings.ShowLeftPosts = chkShowLeftPosts.Checked;
             _settings.ShowRightPosts = chkShowRightPosts.Checked;
 
@@ -761,7 +774,7 @@ namespace Tobasa
 
         private void RestoreButtonThemes()
         {
-            String themeName = Properties.Settings.Default.Theme;
+            String themeName = _settings.Theme;
 
             if (themeName == "btnThemeClassic" || themeName == "Classic")
             {
@@ -802,6 +815,13 @@ namespace Tobasa
             _formIsClosing = true;
             CloseConnection();
             SaveSettings();
+        }
+
+
+        public void ShowOption()
+        {
+            pnlMore.Visible = true;
+            mnuOption.Text = "Hide &Options";
         }
 
         private void OnOption(object sender, EventArgs e)
@@ -896,7 +916,7 @@ namespace Tobasa
             tbClipFolder.Enabled = false;
             btnSetClipFolder.Enabled = false;
 
-            if (mDisplay.DSEngine.CurrentPlayState!= PlayState.Init)
+            if (mDisplay.DSEngine.CurrentPlayState != PlayState.Init)
             {
                 if ( mDisplay.DSEngine.DisplaySource == DisplaySource.Stream )
                     EnableRateButtons(false);
@@ -1251,6 +1271,11 @@ namespace Tobasa
             bool useBranding = chkUseBrandingImageAsMainLogo.Checked;
 
             ApplyDisplayLogoOptionState(useBranding);
+        }
+
+        private void OnChkShowCenterMiddleLayout(object sender, EventArgs e)
+        {
+            chkShowFinishedQueue.Enabled = chkShowCenterMiddleDiv.Checked;
         }
 
         #endregion

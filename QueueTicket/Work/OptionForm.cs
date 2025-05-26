@@ -25,6 +25,8 @@ namespace Tobasa
 {
     public partial class OptionForm : Form
     {
+        Properties.Settings _settings = Properties.Settings.Default;
+
         private PostPropertyCollection postProperties = new PostPropertyCollection();
         private String displayTheme = "Classic";
         private MainForm mainForm = null;
@@ -35,8 +37,8 @@ namespace Tobasa
             InitializeComponent();
 
             // Get POST Ids
-            string[] postIds = new string[Properties.Settings.Default.UIPostList.Count];
-            Properties.Settings.Default.UIPostList.CopyTo(postIds, 0);
+            string[] postIds = new string[_settings.UIPostList.Count];
+            _settings.UIPostList.CopyTo(postIds, 0);
             
             // Populate PostPropertyCollection
             foreach (string id in postIds )
@@ -94,24 +96,24 @@ namespace Tobasa
         
         private void RestoreSettings()
         {
-            tbServer.Text = Properties.Settings.Default.QueueServerHost;
-            tbPort.Text = Properties.Settings.Default.QueueServerPort.ToString();
-            tbStation.Text = Properties.Settings.Default.StationName;
-            cbPost.Text = Properties.Settings.Default.StationPost;
+            tbServer.Text = _settings.QueueServerHost;
+            tbPort.Text = _settings.QueueServerPort.ToString();
+            tbStation.Text = _settings.StationName;
+            cbPost.Text = _settings.StationPost;
             
-            chkStartFullScreen.Checked = Properties.Settings.Default.StartDisplayFullScreen;
-            chkPrintTicket.Checked = Properties.Settings.Default.PrintTicket;
+            chkStartFullScreen.Checked = _settings.StartDisplayFullScreen;
+            chkPrintTicket.Checked = _settings.PrintTicket;
 
-            txtRuntext0.Text = Properties.Settings.Default.RunningText0;
-            txtRuntext1.Text = Properties.Settings.Default.RunningText1;
-            txtPrintFooter.Text = Properties.Settings.Default.PrintFooter;
+            txtRuntext0.Text = _settings.RunningText0;
+            txtRuntext1.Text = _settings.RunningText1;
+            txtPrintFooter.Text = _settings.PrintFooter;
 
-            chkButtonsWithLabel.Checked = Properties.Settings.Default.DrawLabelOnButtons;
-            btnFontSizeChanger.Value = Properties.Settings.Default.ButtonLabelFontSize;
-            labelFontSizeChanger.Value = Properties.Settings.Default.MainMenuLabelFontSize;
+            chkButtonsWithLabel.Checked = _settings.DrawLabelOnButtons;
+            btnFontSizeChanger.Value = _settings.ButtonLabelFontSize;
+            labelFontSizeChanger.Value = _settings.MainMenuLabelFontSize;
 
-            chkShowLeftMenu.Checked = Properties.Settings.Default.ShowLeftMenu;
-            chkShowRightMenu.Checked = Properties.Settings.Default.ShowRightMenu;
+            chkShowLeftMenu.Checked = _settings.ShowLeftMenu;
+            chkShowRightMenu.Checked = _settings.ShowRightMenu;
 
             // Setup post options
             postProperties.LoadFromConfiguration();
@@ -121,11 +123,11 @@ namespace Tobasa
 
             SetRadioButtonMainMenuLabelState();
 
-            displayTheme = Properties.Settings.Default.Theme;
-            tbImgHeader.Text = Properties.Settings.Default.MainBrandingImage;
-            tbImgLogo.Text = Properties.Settings.Default.LogoImage;
+            displayTheme = _settings.Theme;
+            tbImgHeader.Text = _settings.MainBrandingImage;
+            tbImgLogo.Text = _settings.LogoImage;
 
-            bool useBrandingImage = Properties.Settings.Default.UseMainBrandingImage;
+            bool useBrandingImage = _settings.UseMainBrandingImage;
 
             tbImgHeader.Enabled = useBrandingImage;
             btnSetBrandingImage.Enabled = useBrandingImage;
@@ -134,40 +136,40 @@ namespace Tobasa
             btnSetLogoImg.Enabled = !useBrandingImage;
 
 
-            chkUseBrandingImageAsMainLogo.Checked = Properties.Settings.Default.UseMainBrandingImage;
-            tbLogoText.Text = Tobasa.Properties.Settings.Default.MainLogoText;
+            chkUseBrandingImageAsMainLogo.Checked = _settings.UseMainBrandingImage;
+            tbLogoText.Text = _settings.MainLogoText;
 
             RestoreButtonThemes();
 
-            cbBlueThemeButton.Text = Properties.Settings.Default.ThemeBlueButtonColor;
-            cbDarkThemeButton.Text = Properties.Settings.Default.ThemeDarkButtonColor;
-            cbGreenThemeButton.Text = Properties.Settings.Default.ThemeGreenButtonColor;
-            cbOrangeThemeButton.Text = Properties.Settings.Default.ThemeOrangeButtonColor;
-            cbRedThemeButton.Text = Properties.Settings.Default.ThemeRedButtonColor;
+            cbBlueThemeButton.Text = _settings.ThemeBlueButtonColor;
+            cbDarkThemeButton.Text = _settings.ThemeDarkButtonColor;
+            cbGreenThemeButton.Text = _settings.ThemeGreenButtonColor;
+            cbOrangeThemeButton.Text = _settings.ThemeOrangeButtonColor;
+            cbRedThemeButton.Text = _settings.ThemeRedButtonColor;
 
-            mainForm.SetLogoTextColor(Properties.Settings.Default.LogoTextColor);
-            btnLogoTextColor.BackColor = Properties.Settings.Default.LogoTextColor;
+            mainForm.SetLogoTextColor(_settings.LogoTextColor);
+            btnLogoTextColor.BackColor = _settings.LogoTextColor;
         }
 
         private void SaveSettings()
         {
-            Properties.Settings.Default.QueueServerHost = tbServer.Text;
-            Properties.Settings.Default.QueueServerPort = Convert.ToInt32(tbPort.Text);
-            Properties.Settings.Default.StationName = tbStation.Text;
-            Properties.Settings.Default.StationPost = cbPost.Text;
-            Properties.Settings.Default.StartDisplayFullScreen = chkStartFullScreen.Checked;
-            Properties.Settings.Default.PrintTicket = chkPrintTicket.Checked;
-            Properties.Settings.Default.RunningText0 = txtRuntext0.Text;
-            Properties.Settings.Default.RunningText1 = txtRuntext1.Text;
-            Properties.Settings.Default.PrintFooter = txtPrintFooter.Text;
+            _settings.QueueServerHost = tbServer.Text;
+            _settings.QueueServerPort = Convert.ToInt32(tbPort.Text);
+            _settings.StationName = tbStation.Text;
+            _settings.StationPost = cbPost.Text;
+            _settings.StartDisplayFullScreen = chkStartFullScreen.Checked;
+            _settings.PrintTicket = chkPrintTicket.Checked;
+            _settings.RunningText0 = txtRuntext0.Text;
+            _settings.RunningText1 = txtRuntext1.Text;
+            _settings.PrintFooter = txtPrintFooter.Text;
 
-            Properties.Settings.Default.DrawLabelOnButtons = chkButtonsWithLabel.Checked;
-            Properties.Settings.Default.ButtonLabelFontSize = (int) btnFontSizeChanger.Value;
-            Properties.Settings.Default.MainMenuLabelFontSize = (int)labelFontSizeChanger.Value;
-            Properties.Settings.Default.MainMenuLabelAlignment = GetMainMenuLabelAlignmentValue();
+            _settings.DrawLabelOnButtons = chkButtonsWithLabel.Checked;
+            _settings.ButtonLabelFontSize = (int) btnFontSizeChanger.Value;
+            _settings.MainMenuLabelFontSize = (int)labelFontSizeChanger.Value;
+            _settings.MainMenuLabelAlignment = GetMainMenuLabelAlignmentValue();
 
-            Properties.Settings.Default.ShowLeftMenu = chkShowLeftMenu.Checked;
-            Properties.Settings.Default.ShowRightMenu = chkShowRightMenu.Checked;
+            _settings.ShowLeftMenu = chkShowLeftMenu.Checked;
+            _settings.ShowRightMenu = chkShowRightMenu.Checked;
 
             // save post options
             var postId = cbSelectPost.Text;
@@ -188,26 +190,26 @@ namespace Tobasa
             }
             postProperties.SaveToConfiguration();
 
-            Properties.Settings.Default.Theme = displayTheme;
-            Properties.Settings.Default.MainBrandingImage = tbImgHeader.Text;
-            Properties.Settings.Default.UseMainBrandingImage = chkUseBrandingImageAsMainLogo.Checked;   
-            Properties.Settings.Default.MainLogoText = tbLogoText.Text;
-            Properties.Settings.Default.LogoImage = tbImgLogo.Text;
+            _settings.Theme = displayTheme;
+            _settings.MainBrandingImage = tbImgHeader.Text;
+            _settings.UseMainBrandingImage = chkUseBrandingImageAsMainLogo.Checked;   
+            _settings.MainLogoText = tbLogoText.Text;
+            _settings.LogoImage = tbImgLogo.Text;
 
-            Properties.Settings.Default.ThemeBlueButtonColor = cbBlueThemeButton.Text;
-            Properties.Settings.Default.ThemeDarkButtonColor = cbDarkThemeButton.Text;
-            Properties.Settings.Default.ThemeGreenButtonColor = cbGreenThemeButton.Text;
-            Properties.Settings.Default.ThemeOrangeButtonColor = cbOrangeThemeButton.Text;
-            Properties.Settings.Default.ThemeRedButtonColor = cbRedThemeButton.Text;
+            _settings.ThemeBlueButtonColor = cbBlueThemeButton.Text;
+            _settings.ThemeDarkButtonColor = cbDarkThemeButton.Text;
+            _settings.ThemeGreenButtonColor = cbGreenThemeButton.Text;
+            _settings.ThemeOrangeButtonColor = cbOrangeThemeButton.Text;
+            _settings.ThemeRedButtonColor = cbRedThemeButton.Text;
 
-            Properties.Settings.Default.LogoTextColor = btnLogoTextColor.BackColor;
+            _settings.LogoTextColor = btnLogoTextColor.BackColor;
 
-            Properties.Settings.Default.Save();
+            _settings.Save();
         }
 
         private void RestoreButtonThemes()
         {
-            String themeName = Properties.Settings.Default.Theme;
+            String themeName = _settings.Theme;
 
             if (themeName == "btnThemeClassic" || themeName == "Classic")
             {
@@ -254,11 +256,11 @@ namespace Tobasa
 
         private void SetRadioButtonMainMenuLabelState()
         {
-            if (Properties.Settings.Default.MainMenuLabelAlignment == "Left")
+            if (_settings.MainMenuLabelAlignment == "Left")
                 rbLabelLeft.Checked = true;
-            else if (Properties.Settings.Default.MainMenuLabelAlignment == "Middle")
+            else if (_settings.MainMenuLabelAlignment == "Middle")
                 rbLabelMiddle.Checked = true;
-            else if (Properties.Settings.Default.MainMenuLabelAlignment == "Right")
+            else if (_settings.MainMenuLabelAlignment == "Right")
                 rbLabelRight.Checked = true;
             else
                 rbLabelMiddle.Checked = true;
@@ -292,7 +294,7 @@ namespace Tobasa
 
         private void OnPrintTicketChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.PrintTicket = chkPrintTicket.Checked;
+            _settings.PrintTicket = chkPrintTicket.Checked;
         }
 
         private void OnCbSelectPostChanged(object sender, EventArgs e)
@@ -337,7 +339,7 @@ namespace Tobasa
             if (result == DialogResult.OK)
             {
                 tbImgHeader.Text = fileDlg.FileName;
-                Tobasa.Properties.Settings.Default.MainBrandingImage = fileDlg.FileName;
+                _settings.MainBrandingImage = fileDlg.FileName;
             }
         }
 
@@ -366,7 +368,7 @@ namespace Tobasa
             if (result == DialogResult.OK)
             {
                 tbImgLogo.Text = fileDlg.FileName;
-                Tobasa.Properties.Settings.Default.LogoImage = fileDlg.FileName;
+                _settings.LogoImage = fileDlg.FileName;
             }
         }
 
@@ -412,8 +414,6 @@ namespace Tobasa
 
         private void OnCbThemeButton(object sender, EventArgs e)
         {
-            var _settings = Tobasa.Properties.Settings.Default;
-
             if (sender == cbBlueThemeButton )
             {
                 _settings.ThemeBlueButtonColor = cbBlueThemeButton.Text;
@@ -438,8 +438,6 @@ namespace Tobasa
 
         private void OnLogoTextColor(object sender, EventArgs e)
         {
-            var _settings = Tobasa.Properties.Settings.Default;
-
             ColorDialog dlg = new ColorDialog();
 
             dlg.AllowFullOpen = true;

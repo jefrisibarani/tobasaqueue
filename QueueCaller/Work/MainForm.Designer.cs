@@ -305,7 +305,7 @@ namespace Tobasa
             this.lblPost.AutoSize = true;
             this.lblPost.BackColor = System.Drawing.Color.LightSteelBlue;
             this.lblPost.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblPost.Font = new System.Drawing.Font("Microsoft Sans Serif", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPost.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPost.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblPost.Location = new System.Drawing.Point(198, 61);
             this.lblPost.Margin = new System.Windows.Forms.Padding(0);
@@ -413,13 +413,13 @@ namespace Tobasa
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblNumber.AutoSize = true;
             this.lblNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.lblNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 60F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblNumber.ForeColor = System.Drawing.Color.SteelBlue;
             this.lblNumber.Location = new System.Drawing.Point(3, 37);
             this.lblNumber.Name = "lblNumber";
             this.lblNumber.Size = new System.Drawing.Size(260, 150);
             this.lblNumber.TabIndex = 7;
-            this.lblNumber.Text = "R999";
+            this.lblNumber.Text = "CR999";
             this.lblNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblNumber.Resize += new System.EventHandler(this.OnLabelResize);
             // 

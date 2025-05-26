@@ -36,14 +36,18 @@ namespace Tobasa
         private delegate void TCPClientClosedCb(TCPClient e);
 
         Properties.Settings _settings = Properties.Settings.Default;
-        private TCPClient _client = null;
+        
         private TicketPrint _printJob = new TicketPrint();
         private bool _isFullScreen = false;
-
         private DisplayTheme colorProfile = null;
         private Label lblBranding = null;
-
         private bool useBrandingImageAsMainLogo = true;
+
+        private TCPClient _client = null;
+        private System.Timers.Timer _keepConnectedTimer;
+        private int _keepConnectedInterval = 10; // 5 second
+        private bool _formIsClosing = false;
+        private bool _autoConnectToServer = true;
 
         // Struct to save label data -label that need tobe resized automatically
         // See labelRecordList,RecordLabelSize(),OnLabelResize()
@@ -91,23 +95,23 @@ namespace Tobasa
 
         private Bitmap post0BtnImgOn = null;
         private Bitmap post0BtnImgOff = null;
-        private Bitmap post1BtnImgOn = null;
+        private Bitmap post1BtnImgOn  = null;
         private Bitmap post1BtnImgOff = null;
-        private Bitmap post2BtnImgOn = null;
+        private Bitmap post2BtnImgOn  = null;
         private Bitmap post2BtnImgOff = null;
-        private Bitmap post3BtnImgOn = null;
+        private Bitmap post3BtnImgOn  = null;
         private Bitmap post3BtnImgOff = null;
-        private Bitmap post4BtnImgOn = null;
+        private Bitmap post4BtnImgOn  = null;
         private Bitmap post4BtnImgOff = null;
-        private Bitmap post5BtnImgOn = null;
+        private Bitmap post5BtnImgOn  = null;
         private Bitmap post5BtnImgOff = null;
-        private Bitmap post6BtnImgOn = null;
+        private Bitmap post6BtnImgOn  = null;
         private Bitmap post6BtnImgOff = null;
-        private Bitmap post7BtnImgOn = null;
+        private Bitmap post7BtnImgOn  = null;
         private Bitmap post7BtnImgOff = null;
-        private Bitmap post8BtnImgOn = null;
+        private Bitmap post8BtnImgOn  = null;
         private Bitmap post8BtnImgOff = null;
-        private Bitmap post9BtnImgOn = null;
+        private Bitmap post9BtnImgOn  = null;
         private Bitmap post9BtnImgOff = null;
 
         #endregion
@@ -118,7 +122,6 @@ namespace Tobasa
         {
             try
             {
-
                 _isFullScreen = false;
                 labelRecordList = new ArrayList();
 
@@ -142,6 +145,11 @@ namespace Tobasa
 
                 // Start TCP client
                 StartClient();
+
+                InitKeepConnectedTimer();
+
+                if (_settings.ShowInfoDialog)
+                    ToolUsageInfo.ShowUsageInfo();
             }
             catch (Exception e)
             {
@@ -151,10 +159,38 @@ namespace Tobasa
 
         #endregion
 
+        #region Keep Connected Timer stuff
+
+        private void InitKeepConnectedTimer()
+        {
+            if (_autoConnectToServer)
+            {
+                // Initialize the keepalive timer and its default value.
+                _keepConnectedTimer = new System.Timers.Timer();
+                _keepConnectedTimer.Elapsed += new System.Timers.ElapsedEventHandler(KeepConnectedTimer_Elapsed);
+                _keepConnectedTimer.Interval = _keepConnectedInterval * 1000;
+                _keepConnectedTimer.Enabled = true;
+            }
+        }
+
+        private void KeepConnectedTimer_Elapsed(object source, System.Timers.ElapsedEventArgs e)
+        {
+            if (_formIsClosing)
+                return;
+
+            if (!_client.Connected && _autoConnectToServer)
+                RestartClient();
+        }
+
+        #endregion
+
         #region TCP Connection stuffs
 
         private void TCPClientNotified(NotifyEventArgs arg)
         {
+            if (this.IsDisposed)
+                return;
+
             if (this.InvokeRequired)
             {
                 TCPClientNotifiedCb dlg = new TCPClientNotifiedCb(TCPClientNotified);
@@ -162,7 +198,7 @@ namespace Tobasa
             }
             else
             {
-                if (arg.Type == NotifyType.NOTIFY_ERR)
+                if (!_autoConnectToServer && arg.Type == NotifyType.NOTIFY_ERR)
                 {
                     MessageBox.Show(arg.Message, arg.Summary, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -195,6 +231,9 @@ namespace Tobasa
 
         private void TCPClientClosed(TCPClient client)
         {
+            if (this.IsDisposed)
+                return;
+
             if (this.InvokeRequired)
             {
                 TCPClientClosedCb dlg = new TCPClientClosedCb(TCPClientClosed);
@@ -203,6 +242,9 @@ namespace Tobasa
             else
             {
                 //lblStatus.Text = "Not Connected to Server";
+
+                if (!_client.Connected && _autoConnectToServer)
+                    RestartClient();
             }
         }
 
@@ -298,16 +340,16 @@ namespace Tobasa
             picLogo.Image = null;
             picHeader.Image = null;
 
-            if (File.Exists(Tobasa.Properties.Settings.Default.LogoImage))
-                picLogo.Image = new Bitmap(Tobasa.Properties.Settings.Default.LogoImage);
+            if (File.Exists(_settings.LogoImage))
+                picLogo.Image = new Bitmap(_settings.LogoImage);
             else
-                picLogo.Image = Tobasa.Properties.Resources.MainLogo;
+                picLogo.Image = Properties.Resources.MainLogo;
 
             SetupBranding();
 
-            if (Properties.Settings.Default.Theme != "Classic")
+            if (_settings.Theme != "Classic")
             {
-                ApplyTheme(Properties.Settings.Default.Theme);
+                ApplyTheme(_settings.Theme);
             }
             else
             {
@@ -317,8 +359,8 @@ namespace Tobasa
 
         public void SetupBranding()
         {
-            String mainBrandingImagePath = Tobasa.Properties.Settings.Default.MainBrandingImage;
-            bool useBrandingImage = Tobasa.Properties.Settings.Default.UseMainBrandingImage;
+            String mainBrandingImagePath = _settings.MainBrandingImage;
+            bool useBrandingImage = _settings.UseMainBrandingImage;
 
             if (File.Exists(mainBrandingImagePath) && useBrandingImage)
             {
@@ -349,7 +391,7 @@ namespace Tobasa
                 lblBranding.Name = "lblBranding";
                 lblBranding.Size = new System.Drawing.Size(393, 79);
                 lblBranding.TabIndex = 0;
-                lblBranding.Text = Tobasa.Properties.Settings.Default.MainLogoText;
+                lblBranding.Text = _settings.MainLogoText;
                 lblBranding.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                 lblBranding.Resize += new System.EventHandler(this.OnLabelResize);
 
@@ -1365,6 +1407,7 @@ namespace Tobasa
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
+            _formIsClosing = true;
             CloseConnection();
             SaveSettings();
         }

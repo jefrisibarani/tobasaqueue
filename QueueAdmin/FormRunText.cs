@@ -68,8 +68,8 @@ namespace Tobasa
         {
             if (!_insertMode && _initialData.Count > 0)
             {
-                bool sticky = Convert.ToBoolean(Convert.ToInt32(_initialData["sticky"]));
-                bool active = Convert.ToBoolean(Convert.ToInt32(_initialData["active"]));
+                bool sticky = Util.StrToBool(_initialData["sticky"]);
+                bool active = Util.StrToBool(_initialData["active"]);
 
                 txtStation.Text   = _initialData["station"];
                 chkSticky.Checked = sticky;

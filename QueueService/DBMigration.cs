@@ -68,12 +68,12 @@ namespace Tobasa
                     }
                 }
 
-                if (tablesFound == 7 && viewsFound == 2 && triggerFound == 1)
+                if (tablesFound == 7 && viewsFound == 3 && triggerFound == 1)
                 {
                     QueueServer.Log($"DBMigration found correct database objects");
                     return true;
                 }
-                else if (tablesFound != 7 && viewsFound != 2 && triggerFound != 1)
+                else if (tablesFound != 7 && viewsFound != 3 && triggerFound != 1)
                 {
                     QueueServer.Log($"DBMigration creating database objects");
 

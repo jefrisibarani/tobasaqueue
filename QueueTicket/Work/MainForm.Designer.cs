@@ -781,7 +781,7 @@ namespace Tobasa
             this.runningTextBottom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.runningTextBottom.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.runningTextBottom.ForeColor = System.Drawing.Color.Gold;
-            this.runningTextBottom.Location = new System.Drawing.Point(0, 40);
+            this.runningTextBottom.Location = new System.Drawing.Point(0, 0);
             this.runningTextBottom.Margin = new System.Windows.Forms.Padding(0);
             this.runningTextBottom.Name = "runningTextBottom";
             this.runningTextBottom.Size = new System.Drawing.Size(784, 51);

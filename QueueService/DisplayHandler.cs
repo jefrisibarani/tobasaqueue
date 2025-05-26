@@ -141,7 +141,7 @@ namespace Tobasa
                 exp = ex;
             }
 
-            if(exp != null)
+            if (exp != null)
             {
                 Logger.Log("DisplayHandler", exp);
 

@@ -754,7 +754,7 @@ namespace Tobasa.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AudioUseLoket {
             get {
                 return ((bool)(this["AudioUseLoket"]));
@@ -776,12 +776,15 @@ namespace Tobasa.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool BasicQueueMode {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowFinishedQueue {
             get {
-                return ((bool)(this["BasicQueueMode"]));
+                return ((bool)(this["ShowFinishedQueue"]));
+            }
+            set {
+                this["ShowFinishedQueue"] = value;
             }
         }
         
@@ -1232,12 +1235,12 @@ namespace Tobasa.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SwapCounterNoumberLabelPosition {
+        public bool SwapCounterNumberLabelPosition {
             get {
-                return ((bool)(this["SwapCounterNoumberLabelPosition"]));
+                return ((bool)(this["SwapCounterNumberLabelPosition"]));
             }
             set {
-                this["SwapCounterNoumberLabelPosition"] = value;
+                this["SwapCounterNumberLabelPosition"] = value;
             }
         }
         
@@ -1295,6 +1298,18 @@ namespace Tobasa.Properties {
             }
             set {
                 this["UseMainBrandingImage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowInfoDialog {
+            get {
+                return ((bool)(this["ShowInfoDialog"]));
+            }
+            set {
+                this["ShowInfoDialog"] = value;
             }
         }
     }

@@ -139,6 +139,7 @@
     <Compile Include="AppMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Work\AudioPlayer.cs" />
+    <Compile Include="Work\ToolUsageInfo.cs" />
     <EmbeddedResource Include="Work\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>

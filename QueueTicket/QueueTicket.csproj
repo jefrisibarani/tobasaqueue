@@ -139,6 +139,7 @@
     <Compile Include="Work\RuntextLabel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Work\ToolUsageInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>

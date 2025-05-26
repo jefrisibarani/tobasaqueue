@@ -147,7 +147,7 @@ namespace Tobasa
 
             IPAddress lochost;
             IPAddress.TryParse("127.0.0.1", out lochost);
-            
+
             // we always allow connection from localhost 
             if (lochost.Equals(ep.Address))
             {
