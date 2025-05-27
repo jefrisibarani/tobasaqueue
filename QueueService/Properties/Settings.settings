@@ -46,7 +46,7 @@
       <Value Profile="(Default)">Host=127.0.0.1;Username=antrian;Database=antri;Port=5462;</Value>
     </Setting>
     <Setting Name="ProviderType" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">MYSQL</Value>
+      <Value Profile="(Default)">MSSQL</Value>
     </Setting>
   </Settings>
 </SettingsFile>
