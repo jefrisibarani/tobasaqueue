@@ -24,6 +24,7 @@ using System.Text;
 using System.Net;
 using System.Data.Common;
 using System.Data;
+using System.Linq;
 
 namespace Tobasa
 {
@@ -35,6 +36,8 @@ namespace Tobasa
         private bool stopped = false;
         private TCPServer tcpsrv = null;
         private static Dictionary<int, Client> clients = new Dictionary<int, Client>();
+
+        private static readonly object clientLock = new object();
 
         private SysHandler sysHandler = new SysHandler();
         private CallerHandler callerHandler = new CallerHandler();
@@ -131,7 +134,7 @@ namespace Tobasa
             string remoteInfo = ses.RemoteInfo;
             string id = ses.Id.ToString();
 
-            lock (clients)
+            lock (clientLock)
             {
                 clients.Remove(ses.Id);
             }
@@ -179,7 +182,7 @@ namespace Tobasa
             string id = ses.Id.ToString();
             Client client = new Client(ses);
 
-            lock (clients)
+            lock (clientLock)
             {
                 clients.Add(ses.Id, client);
             }
@@ -446,20 +449,35 @@ namespace Tobasa
 
         public static void SendMessageToClient(ClientType type, string text, string post = "")
         {
-            foreach (KeyValuePair<int, Client> kv in clients)
+            try
             {
-                Client c = kv.Value;
-                if (c.Type == type )
+                List<Client> snapshot;
+                
+                // To fix exception: Collection was modified; enumeration operation may not execute.
+                lock (clientLock)
                 {
-                    if (c.Post == post || c.Post == "ANY" || c.ReceiveMessageFromOtherPost)
-                        c.Session.Send(text);
+                    snapshot = clients.Values.ToList(); // Take snapshot while locked
+                }
+
+                
+                foreach (Client c in snapshot)
+                {
+                    if (c.Type == type)
+                    {
+                        if (c.Post == post || c.Post == "ANY" || c.ReceiveMessageFromOtherPost)
+                            c.Session.Send(text);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+            }
         }
-        
+
         #endregion
 
-    
+
         public static void Log(string message)
         {
             string datetimeIfo = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") + " : ";

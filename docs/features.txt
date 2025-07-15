@@ -1,7 +1,7 @@
 * Software Antrian Open Source dan gratis.
+* Support database SQLite 3, MySQL, PostgreSQL, MSSQL
 * Settingan default menggunakan database SQLite 3, 
-  sehingga tidak perlu menginstall/menggunakan Microsoft SQL Server.
-* Bila diperlukan, dapat menggunakan Microsoft SQL Server sebagai database.
+  sehingga tidak perlu menginstall/menggunakan SQL Server Engine lainnya.
 * Tersedia tool untuk mengubah pengunaan jenis database dan Queue Server.
 * Melayani hingga 10 POS layanan
 * Settingan default satu POS layanan dengan sepuluh loket/counter
@@ -12,7 +12,8 @@
 * Layout modul Display dan Tiket dapat diatur dengan mudah
 * Running text pada modul Display dan Tiket
 * Mengubah/menambah running text dengan mudah
-* Dokumentasi yang lengkap tersedia pada www.mangapul.com
+* Theme pada modul Display dan Tiket
+* Dokumentasi yang lengkap tersedia pada www.mangapul.net
 
 Modul Tiket
 * Menampilkan minimal tiga POS layanan

@@ -7,7 +7,6 @@ using System.Net;
 
 namespace Tobasa
 {
-
     public class Tbl
     {
         public const string runningtexts  = "queue_runningtexts";
@@ -133,15 +132,10 @@ namespace Tobasa
                         {
                             reader.Read();
 
-                            string user = reader.GetString(0).Trim();
-                            string pwd = reader.GetString(1).Trim();
+                            string user      = reader.GetString(0).Trim();
+                            string pwd       = reader.GetString(1).Trim();
                             DateTime expired = reader.GetDateTime(2);
-
-                            bool active = false;
-                            if (Database.Me.ProviderType == DatabaseProviderType.PGSQL)
-                                active = reader.GetBoolean(3);
-                            else 
-                                active = Convert.ToBoolean(reader.GetInt32(3));
+                            bool active      = Convert.ToBoolean(reader.GetInt32(3));
 
                             if (!active)
                             {
@@ -256,9 +250,9 @@ namespace Tobasa
                         cmd.CommandText = sql;
 
                         Database.Me.AddParameter(cmd, "staname", runningText.StationName, DbType.String);
-                        Database.Me.AddParameter(cmd, "sticky", runningText.Sticky, DbType.Boolean);
-                        Database.Me.AddParameter(cmd, "active", runningText.Active, DbType.Boolean);
-                        Database.Me.AddParameter(cmd, "runtext", runningText.Text, DbType.String);
+                        Database.Me.AddParameter(cmd, "sticky",  runningText.Sticky,      DbType.Int32);
+                        Database.Me.AddParameter(cmd, "active",  runningText.Active,      DbType.Int32);
+                        Database.Me.AddParameter(cmd, "runtext", runningText.Text,        DbType.String);
 
                         if (!insertData)
                         {
@@ -306,9 +300,9 @@ namespace Tobasa
                     {
                         cmd.CommandText = sql;
 
-                        Database.Me.AddParameter(cmd, "ip", accessList.IpAddress, DbType.String);
-                        Database.Me.AddParameter(cmd, "allow", accessList.Allowed, DbType.Boolean);
-                        Database.Me.AddParameter(cmd, "ket", accessList.Keterangan, DbType.String);
+                        Database.Me.AddParameter(cmd, "ip",    accessList.IpAddress,  DbType.String);
+                        Database.Me.AddParameter(cmd, "allow", accessList.Allowed,    DbType.Int32);
+                        Database.Me.AddParameter(cmd, "ket",   accessList.Keterangan, DbType.String);
 
                         if (!insertData)
                         {
@@ -358,20 +352,20 @@ namespace Tobasa
 
                         if (insertData)
                         {
-                            Database.Me.AddParameter(cmd, "name", station.Name, DbType.String);
-                            Database.Me.AddParameter(cmd, "post", station.Post, DbType.String);
-                            Database.Me.AddParameter(cmd, "canlogin", station.CanLogin, DbType.Boolean);
+                            Database.Me.AddParameter(cmd, "name",       station.Name,       DbType.String);
+                            Database.Me.AddParameter(cmd, "post",       station.Post,       DbType.String);
+                            Database.Me.AddParameter(cmd, "canlogin",   station.CanLogin,   DbType.Int32);
                             Database.Me.AddParameter(cmd, "keterangan", station.Keterangan, DbType.String);
 
                         }
                         else //update
                         {
-                            Database.Me.AddParameter(cmd, "name", station.Name, DbType.String);
-                            Database.Me.AddParameter(cmd, "post", station.Post, DbType.String);
-                            Database.Me.AddParameter(cmd, "canlogin", station.CanLogin, DbType.Boolean);
+                            Database.Me.AddParameter(cmd, "name",       station.Name,       DbType.String);
+                            Database.Me.AddParameter(cmd, "post",       station.Post,       DbType.String);
+                            Database.Me.AddParameter(cmd, "canlogin",   station.CanLogin,   DbType.Int32);
                             Database.Me.AddParameter(cmd, "keterangan", station.Keterangan, DbType.String);
-                            Database.Me.AddParameter(cmd, "nameO", station.NameOld, DbType.String);
-                            Database.Me.AddParameter(cmd, "postO", station.PostOld, DbType.String);
+                            Database.Me.AddParameter(cmd, "nameO",      station.NameOld,    DbType.String);
+                            Database.Me.AddParameter(cmd, "postO",      station.PostOld,    DbType.String);
                         }
 
                         affected = cmd.ExecuteNonQuery();
@@ -491,20 +485,20 @@ namespace Tobasa
                             Database.Me.AddParameter(cmd, "username", login.Username, DbType.String);
                             Database.Me.AddParameter(cmd, "pwd",      login.Password, DbType.String);
                             Database.Me.AddParameter(cmd, "exp",      newExp,         DbType.Date);
-                            Database.Me.AddParameter(cmd, "active",   login.Active,   DbType.Boolean);
+                            Database.Me.AddParameter(cmd, "active",   login.Active,   DbType.Int32);
                         }
                         else if (command == "UPDATE_PASSWORD")
                         {
                             Database.Me.AddParameter(cmd, "username",  login.Username,    DbType.String);
                             Database.Me.AddParameter(cmd, "pwd",       login.Password,    DbType.String);
                             Database.Me.AddParameter(cmd, "exp",       login.Expired,     DbType.Date);
-                            Database.Me.AddParameter(cmd, "active",    login.Active,      DbType.Boolean);
+                            Database.Me.AddParameter(cmd, "active",    login.Active,      DbType.Int32);
                             Database.Me.AddParameter(cmd, "username2", login.UsernameOld, DbType.String);
                         }
                         else
                         {
                             Database.Me.AddParameter(cmd, "exp",       login.Expired,     DbType.Date);
-                            Database.Me.AddParameter(cmd, "active",    login.Active,      DbType.Boolean);
+                            Database.Me.AddParameter(cmd, "active",    login.Active,      DbType.Int32);
                             Database.Me.AddParameter(cmd, "username",  login.UsernameOld, DbType.String);
                         }
 
@@ -1729,19 +1723,15 @@ namespace Tobasa
 
             try
             {
-                string sql = $@"SELECT station_name, sticky, active, running_text FROM {Tbl.runningtexts} WHERE active=@active AND station_name = @station_name";
+                string sql = $@"SELECT station_name, sticky, active, running_text FROM {Tbl.runningtexts} WHERE active=@active AND station_name = @staname";
 
                 Database.Me.OpenConnection();
                 using (DbCommand cmd = Database.Me.Connection.CreateCommand())
                 {
                     cmd.CommandText = sql;
                     
-                    if (Database.Me.ProviderType == DatabaseProviderType.PGSQL)
-                        Database.Me.AddParameter(cmd, "active", true, DbType.Boolean);
-                    else
-                        Database.Me.AddParameter(cmd, "active", 1, DbType.Int32);
-
-                    Database.Me.AddParameter(cmd, "station_name", station, DbType.String);
+                    Database.Me.AddParameter(cmd, "active", 1, DbType.Int32);
+                    Database.Me.AddParameter(cmd, "staname", station, DbType.String);
 
                     using (DbDataReader reader = cmd.ExecuteReader())
                     {

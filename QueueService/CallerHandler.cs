@@ -125,18 +125,6 @@ namespace Tobasa
                             }
                             else
                             {
-                                /*
-                                string messageC = 
-                                    Msg.CallerGetNext.Text +
-                                    Msg.Separator + "RES" +
-                                    Msg.Separator + "Identifier" +
-                                    Msg.Separator + "" +
-                                    Msg.Separator + "" +
-                                    Msg.CompDelimiter + "" +
-                                    Msg.CompDelimiter + "";
-
-                                session.Send(messageC);
-                                */
                             }
                         }
                     };

@@ -93,10 +93,6 @@ namespace Tobasa
             {
                 SQLiteConnectionStringBuilder builder = new SQLiteConnectionStringBuilder();
                 builder.ConnectionString = partialConnStr;
-                //if (!string.IsNullOrWhiteSpace(encryptedPwd))
-                //{
-                //    string clearPwd = Util.DecryptPassword(encryptedPwd, salt);
-                //}
                 return builder.ToString();
             }
             else if (ProviderType == DatabaseProviderType.MYSQL)
@@ -393,6 +389,12 @@ namespace Tobasa
                 }
             }
             return null;
+        }
+
+        public DbParameter AddParameterBool(DbCommand command, string paramName, bool value)
+        {
+            int val = value == true ? 1 : 0;
+            return AddParameter(command, paramName, val, DbType.Int32);
         }
 
         public DbParameter AddParameter(DbCommand command, string paramName, object value, DbType dataType)

@@ -202,7 +202,6 @@
   <PropertyGroup>
     <PostBuildEvent>IF NOT EXIST $(SolutionDir)_OUTPUT                         MD $(SolutionDir)_OUTPUT
 IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)          MD $(SolutionDir)_OUTPUT\$(ProjectName)
-IF NOT EXIST $(SolutionDir)_OUTPUT\Database                MD $(SolutionDir)_OUTPUT\Database
 IF NOT EXIST $(SolutionDir)_OUTPUT\$(ProjectName)\Database MD $(SolutionDir)_OUTPUT\$(ProjectName)\Database
 
 IF EXIST $(TargetDir)Database   rmdir /q /s $(TargetDir)Database
@@ -222,17 +221,7 @@ COPY /Y $(TargetDir)System.Buffers.dll                         $(SolutionDir)_OU
 COPY /Y $(TargetDir)System.Diagnostics.DiagnosticSource.dll    $(SolutionDir)_OUTPUT\$(ProjectName)\
 COPY /Y $(TargetDir)System.Memory.dll                          $(SolutionDir)_OUTPUT\$(ProjectName)\
 COPY /Y $(TargetDir)System.Runtime.CompilerServices.Unsafe.dll $(SolutionDir)_OUTPUT\$(ProjectName)\
-COPY /Y $(TargetDir)System.Threading.Tasks.Extensions.dll      $(SolutionDir)_OUTPUT\$(ProjectName)\
-
-
-REM Copy Database resources
-REM ----------------------------------------------------------------------------
-COPY /Y $(SolutionDir)Database\sqlserver_2008_R2_antri.bak $(SolutionDir)_OUTPUT\Database\
-COPY /Y $(SolutionDir)Database\install_db_sqlserver.md     $(SolutionDir)_OUTPUT\Database\
-COPY /Y $(SolutionDir)Database\sqlite3_antri.db3           $(SolutionDir)_OUTPUT\Database\antri.db3
-COPY /Y $(SolutionDir)Database\sqlite3_antri.db3           $(SolutionDir)Database\antri.db3
-
-</PostBuildEvent>
+COPY /Y $(TargetDir)System.Threading.Tasks.Extensions.dll      $(SolutionDir)_OUTPUT\$(ProjectName)\</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>IF EXIST $(SolutionDir)_OUTPUT\$(ProjectName)   rmdir /q /s $(SolutionDir)_OUTPUT\$(ProjectName)

@@ -1,17 +1,13 @@
 # Software Antrian Tobasa
-http://www.mangapul.com/p/software-antrian-tobasa.html
+http://www.mangapul.net/p/software-antrian-tobasa.html
 
+Software Antrian Open Source dan gratis.
 Software sistem antrian andal untuk mengelola antrian pelanggan, mengurangi waktu tunggu, 
-meningkatkan kualitas layanan dan memaksimalkan kepuasan customer.
+meningkatkan kualitas layanan dan memaksimalkan kepuasan pelanggan.
 
 ## Kebutuhan minimal
 * Windows 7 Service Pack 1 
-* Microsoft .NET Framework 4.8
-
-Bila ingin menggunakan SQL Server sebagai database:
-* Microsoft SQL Server 2008 R2 Express Edition 
-
-Software Antrian Tobasa menggunakan SQLite sebagai database default.
+* Microsoft .NET Framework 4.6
 
 ## Build/Compile dari source code
 * Clone/download project source code dari https://github.com/jefrisibarani/tobasaqueue
@@ -21,19 +17,20 @@ Software Antrian Tobasa menggunakan SQLite sebagai database default.
 #### Struktur folder output
 ```
 _OUTPUT
-   \--Database
-   \--QueueAdmin
-   \--QueueCaller
-   \--QueueDisplay
-      \--img
-      \--movie
-      \--wav
-   \--QueueService
-   \--QueueTicket
-      \--img
-   \--LICENSE
-   \--README.md
-   \--startall_output.cmd
+   \---QueueAdmin
+   \---QueueCaller
+   \---QueueDisplay
+       \---img
+       \---movie
+       \---wav
+   \---QueueService
+       \---Database
+   \---QueueTicket
+       \---img
+   \---LICENSE
+   \---QueueConfig.exe
+   \---README.md
+   \---startall_output.cmd
 ```
 
 ## Instalasi
@@ -42,22 +39,14 @@ misalkan C:\AntrianTobasa
 
 Atau silahkan download versi binary dari:
 * https://github.com/jefrisibarani/tobasaqueue/releases
-* http://www.mangapul.com/2016/05/download-software-antrian-tobasa.html
+* http://www.mangapul.net/2016/05/download-software-antrian-tobasa.html
 
 Lalu extract ke folder C:\AntrianTobasa
 
 
-#### Bila ingin menggunakan SQL Server sebagai database:
-* Restore database ***sqlserver_2008_r2_antri.bak*** yang ada di folder Database,
-  ikuti petunjuk pada file **Database\install_db_sqlserver.md**
-  
-* Jalankan program server **QueueService.exe** pada folder QueueService
-* Jalankan program QueueDisplay.exe, QueueAdmin.exe, QueueCaller.exe
-
-
 #### Menampilkan file video
 Bila ingin menampilkan video pada QueueDisplay:
-Copykan file video (**format wmv**), atau format lainnya(bila codec sudah terinstall pada windows)
+Copykan file video (**format wmv**), atau format lainnya(bila codec sudah terinstall pada Windows)
 pada folder QueueDisplay\movie\ 
 
 
@@ -70,12 +59,12 @@ c:\Windows\Microsoft.NET\Framework\v4.0.30319\installutil QueueService.exe
 ```
 
 #### Untuk informasi/konfigurasi lebih lanjut
-* http://www.mangapul.com/p/software-antrian-tobasa.html
-* http://www.mangapul.com/2016/12/konfigurasi-aplikasi-antrian-tobasa.html
+* http://www.mangapul.net/p/software-antrian-tobasa.html
+* http://www.mangapul.net/2016/12/konfigurasi-aplikasi-antrian-tobasa.html
 
 
 #### Download .NET
 * https://dotnet.microsoft.com/download/dotnet-framework/net48
 
 
-##### Copyright (C) 2015-2025 Jefri Sibarani
+##### Copyright (C) 2025 Jefri Sibarani

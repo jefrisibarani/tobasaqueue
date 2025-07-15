@@ -282,13 +282,13 @@ COPY /Y $(SolutionDir)startall_output.cmd         $(SolutionDir)_OUTPUT\
 COPY /Y $(SolutionDir)README.md                     $(SolutionDir)_OUTPUT\
 COPY /Y $(SolutionDir)LICENSE                             $(SolutionDir)_OUTPUT\
 COPY /Y $(ProjectDir)img\*.*                                 $(SolutionDir)_OUTPUT\$(ProjectName)\img\
-COPY /Y $(SolutionDir)MediaFiles\audio\*.wav                         $(SolutionDir)_OUTPUT\$(ProjectName)\wav\
-COPY /Y $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv     $(SolutionDir)_OUTPUT\$(ProjectName)\movie\
+COPY /Y $(SolutionDir)MediaFiles\audio\*.wav  $(SolutionDir)_OUTPUT\$(ProjectName)\wav\
+COPY /Y $(SolutionDir)MediaFiles\video\*.mp4  $(SolutionDir)_OUTPUT\$(ProjectName)\movie\
 
 COPY /Y $(ProjectDir)img\*.*                                                         $(TargetDir)img\
 COPY /Y $(SolutionDir)MediaFiles\audio\*.wav                          $(TargetDir)wav\
 
-IF EXIST $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv COPY /Y $(SolutionDir)MediaFiles\video\wildlifeinhd.wmv   $(TargetDir)movie\
+IF EXIST $(SolutionDir)MediaFiles\video\pangalengan.mp4 COPY /Y $(SolutionDir)MediaFiles\video\pangalengan.mp4   $(TargetDir)movie\
 
 REM type nul &gt; $(SolutionDir)_OUTPUT\$(ProjectName)\movie\put_your_video_files_here
 </PostBuildEvent>
