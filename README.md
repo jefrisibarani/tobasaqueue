@@ -1,5 +1,5 @@
 # Software Antrian Tobasa
-http://www.mangapul.net/p/software-antrian-tobasa.html
+https://www.mangapul.net/p/software-antrian-tobasa.html
 
 Software Antrian Open Source dan gratis.
 Software sistem antrian andal untuk mengelola antrian pelanggan, mengurangi waktu tunggu, 
@@ -39,7 +39,7 @@ misalkan C:\AntrianTobasa
 
 Atau silahkan download versi binary dari:
 * https://github.com/jefrisibarani/tobasaqueue/releases
-* http://www.mangapul.net/2016/05/download-software-antrian-tobasa.html
+* https://www.mangapul.net/2016/05/download-software-antrian-tobasa.html
 
 Lalu extract ke folder C:\AntrianTobasa
 
@@ -59,12 +59,12 @@ c:\Windows\Microsoft.NET\Framework\v4.0.30319\installutil QueueService.exe
 ```
 
 #### Untuk informasi/konfigurasi lebih lanjut
-* http://www.mangapul.net/p/software-antrian-tobasa.html
-* http://www.mangapul.net/2016/12/konfigurasi-aplikasi-antrian-tobasa.html
+* https://www.mangapul.net/p/software-antrian-tobasa.html
+* https://www.mangapul.net/2016/12/konfigurasi-aplikasi-antrian-tobasa.html
 
 
 #### Download .NET
 * https://dotnet.microsoft.com/download/dotnet-framework/net48
 
 
-##### Copyright (C) 2025 Jefri Sibarani
+##### Copyright (C) 2026 Jefri Sibarani
